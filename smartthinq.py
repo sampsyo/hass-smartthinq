@@ -47,7 +47,7 @@ class LGDevice(climate.ClimateDevice):
 
     @property
     def name(self):
-        return self._info['alias']
+        return self._info.name
 
     @property
     def available(self):
