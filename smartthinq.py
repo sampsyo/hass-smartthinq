@@ -116,6 +116,7 @@ class LGDevice(climate.ClimateDevice):
 
         import wideq
         self._mon = wideq.Monitor(self._client.session, self._device.id)
+        self._mon.start()
 
     def update(self):
         """Poll for updated device status.
