@@ -58,8 +58,9 @@ class LGDevice(climate.ClimateDevice):
     def target_temperature(self):
         return self._temp_cfg
 
-    def set_temperature(self, temperature=None):
-        self.client.session.set_device_controls(
+    def set_temperature(self, **kwargs):
+        temperature = kwargs['temperature']
+        self._client.session.set_device_controls(
             self._id,
             {'TempCfg': str(temperature)},
         )
