@@ -13,6 +13,14 @@ PLATFORM_SCHEMA = climate.PLATFORM_SCHEMA.extend({
     vol.Required('refresh_token'): cv.string,
 })
 
+MODES = {
+    "@AC_MAIN_OPERATION_MODE_HEAT_W": climate.STATE_HEAT,
+    "@AC_MAIN_OPERATION_MODE_COOL_W": climate.STATE_COOL,
+    "@AC_MAIN_OPERATION_MODE_DRY_W": climate.STATE_DRY,
+    "@AC_MAIN_OPERATION_MODE_FAN_W": climate.STATE_FAN_ONLY,
+    "@AC_MAIN_OPERATION_MODE_ENERGY_SAVING_W": climate.STATE_ECO,
+}
+
 
 def setup_platform(hass, config, add_devices, discovery_info=None):
     import wideq
@@ -28,8 +36,10 @@ class LGDevice(climate.ClimateDevice):
         self._client = client
         self._info = info
 
-        self._temp_cfg = None
-        self._temp_cur = None
+        self._state = None
+
+        # Cache the model information.
+        self._model = client.model_info(self._info)
 
     @property
     def temperature_unit(self):
@@ -45,15 +55,47 @@ class LGDevice(climate.ClimateDevice):
 
     @property
     def supported_features(self):
-        return climate.SUPPORT_TARGET_TEMPERATURE
+        return (
+            climate.SUPPORT_TARGET_TEMPERATURE |
+            climate.SUPPORT_OPERATION_MODE
+        )
 
     @property
     def current_temperature(self):
-        return self._temp_cur
+        if self._state:
+            return float(self._state['TempCur'])
 
     @property
     def target_temperature(self):
-        return self._temp_cfg
+        if self._state:
+            return float(self._state['TempCfg'])
+
+    @property
+    def operation_list(self):
+        return list(MODES.values())
+
+    @property
+    def current_operation(self):
+        options = self._model.value('OpMode').options
+
+        if self._state:
+            mode = self._state['OpMode']
+            mode_desc = options[mode]
+            return MODES[mode_desc]
+
+    def set_operation_mode(self, operation_mode):
+        # Invert the modes mapping.
+        modes_inv = {v: k for k, v in MODES.items()}
+
+        # Invert the OpMode mapping.
+        options = self._model.value('OpMode').options
+        options_inv = {v: k for k, v in options.items()}
+
+        mode = options_inv[modes_inv[operation_mode]]
+        self._client.session.set_device_controls(
+            self._info.id,
+            {'OpMode': mode},
+        )
 
     def set_temperature(self, **kwargs):
         temperature = kwargs['temperature']
@@ -70,6 +112,7 @@ class LGDevice(climate.ClimateDevice):
                 LOGGER.info('Polling...')
                 res = mon.poll()
                 if res:
+                    self._state = res
                     self._temp_cfg = float(res['TempCfg'])
                     self._temp_cur = float(res['TempCur'])
                     break
