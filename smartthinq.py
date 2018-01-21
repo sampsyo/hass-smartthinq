@@ -34,12 +34,12 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
 class LGDevice(climate.ClimateDevice):
     def __init__(self, client, info):
         self._client = client
-        self._info = info
+        self._device = info
 
         self._state = None
 
         # Cache the model information.
-        self._model = client.model_info(self._info)
+        self._model = client.model_info(self._device)
 
     @property
     def temperature_unit(self):
@@ -47,7 +47,7 @@ class LGDevice(climate.ClimateDevice):
 
     @property
     def name(self):
-        return self._info.name
+        return self._device.name
 
     @property
     def available(self):
@@ -93,14 +93,14 @@ class LGDevice(climate.ClimateDevice):
 
         mode = options_inv[modes_inv[operation_mode]]
         self._client.session.set_device_controls(
-            self._info.id,
+            self._device.id,
             {'OpMode': mode},
         )
 
     def set_temperature(self, **kwargs):
         temperature = kwargs['temperature']
         self._client.session.set_device_controls(
-            self._info.id,
+            self._device.id,
             {'TempCfg': str(temperature)},
         )
 
