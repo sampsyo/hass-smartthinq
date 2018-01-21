@@ -20,6 +20,7 @@ MODES = {
     "@AC_MAIN_OPERATION_MODE_FAN_W": climate.STATE_FAN_ONLY,
     "@AC_MAIN_OPERATION_MODE_ENERGY_SAVING_W": climate.STATE_ECO,
 }
+MAX_RETRIES = 5
 
 
 def setup_platform(hass, config, add_devices, discovery_info=None):
@@ -40,6 +41,9 @@ class LGDevice(climate.ClimateDevice):
 
         # Cache the model information.
         self._model = client.model_info(self._device)
+
+        self._mon = None
+        self._start_monitoring()
 
     @property
     def temperature_unit(self):
@@ -104,15 +108,29 @@ class LGDevice(climate.ClimateDevice):
             {'TempCfg': str(temperature)},
         )
 
-    def update(self):
+    def _start_monitoring(self):
+        """Start monitoring the device's status.
+
+        Set the `_mon` field to an active `Monitor` object.
+        """
+
         import wideq
-        with wideq.Monitor(self._client.session, self._device.id) as mon:
-            while True:
-                time.sleep(1)
-                LOGGER.info('Polling...')
-                res = mon.poll()
-                if res:
-                    self._state = res
-                    self._temp_cfg = float(res['TempCfg'])
-                    self._temp_cur = float(res['TempCur'])
-                    break
+        self._mon = wideq.Monitor(self._client.session, self._device.id)
+
+    def update(self):
+        """Poll for updated device status.
+
+        Set the `_state` field to a new data mapping.
+        """
+
+        for _ in range(MAX_RETRIES):
+            time.sleep(1)
+            LOGGER.info('Polling...')
+            res = self._mon.poll()
+            if res:
+                LOGGER.info('Status updated.')
+                self._state = res
+                return
+
+        # We tried several times but got no result.
+        LOGGER.warn('Status update failed.')
