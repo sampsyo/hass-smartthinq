@@ -28,9 +28,6 @@ class LGDevice(climate.ClimateDevice):
         self._client = client
         self._info = info
 
-        LOGGER.debug('device info: %s', self._info)
-        self._id = self._info['deviceId']
-
         self._temp_cfg = None
         self._temp_cur = None
 
@@ -61,13 +58,13 @@ class LGDevice(climate.ClimateDevice):
     def set_temperature(self, **kwargs):
         temperature = kwargs['temperature']
         self._client.session.set_device_controls(
-            self._id,
+            self._info.id,
             {'TempCfg': str(temperature)},
         )
 
     def update(self):
         import wideq
-        with wideq.Monitor(self._client.session, self._id) as mon:
+        with wideq.Monitor(self._client.session, self._device.id) as mon:
             while True:
                 time.sleep(1)
                 LOGGER.info('Polling...')
