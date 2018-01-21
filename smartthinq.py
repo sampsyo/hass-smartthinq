@@ -124,6 +124,7 @@ class LGDevice(climate.ClimateDevice):
         Set the `_state` field to a new data mapping.
         """
 
+        LOGGER.info('Updating %s.', self.name)
         for _ in range(MAX_RETRIES):
             time.sleep(1)
             LOGGER.info('Polling...')
