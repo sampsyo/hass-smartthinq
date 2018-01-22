@@ -44,6 +44,7 @@ class LGDevice(climate.ClimateDevice):
 
         self._mon = None
         self._start_monitoring()
+        self.update()
 
     @property
     def temperature_unit(self):
