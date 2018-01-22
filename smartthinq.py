@@ -75,6 +75,14 @@ class LGDevice(climate.ClimateDevice):
             return float(self._state['TempCfg'])
 
     @property
+    def min_temp(self):
+        return self._model.value('TempCfg').min
+
+    @property
+    def max_temp(self):
+        return self._model.value('TempCfg').max
+
+    @property
     def operation_list(self):
         return list(MODES.values())
 
