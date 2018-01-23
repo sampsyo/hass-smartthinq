@@ -129,15 +129,26 @@ class LGDevice(climate.ClimateDevice):
         Set the `_state` field to a new data mapping.
         """
 
+        import wideq
+
         LOGGER.info('Updating %s.', self.name)
         for _ in range(MAX_RETRIES):
-            time.sleep(1)
             LOGGER.info('Polling...')
-            res = self._mon.poll()
+
+            try:
+                res = self._mon.poll()
+            except wideq.NotLoggedInError:
+                LOGGER.info('Session expired. Refreshing.')
+                self._client.refresh()
+                self._start_monitoring()
+
             if res:
                 LOGGER.info('Status updated.')
                 self._state = res
                 return
+
+            LOGGER.info('No status available yet.')
+            time.sleep(1)
 
         # We tried several times but got no result.
         LOGGER.warn('Status update failed.')
