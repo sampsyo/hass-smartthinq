@@ -112,10 +112,11 @@ class LGDevice(climate.ClimateDevice):
     def set_temperature(self, **kwargs):
         temperature = kwargs['temperature']
 
-        LOGGER.info('Setting temperature to %s...', temperature)
+        round_temp = str(int(temperature))
+        LOGGER.info('Setting temperature to %s...', round_temp)
         self._client.session.set_device_controls(
             self._device.id,
-            {'TempCfg': str(temperature)},
+            {'TempCfg': round_temp},
         )
         LOGGER.info('Temperature set.')
 
