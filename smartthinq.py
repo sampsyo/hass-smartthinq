@@ -101,17 +101,23 @@ class LGDevice(climate.ClimateDevice):
         options_inv = {v: k for k, v in options.items()}
 
         mode = options_inv[modes_inv[operation_mode]]
+
+        LOGGER.info('Setting mode to %s...', mode)
         self._client.session.set_device_controls(
             self._device.id,
             {'OpMode': mode},
         )
+        LOGGER.info('Mode set.')
 
     def set_temperature(self, **kwargs):
         temperature = kwargs['temperature']
+
+        LOGGER.info('Setting temperature to %s...', temperature)
         self._client.session.set_device_controls(
             self._device.id,
             {'TempCfg': str(temperature)},
         )
+        LOGGER.info('Temperature set.')
 
     def _start_monitoring(self):
         """Start monitoring the device's status.
