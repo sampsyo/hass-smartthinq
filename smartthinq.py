@@ -25,27 +25,6 @@ TRANSIENT_EXP = 5.0  # Report set temperature for 5 seconds.
 TEMP_MIN_F = 60  # Guessed from actual behavior: API reports are unreliable.
 TEMP_MAX_F = 89
 
-TEMP_F_BASE = 62
-TEMP_C_BASE = 17
-
-
-def fahrenheit_to_fake_celsius(f):
-    """Unbelievably, the SmartThinQ API has a unique, bespoke mapping
-    between F and C. It *roughly* corresponds to the actual mapping, but
-    not quite: it works by mapping Fahrenheit values to half-degree
-    Celsius increments.
-    """
-
-    c = (f - TEMP_F_BASE) / 2 + TEMP_C_BASE
-    if int(c) == c:
-        return int(c)
-    else:
-        return c
-
-
-def fake_celsius_to_fahrenheit(c):
-    return (c - TEMP_C_BASE) * 2 + TEMP_F_BASE
-
 
 def setup_platform(hass, config, add_devices, discovery_info=None):
     import wideq
@@ -64,33 +43,17 @@ class LGDevice(climate.ClimateDevice):
 
         import wideq
         self._ac = wideq.ACDevice(client, device)
+        self._ac.monitor_start()
 
         # The response from the monitoring query.
         self._state = None
-
-        # Cache the model information.
-        self._model = client.model_info(self._device)
 
         # Store a transient temperature when we've just set it. We also
         # store the timestamp for when we set this value.
         self._transient_temp = None
         self._transient_time = None
 
-        self._mon = None
-        self._start_monitoring()
         self.update()
-
-    def _temp_out(self, c):
-        if self._fahrenheit:
-            return fake_celsius_to_fahrenheit(c)
-        else:
-            return c
-
-    def _temp_in(self, t):
-        if self._fahrenheit:
-            return fahrenheit_to_fake_celsius(t)
-        else:
-            return t
 
     @property
     def temperature_unit(self):
@@ -129,8 +92,10 @@ class LGDevice(climate.ClimateDevice):
     @property
     def current_temperature(self):
         if self._state:
-            c = float(self._state['TempCur'])
-            return self._temp_out(c)
+            if self._fahrenheit:
+                return self._state.temp_cur_f
+            else:
+                return self._state.temp_cur_c
 
     @property
     def target_temperature(self):
@@ -143,14 +108,16 @@ class LGDevice(climate.ClimateDevice):
             else:
                 self._transient_temp = None
 
-        # Otherwise, actually query the device.
+        # Otherwise, actually use the device's state.
         if self._state:
-            c = float(self._state['TempCfg'])
-            return self._temp_out(c)
+            if self._fahrenheit:
+                return self._state.temp_cfg_f
+            else:
+                return self._state.temp_cfg_c
 
     @property
     def operation_list(self):
-        options = self._model.value('OpMode').options
+        options = self._ac.model.value('OpMode').options
         return [
             v for k, v in MODES.items()
             if k in options
@@ -158,10 +125,10 @@ class LGDevice(climate.ClimateDevice):
 
     @property
     def current_operation(self):
-        options = self._model.value('OpMode').options
+        options = self._ac.model.value('OpMode').options
 
         if self._state:
-            mode = self._state['OpMode']
+            mode = self._state.data['OpMode']
             mode_desc = options[mode]
             return MODES[mode_desc]
 
@@ -170,7 +137,7 @@ class LGDevice(climate.ClimateDevice):
         modes_inv = {v: k for k, v in MODES.items()}
 
         # Invert the OpMode mapping.
-        options = self._model.value('OpMode').options
+        options = self._ac.model.value('OpMode').options
         options_inv = {v: k for k, v in options.items()}
 
         mode = options_inv[modes_inv[operation_mode]]
@@ -187,23 +154,12 @@ class LGDevice(climate.ClimateDevice):
         self._transient_temp = temperature
         self._transient_time = time.time()
 
-        round_temp = self._temp_in(temperature)
-        LOGGER.info('Setting temperature to %s...', round_temp)
+        LOGGER.info('Setting temperature to %s...', temperature)
         if self._fahrenheit:
             self._ac.set_fahrenheit(temperature)
         else:
             self._ac.set_celsius(temperature)
         LOGGER.info('Temperature set.')
-
-    def _start_monitoring(self):
-        """Start monitoring the device's status.
-
-        Set the `_mon` field to an active `Monitor` object.
-        """
-
-        import wideq
-        self._mon = wideq.Monitor(self._client.session, self._device.id)
-        self._mon.start()
 
     def update(self):
         """Poll for updated device status.
@@ -218,15 +174,15 @@ class LGDevice(climate.ClimateDevice):
             LOGGER.info('Polling...')
 
             try:
-                res = self._mon.poll()
+                state = self._ac.poll()
             except wideq.NotLoggedInError:
                 LOGGER.info('Session expired. Refreshing.')
                 self._client.refresh()
-                self._start_monitoring()
+                self._ac.monitor_start()
 
-            if res:
+            if state:
                 LOGGER.info('Status updated.')
-                self._state = res
+                self._state = state
                 return
 
             LOGGER.info('No status available yet.')
