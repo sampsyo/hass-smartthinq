@@ -21,6 +21,7 @@ MODES = {
     "@AC_MAIN_OPERATION_MODE_ENERGY_SAVING_W": climate.STATE_ECO,
 }
 MAX_RETRIES = 5
+TRANSIENT_EXP = 5.0  # Report set temperature for 5 seconds.
 
 TEMP_F_BASE = 62
 TEMP_C_BASE = 17
@@ -59,10 +60,16 @@ class LGDevice(climate.ClimateDevice):
         self._device = device
         self._fahrenheit = fahrenheit
 
+        # The response from the monitoring query.
         self._state = None
 
         # Cache the model information.
         self._model = client.model_info(self._device)
+
+        # Store a transient temperature when we've just set it. We also
+        # store the timestamp for when we set this value.
+        self._transient_temp = None
+        self._transient_time = None
 
         self._mon = None
         self._start_monitoring()
@@ -110,6 +117,16 @@ class LGDevice(climate.ClimateDevice):
 
     @property
     def target_temperature(self):
+        # Use the recently-set target temperature if it was set recently
+        # (within TRANSIENT_EXP seconds ago).
+        if self._transient_temp:
+            interval = time.time() - self._transient_time
+            if interval < TRANSIENT_EXP:
+                return self._transient_temp
+            else:
+                self._transient_temp = None
+
+        # Otherwise, actually query the device.
         if self._state:
             c = float(self._state['TempCfg'])
             return self._temp_out(c)
@@ -150,6 +167,8 @@ class LGDevice(climate.ClimateDevice):
 
     def set_temperature(self, **kwargs):
         temperature = kwargs['temperature']
+        self._transient_temp = temperature
+        self._transient_time = time.time()
 
         round_temp = self._temp_in(temperature)
         LOGGER.info('Setting temperature to %s...', round_temp)
