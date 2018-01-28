@@ -62,6 +62,9 @@ class LGDevice(climate.ClimateDevice):
         self._device = device
         self._fahrenheit = fahrenheit
 
+        import wideq
+        self._ac = wideq.ACDevice(client, device)
+
         # The response from the monitoring query.
         self._state = None
 
@@ -186,10 +189,10 @@ class LGDevice(climate.ClimateDevice):
 
         round_temp = self._temp_in(temperature)
         LOGGER.info('Setting temperature to %s...', round_temp)
-        self._client.session.set_device_controls(
-            self._device.id,
-            {'TempCfg': round_temp},
-        )
+        if self._fahrenheit:
+            self._ac.set_fahrenheit(temperature)
+        else:
+            self._ac.set_celsius(temperature)
         LOGGER.info('Temperature set.')
 
     def _start_monitoring(self):
