@@ -22,6 +22,8 @@ MODES = {
 }
 MAX_RETRIES = 5
 TRANSIENT_EXP = 5.0  # Report set temperature for 5 seconds.
+TEMP_MIN_F = 60  # Guessed from actual behavior: API reports are unreliable.
+TEMP_MAX_F = 89
 
 TEMP_F_BASE = 62
 TEMP_C_BASE = 17
@@ -108,6 +110,18 @@ class LGDevice(climate.ClimateDevice):
             climate.SUPPORT_TARGET_TEMPERATURE |
             climate.SUPPORT_OPERATION_MODE
         )
+
+    @property
+    def min_temp(self):
+        if self._fahrenheit:
+            return TEMP_MIN_F
+        return climate.ClimateDevice.min_temp.fget(self)
+
+    @property
+    def max_temp(self):
+        if self._fahrenheit:
+            return TEMP_MAX_F
+        return climate.ClimateDevice.max_temp.fget(self)
 
     @property
     def current_temperature(self):
