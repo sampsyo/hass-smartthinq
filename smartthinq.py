@@ -22,6 +22,27 @@ MODES = {
 }
 MAX_RETRIES = 5
 
+TEMP_F_BASE = 62
+TEMP_C_BASE = 17
+
+
+def fahrenheit_to_fake_celsius(f):
+    """Unbelievably, the SmartThinQ API has a unique, bespoke mapping
+    between F and C. It *roughly* corresponds to the actual mapping, but
+    not quite: it works by mapping Fahrenheit values to half-degree
+    Celsius increments.
+    """
+
+    c = (f - TEMP_F_BASE) / 2 + TEMP_C_BASE
+    if int(c) == c:
+        return int(c)
+    else:
+        return c
+
+
+def fake_celsius_to_fahrenheit(c):
+    return (c - TEMP_C_BASE) * 2 + TEMP_F_BASE
+
 
 def setup_platform(hass, config, add_devices, discovery_info=None):
     import wideq
@@ -33,9 +54,10 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
 
 
 class LGDevice(climate.ClimateDevice):
-    def __init__(self, client, info):
+    def __init__(self, client, device, fahrenheit=True):
         self._client = client
-        self._device = info
+        self._device = device
+        self._fahrenheit = fahrenheit
 
         self._state = None
 
@@ -46,9 +68,24 @@ class LGDevice(climate.ClimateDevice):
         self._start_monitoring()
         self.update()
 
+    def _temp_out(self, c):
+        if self._fahrenheit:
+            return fake_celsius_to_fahrenheit(c)
+        else:
+            return c
+
+    def _temp_in(self, t):
+        if self._fahrenheit:
+            return fahrenheit_to_fake_celsius(t)
+        else:
+            return t
+
     @property
     def temperature_unit(self):
-        return const.TEMP_CELSIUS
+        if self._fahrenheit:
+            return const.TEMP_FAHRENHEIT
+        else:
+            return const.TEMP_CELSIUS
 
     @property
     def name(self):
@@ -68,12 +105,14 @@ class LGDevice(climate.ClimateDevice):
     @property
     def current_temperature(self):
         if self._state:
-            return float(self._state['TempCur'])
+            c = float(self._state['TempCur'])
+            return self._temp_out(c)
 
     @property
     def target_temperature(self):
         if self._state:
-            return float(self._state['TempCfg'])
+            c = float(self._state['TempCfg'])
+            return self._temp_out(c)
 
     @property
     def operation_list(self):
@@ -112,7 +151,7 @@ class LGDevice(climate.ClimateDevice):
     def set_temperature(self, **kwargs):
         temperature = kwargs['temperature']
 
-        round_temp = str(int(temperature))
+        round_temp = self._temp_in(temperature)
         LOGGER.info('Setting temperature to %s...', round_temp)
         self._client.session.set_device_controls(
             self._device.id,
