@@ -14,11 +14,11 @@ PLATFORM_SCHEMA = climate.PLATFORM_SCHEMA.extend({
 })
 
 MODES = {
-    "@AC_MAIN_OPERATION_MODE_HEAT_W": climate.STATE_HEAT,
-    "@AC_MAIN_OPERATION_MODE_COOL_W": climate.STATE_COOL,
-    "@AC_MAIN_OPERATION_MODE_DRY_W": climate.STATE_DRY,
-    "@AC_MAIN_OPERATION_MODE_FAN_W": climate.STATE_FAN_ONLY,
-    "@AC_MAIN_OPERATION_MODE_ENERGY_SAVING_W": climate.STATE_ECO,
+    'HEAT': climate.STATE_HEAT,
+    'COOL': climate.STATE_COOL,
+    'DRY': climate.STATE_DRY,
+    'FAN': climate.STATE_FAN_ONLY,
+    'ENERGY_SAVING': climate.STATE_ECO,
 }
 MAX_RETRIES = 5
 TRANSIENT_EXP = 5.0  # Report set temperature for 5 seconds.
@@ -125,28 +125,19 @@ class LGDevice(climate.ClimateDevice):
 
     @property
     def current_operation(self):
-        options = self._ac.model.value('OpMode').options
-
         if self._state:
-            mode = self._state.data['OpMode']
-            mode_desc = options[mode]
-            return MODES[mode_desc]
+            mode = self._state.mode
+            return MODES[mode.name]
 
     def set_operation_mode(self, operation_mode):
+        import wideq
+
         # Invert the modes mapping.
         modes_inv = {v: k for k, v in MODES.items()}
 
-        # Invert the OpMode mapping.
-        options = self._ac.model.value('OpMode').options
-        options_inv = {v: k for k, v in options.items()}
-
-        mode = options_inv[modes_inv[operation_mode]]
-
+        mode = wideq.ACMode[modes_inv[operation_mode]]
         LOGGER.info('Setting mode to %s...', mode)
-        self._client.session.set_device_controls(
-            self._device.id,
-            {'OpMode': mode},
-        )
+        self._ac.set_mode(mode)
         LOGGER.info('Mode set.')
 
     def set_temperature(self, **kwargs):
