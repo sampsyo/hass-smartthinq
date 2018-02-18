@@ -117,11 +117,7 @@ class LGDevice(climate.ClimateDevice):
 
     @property
     def operation_list(self):
-        options = self._ac.model.value('OpMode').options
-        return [
-            v for k, v in MODES.items()
-            if k in options.values()
-        ]
+        return list(MODES.values())
 
     @property
     def current_operation(self):
