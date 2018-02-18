@@ -120,7 +120,7 @@ class LGDevice(climate.ClimateDevice):
         options = self._ac.model.value('OpMode').options
         return [
             v for k, v in MODES.items()
-            if k in options
+            if k in options.values()
         ]
 
     @property
