@@ -74,7 +74,8 @@ class LGDevice(climate.ClimateDevice):
     def supported_features(self):
         return (
             climate.SUPPORT_TARGET_TEMPERATURE |
-            climate.SUPPORT_OPERATION_MODE
+            climate.SUPPORT_OPERATION_MODE |
+            climate.SUPPORT_ON_OFF
         )
 
     @property
@@ -125,6 +126,11 @@ class LGDevice(climate.ClimateDevice):
             mode = self._state.mode
             return MODES[mode.name]
 
+    @property
+    def is_on(self):
+        if self._state:
+            return self._state.is_on
+
     def set_operation_mode(self, operation_mode):
         import wideq
 
@@ -147,6 +153,16 @@ class LGDevice(climate.ClimateDevice):
         else:
             self._ac.set_celsius(temperature)
         LOGGER.info('Temperature set.')
+
+    def turn_on(self):
+        LOGGER.info('Turning on...')
+        self._ac.set_on(True)
+        LOGGER.info('...done.')
+
+    def turn_off(self):
+        LOGGER.info('Turning off...')
+        self._ac.set_on(False)
+        LOGGER.info('...done.')
 
     def update(self):
         """Poll for updated device status.
