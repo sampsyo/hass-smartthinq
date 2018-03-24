@@ -192,5 +192,8 @@ class LGDevice(climate.ClimateDevice):
             LOGGER.info('No status available yet.')
             time.sleep(1)
 
-        # We tried several times but got no result.
+        # We tried several times but got no result. This might happen
+        # when the monitoring request gets into a bad state, so we
+        # restart the task.
         LOGGER.warn('Status update failed.')
+        self._ac.monitor_start()
