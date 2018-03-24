@@ -182,6 +182,7 @@ class LGDevice(climate.ClimateDevice):
                 LOGGER.info('Session expired. Refreshing.')
                 self._client.refresh()
                 self._ac.monitor_start()
+                continue
 
             if state:
                 LOGGER.info('Status updated.')
