@@ -32,7 +32,11 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
     refresh_token = config.get('refresh_token')
     client = wideq.Client.from_token(refresh_token)
 
-    add_devices(LGDevice(client, device) for device in client.devices)
+    add_devices(
+        LGDevice(client, device)
+        for device in client.devices
+        if device.type == wideq.DeviceType.AC
+    )
 
 
 class LGDevice(climate.ClimateDevice):
