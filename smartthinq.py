@@ -4,6 +4,7 @@ from homeassistant.components import climate
 import homeassistant.helpers.config_validation as cv
 from homeassistant import const
 import time
+import wideq
 
 REQUIREMENTS = ['wideq']
 
@@ -14,17 +15,15 @@ PLATFORM_SCHEMA = climate.PLATFORM_SCHEMA.extend({
 })
 
 MODES = {
-    'HEAT': climate.STATE_HEAT,
-    'COOL': climate.STATE_COOL,
-    'DRY': climate.STATE_DRY,
-    'FAN': climate.STATE_FAN_ONLY,
-    'ENERGY_SAVING': climate.STATE_ECO,
+    'COOL': wideq.STATE_COOL,
+    'DRY': wideq.STATE_DRY,
+
 }
+
 MAX_RETRIES = 5
 TRANSIENT_EXP = 5.0  # Report set temperature for 5 seconds.
-TEMP_MIN_F = 60  # Guessed from actual behavior: API reports are unreliable.
-TEMP_MAX_F = 89
-
+TEMP_MIN_C = 18
+TEMP_MAX_C = 26
 
 def setup_platform(hass, config, add_devices, discovery_info=None):
     import wideq
@@ -40,10 +39,10 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
 
 
 class LGDevice(climate.ClimateDevice):
-    def __init__(self, client, device, fahrenheit=True):
+    def __init__(self, client, device, celsius=True):
         self._client = client
         self._device = device
-        self._fahrenheit = fahrenheit
+        self._celsius = celsius
 
         import wideq
         self._ac = wideq.ACDevice(client, device)
@@ -61,10 +60,10 @@ class LGDevice(climate.ClimateDevice):
 
     @property
     def temperature_unit(self):
-        if self._fahrenheit:
-            return const.TEMP_FAHRENHEIT
-        else:
+        if self._celsius:
             return const.TEMP_CELSIUS
+        else:
+            return const.TEMP_FAHRENHEIT
 
     @property
     def name(self):
@@ -84,22 +83,20 @@ class LGDevice(climate.ClimateDevice):
 
     @property
     def min_temp(self):
-        if self._fahrenheit:
-            return TEMP_MIN_F
+        if self._celsius:
+            return TEMP_MIN_C
         return climate.ClimateDevice.min_temp.fget(self)
 
     @property
     def max_temp(self):
-        if self._fahrenheit:
-            return TEMP_MAX_F
+        if self._celsius:
+            return TEMP_MAX_C
         return climate.ClimateDevice.max_temp.fget(self)
 
     @property
     def current_temperature(self):
         if self._state:
-            if self._fahrenheit:
-                return self._state.temp_cur_f
-            else:
+            if self._celsius:
                 return self._state.temp_cur_c
 
     @property
@@ -115,10 +112,10 @@ class LGDevice(climate.ClimateDevice):
 
         # Otherwise, actually use the device's state.
         if self._state:
-            if self._fahrenheit:
-                return self._state.temp_cfg_f
-            else:
+            if self._celsius:
                 return self._state.temp_cfg_c
+            else:
+                return self._state.temp_cfg_f
 
     @property
     def operation_list(self):
@@ -152,10 +149,10 @@ class LGDevice(climate.ClimateDevice):
         self._transient_time = time.time()
 
         LOGGER.info('Setting temperature to %s...', temperature)
-        if self._fahrenheit:
-            self._ac.set_fahrenheit(temperature)
-        else:
+        if self._celsius:
             self._ac.set_celsius(temperature)
+        else:
+            self._ac.set_fahrenheit(temperature)
         LOGGER.info('Temperature set.')
 
     def turn_on(self):
