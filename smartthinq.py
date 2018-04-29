@@ -19,6 +19,7 @@ MODES = {
     'DRY': climate.STATE_DRY,
     'FAN': climate.STATE_FAN_ONLY,
     'ENERGY_SAVING': climate.STATE_ECO,
+    'ACO': climate.STATE_AUTO
 }
 MAX_RETRIES = 5
 TRANSIENT_EXP = 5.0  # Report set temperature for 5 seconds.
