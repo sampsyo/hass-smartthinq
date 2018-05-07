@@ -19,6 +19,7 @@ MODES = {
     'DRY': climate.STATE_DRY,
     'FAN': climate.STATE_FAN_ONLY,
     'ENERGY_SAVING': climate.STATE_ECO,
+    'ACO': climate.STATE_AUTO
 }
 MAX_RETRIES = 5
 TRANSIENT_EXP = 5.0  # Report set temperature for 5 seconds.
@@ -177,7 +178,7 @@ class LGDevice(climate.ClimateDevice):
         import wideq
 
         LOGGER.info('Updating %s.', self.name)
-        for _ in range(MAX_RETRIES):
+        for iteration in range(MAX_RETRIES):
             LOGGER.info('Polling...')
 
             try:
@@ -194,7 +195,7 @@ class LGDevice(climate.ClimateDevice):
                 return
 
             LOGGER.info('No status available yet.')
-            time.sleep(1)
+            time.sleep(2 ** iteration) # Exponential backoff
 
         # We tried several times but got no result. This might happen
         # when the monitoring request gets into a bad state, so we
