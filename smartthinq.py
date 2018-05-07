@@ -195,7 +195,7 @@ class LGDevice(climate.ClimateDevice):
                 return
 
             LOGGER.info('No status available yet.')
-            time.sleep(2 ** iteration) # Exponential backoff
+            time.sleep(2 ** iteration)  # Exponential backoff.
 
         # We tried several times but got no result. This might happen
         # when the monitoring request gets into a bad state, so we
