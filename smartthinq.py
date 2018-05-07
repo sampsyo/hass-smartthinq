@@ -178,7 +178,7 @@ class LGDevice(climate.ClimateDevice):
         import wideq
 
         LOGGER.info('Updating %s.', self.name)
-        for _ in range(MAX_RETRIES):
+        for iteration in range(MAX_RETRIES):
             LOGGER.info('Polling...')
 
             try:
@@ -195,7 +195,7 @@ class LGDevice(climate.ClimateDevice):
                 return
 
             LOGGER.info('No status available yet.')
-            time.sleep(1)
+            time.sleep(2 ** iteration) # Exponential backoff
 
         # We tried several times but got no result. This might happen
         # when the monitoring request gets into a bad state, so we
