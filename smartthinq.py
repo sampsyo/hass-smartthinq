@@ -17,7 +17,15 @@ PLATFORM_SCHEMA = climate.PLATFORM_SCHEMA.extend({
 MODES = {
     'COOL': wideq.STATE_COOL,
     'DRY': wideq.STATE_DRY,
+    'AIRCLEAN': wideq.STATE_AIRCLEAN,
+}
 
+FANMODES = {
+    'LOW' : wideq.STATE_LOW,
+    'MID' : wideq.STATE_MID,
+    'HIGH' : wideq.STATE_HIGH,
+    'COOLPOWER' : wideq.STATE_COOLPOWER,
+    'LONGPOWER' : wideq.STATE_LONGPOWER,
 }
 
 MAX_RETRIES = 5
@@ -78,6 +86,7 @@ class LGDevice(climate.ClimateDevice):
         return (
             climate.SUPPORT_TARGET_TEMPERATURE |
             climate.SUPPORT_OPERATION_MODE |
+            climate.SUPPORT_FAN_MODE |
             climate.SUPPORT_ON_OFF
         )
 
@@ -120,6 +129,11 @@ class LGDevice(climate.ClimateDevice):
     @property
     def operation_list(self):
         return list(MODES.values())
+   
+    @property
+    def fan_list(self):
+        return list(FANMODES.values())
+
 
     @property
     def current_operation(self):
@@ -142,6 +156,20 @@ class LGDevice(climate.ClimateDevice):
         LOGGER.info('Setting mode to %s...', mode)
         self._ac.set_mode(mode)
         LOGGER.info('Mode set.')
+
+    def set_fan_mode(self, fan_mode):
+        import wideq
+        # Invert the modes mapping.
+        fanmodes_inv = {v: k for k, v in FANMODES.items()}
+        
+        if fan_mode == 'COOLPOWER':
+            self._ac.set_icevalley(True)
+        elif fan_mode == 'LONGPOWER':
+            self._ac.set_longpower(True)       
+        else :
+            mode = wideq.ACWindstrength[fanmodes_inv[fan_mode]]
+            self._ac.set_windstrength(mode)
+
 
     def set_temperature(self, **kwargs):
         temperature = kwargs['temperature']
@@ -174,7 +202,7 @@ class LGDevice(climate.ClimateDevice):
         import wideq
 
         LOGGER.info('Updating %s.', self.name)
-        for _ in range(MAX_RETRIES):
+        for iteration in range(MAX_RETRIES):
             LOGGER.info('Polling...')
 
             try:
@@ -191,7 +219,7 @@ class LGDevice(climate.ClimateDevice):
                 return
 
             LOGGER.info('No status available yet.')
-            time.sleep(1)
+            time.sleep(2 ** iteration)  # Exponential backoff.
 
         # We tried several times but got no result. This might happen
         # when the monitoring request gets into a bad state, so we
