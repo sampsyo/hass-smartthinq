@@ -2,7 +2,8 @@ Home Assistant: LG SmartThinQ Component
 =======================================
 
 Edit it for korean model. based on FQ19D7DWAN
-=======================================
+
+
 A [Home Assistant][hass] component for controlling LG HVAC devices via their SmartThinQ platform, based on [WideQ][].
 
 [hass]: https://home-assistant.io
