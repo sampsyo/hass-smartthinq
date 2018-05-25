@@ -17,7 +17,13 @@ PLATFORM_SCHEMA = climate.PLATFORM_SCHEMA.extend({
 MODES = {
     'COOL': wideq.STATE_COOL,
     'DRY': wideq.STATE_DRY,
+    'POWER_SAVE' : wideq.STATE_POWER_SAVE,
     'AIRCLEAN': wideq.STATE_AIRCLEAN,
+    'AIRCLEAN_OFF': wideq.STATE_AIRCLEAN_OFF,
+    'SMARTCARE': wideq.STATE_SMARTCARE,
+    'SMARTCARE_OFF': wideq.STATE_SMARTCARE_OFF,
+    'AUTODRY': wideq.STATE_AUTODRY,
+    'AUTODRY_OFF': wideq.STATE_AUTODRY_OFF,
 }
 
 FANMODES = {
@@ -26,7 +32,31 @@ FANMODES = {
     'HIGH' : wideq.STATE_HIGH,
     'COOLPOWER' : wideq.STATE_COOLPOWER,
     'LONGPOWER' : wideq.STATE_LONGPOWER,
+    'RIGHT_ONLY_LOW': wideq.STATE_RIGHT_ONLY_LOW,
+    'RIGHT_ONLY_MID': wideq.STATE_RIGHT_ONLY_MID,
+    'RIGHT_ONLY_HIGH': wideq.STATE_RIGHT_ONLY_HIGH,
+    'LEFT_ONLY_LOW': wideq.STATE_LEFT_ONLY_LOW,
+    'LEFT_ONLY_MID': wideq.STATE_LEFT_ONLY_MID,
+    'LEFT_ONLY_HIGH': wideq.STATE_LEFT_ONLY_HIGH,
+    'RIGHT_LOW_LEFT_MID': wideq.STATE_RIGHT_LOW_LEFT_MID,
+    'RIGHT_LOW_LEFT_HIGH': wideq.STATE_RIGHT_LOW_LEFT_HIGH,
+    'RIGHT_MID_LEFT_LOW': wideq.STATE_RIGHT_MID_LEFT_LOW,
+    'RIGHT_MID_LEFT_HIGH': wideq.STATE_RIGHT_MID_LEFT_HIGH,
+    'RIGHT_HIGH_LEFT_LOW': wideq.STATE_RIGHT_HIGH_LEFT_LOW,
+    'RIGHT_HIGH_LEFT_MID': wideq.STATE_RIGHT_HIGH_LEFT_MID,
+
 }
+
+SWINGMODES = {
+    'UP_DOWN': wideq.STATE_UP_DOWN,
+    'UP_DOWN_STOP' : wideq.STATE_UP_DOWN_STOP,
+    'LEFT_RIGHT': wideq.STATE_LEFT_RIGHT,
+    'RIGHTSIDE_LEFT_RIGHT': wideq.STATE_RIGHTSIDE_LEFT_RIGHT,
+    'LEFTSIDE_LEFT_RIGHT': wideq.STATE_LEFTSIDE_LEFT_RIGHT,
+    'LEFT_RIGHT_STOP': wideq.STATE_LEFT_RIGHT_STOP,
+
+}
+
 
 MAX_RETRIES = 5
 TRANSIENT_EXP = 5.0  # Report set temperature for 5 seconds.
@@ -66,6 +96,7 @@ class LGDevice(climate.ClimateDevice):
 
         self.update()
 
+
     @property
     def temperature_unit(self):
         if self._celsius:
@@ -87,6 +118,7 @@ class LGDevice(climate.ClimateDevice):
             climate.SUPPORT_TARGET_TEMPERATURE |
             climate.SUPPORT_OPERATION_MODE |
             climate.SUPPORT_FAN_MODE |
+            climate.SUPPORT_SWING_MODE |
             climate.SUPPORT_ON_OFF
         )
 
@@ -101,12 +133,26 @@ class LGDevice(climate.ClimateDevice):
         if self._celsius:
             return TEMP_MAX_C
         return climate.ClimateDevice.max_temp.fget(self)
-
+    
     @property
     def current_temperature(self):
         if self._state:
             if self._celsius:
                 return self._state.temp_cur_c
+
+    @property
+    def current_humidity(self):
+        import wideq
+        if self._state:
+            return self._state.sensor_humidity(self)
+    """
+    @property
+    def device_state_attributes(self):
+
+        attrs = {}
+        attrs['SensorHumidity'] = self.current_humidity(self)
+        return attrs
+    """
 
     @property
     def target_temperature(self):
@@ -134,6 +180,9 @@ class LGDevice(climate.ClimateDevice):
     def fan_list(self):
         return list(FANMODES.values())
 
+    @property
+    def swing_list(self):
+        return list(SWINGMODES.values())
 
     @property
     def current_operation(self):
@@ -152,10 +201,21 @@ class LGDevice(climate.ClimateDevice):
         # Invert the modes mapping.
         modes_inv = {v: k for k, v in MODES.items()}
 
-        mode = wideq.ACMode[modes_inv[operation_mode]]
-        LOGGER.info('Setting mode to %s...', mode)
-        self._ac.set_mode(mode)
-        LOGGER.info('Mode set.')
+        if operation_mode == 'SMARTCARE':
+            self._ac.set_smartcare(True)
+        elif operation_mode == 'SMARTCARE_OFF':
+            self._ac.set_smartcare(False)
+        elif operation_mode == 'POWER_SAVE':
+            self._ac.set_powersave(True)
+        elif operation_mode == 'AIRCLEAN_OFF':
+            self._ac.set_airclean(False)
+        elif operation_mode == 'AUTODRY':
+            self._ac.set_autodry(True)
+        elif operation_mode == 'AUTODRY_OFF':
+            self._ac.set_autodry(False)
+        else:
+            mode = wideq.ACMode[modes_inv[operation_mode]]
+            self._ac.set_mode(mode)
 
     def set_fan_mode(self, fan_mode):
         import wideq
@@ -165,10 +225,22 @@ class LGDevice(climate.ClimateDevice):
         if fan_mode == 'COOLPOWER':
             self._ac.set_icevalley(True)
         elif fan_mode == 'LONGPOWER':
-            self._ac.set_longpower(True)       
+            self._ac.set_longpower(True)
         else :
             mode = wideq.ACWindstrength[fanmodes_inv[fan_mode]]
             self._ac.set_windstrength(mode)
+
+    def set_swing_mode(self, swing_mode):
+        import wideq
+        swingmodes_inv = {v: k for k, v in SWINGMODES.items()}
+
+        if swing_mode == 'UP_DOWN':
+            self._ac.set_wind_updown(True)
+        elif swing_mode == 'UP_DOWN_STOP':
+            self._ac.set_wind_updown(False)
+        else :
+            mode = wideq.WDIRLEFTRIGHT[swingmodes_inv[swing_mode]]
+            self._ac.set_wind_leftright(mode)
 
 
     def set_temperature(self, **kwargs):
