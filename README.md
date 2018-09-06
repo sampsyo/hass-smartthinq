@@ -13,7 +13,7 @@ Here's how to use this:
 
 1. Install [WideQ][] by typing something like:
 
-       $ git clone https://github.com/sampsyo/wideq.git
+       $ git clone https://github.com/wkd8176/wideq.git
        $ cd wideq
        $ pip3 install -e .
 
@@ -22,7 +22,7 @@ Here's how to use this:
        $ cd ~/.homeassistant
        $ mkdir custom_components
        $ cd custom_components
-       $ git clone https://github.com/sampsyo/hass-smartthinq.git climate
+       $ git clone https://github.com/wkd8176/hass-smartthinq.git climate
 
 3. Authenticate with the SmartThinQ service to get a refresh token by running the WideQ example script. (Eventually, I would like to add a feature to the Home Assistant component that can let you log in through a UI, but I haven't gotten there yet.) Run this in the `wideq` directory:
 
