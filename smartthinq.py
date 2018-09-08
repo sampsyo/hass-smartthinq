@@ -1,17 +1,72 @@
 import logging
 import voluptuous as vol
+import json
 from homeassistant.components import climate
+from homeassistant.helpers.temperature import display_temp as show_temp
+from homeassistant.util.temperature import convert as convert_temperature
+from homeassistant.helpers.config_validation import PLATFORM_SCHEMA  # noqa
 import homeassistant.helpers.config_validation as cv
 from homeassistant import const
+from homeassistant.const import (
+    ATTR_ENTITY_ID, ATTR_TEMPERATURE, SERVICE_TURN_ON, SERVICE_TURN_OFF,
+    STATE_ON, STATE_OFF, STATE_UNKNOWN, TEMP_CELSIUS, PRECISION_WHOLE,
+    PRECISION_TENTHS, )
 import time
 import wideq
 
 REQUIREMENTS = ['wideq']
 
+ATTR_CURRENT_TEMPERATURE = 'current_temperature'
+ATTR_MAX_TEMP = 'max_temp'
+ATTR_MIN_TEMP = 'min_temp'
+ATTR_TARGET_TEMPERATURE = 'target_temperature'
+ATTR_HUMIDITY = 'humidity'
+ATTR_SENSORPM1 = 'PM1'
+ATTR_SENSORPM2 = 'PM2'
+ATTR_SENSORPM10 = 'PM10'
+ATTR_TOTALAIRPOLUTION = 'total_air_polution'
+ATTR_FILTER_STATE = 'filter_state'
+ATTR_MFILTER_STATE = 'mfilter_state'
+ATTR_AIRPOLUTION = 'air_polution'
+ATTR_OPERATION_MODE = 'operation_mode'
+ATTR_OPERATION_LIST = 'operation_list'
+ATTR_FAN_MODE = 'fan_mode'
+ATTR_FAN_LIST = 'fan_list'
+ATTR_SWING_MODE = 'swing_mode'
+ATTR_SWING_LIST = 'swing_list'
+ATTR_STATUS = 'current_status'
+
+CONVERTIBLE_ATTRIBUTE = [
+    ATTR_TEMPERATURE
+]
+SUPPORT_TARGET_TEMPERATURE = 1
+SUPPORT_FAN_MODE = 64
+SUPPORT_OPERATION_MODE = 128
+SUPPORT_SWING_MODE = 512
+SUPPORT_ON_OFF = 4096
+
 LOGGER = logging.getLogger(__name__)
 
-PLATFORM_SCHEMA = climate.PLATFORM_SCHEMA.extend({
-    vol.Required('refresh_token'): cv.string,
+ON_OFF_SERVICE_SCHEMA = vol.Schema({
+    vol.Optional('refresh_token'): cv.string,
+})
+SET_TEMPERATURE_SCHEMA = vol.Schema({
+    vol.Exclusive(ATTR_TEMPERATURE, 'temperature'): vol.Coerce(float),
+    vol.Optional('refresh_token'): cv.string,
+    vol.Optional(ATTR_OPERATION_MODE): cv.string,
+})
+
+SET_OPERATION_MODE_SCHEMA = vol.Schema({
+    vol.Optional('refresh_token'): cv.string,
+    vol.Required(ATTR_OPERATION_MODE): cv.string,
+})
+SET_FAN_MODE_SCHEMA = vol.Schema({
+    vol.Optional('refresh_token'): cv.entity_ids,
+    vol.Required(ATTR_FAN_MODE): cv.string,
+})
+SET_SWING_MODE_SCHEMA = vol.Schema({
+    vol.Optional('refresh_token'): cv.string,
+    vol.Required(ATTR_SWING_MODE): cv.string,
 })
 
 MODES = {
@@ -58,6 +113,7 @@ SWINGMODES = {
 }
 
 
+
 MAX_RETRIES = 5
 TRANSIENT_EXP = 5.0  # Report set temperature for 5 seconds.
 TEMP_MIN_C = 18
@@ -88,14 +144,68 @@ class LGDevice(climate.ClimateDevice):
 
         # The response from the monitoring query.
         self._state = None
-
         # Store a transient temperature when we've just set it. We also
         # store the timestamp for when we set this value.
         self._transient_temp = None
         self._transient_time = None
 
         self.update()
+    @property
+    def supported_features(self):
+        return (
+            climate.SUPPORT_TARGET_TEMPERATURE |
+            climate.SUPPORT_OPERATION_MODE |
+            climate.SUPPORT_FAN_MODE |
+            climate.SUPPORT_SWING_MODE |
+            climate.SUPPORT_ON_OFF
+        )
 
+    @property
+    def state_attributes(self):
+        """Return the optional state attributes."""
+        data = {
+            ATTR_CURRENT_TEMPERATURE: show_temp(
+                self.hass, self.current_temperature, self.temperature_unit,
+                self.precision),
+            ATTR_MIN_TEMP: show_temp(
+                self.hass, self.min_temp, self.temperature_unit,
+                self.precision),
+            ATTR_MAX_TEMP: show_temp(
+                self.hass, self.max_temp, self.temperature_unit,
+                self.precision),
+            ATTR_TEMPERATURE: show_temp(
+                self.hass, self.target_temperature, self.temperature_unit,
+                self.precision),
+        }
+
+        data[ATTR_TARGET_TEMPERATURE] = self.target_temperature
+        data[ATTR_HUMIDITY] = self._state.humidity
+        data[ATTR_SENSORPM1] = self._state.sensorpm1
+        data[ATTR_SENSORPM2] = self._state.sensorpm2
+        data[ATTR_SENSORPM10] = self._state.sensorpm10
+        data[ATTR_TOTALAIRPOLUTION] = self._state.total_air_polution
+        data[ATTR_AIRPOLUTION] = self._state.air_polution        
+        data[ATTR_STATUS] = self.current_status
+        data[ATTR_FILTER_STATE] = self.filter_state
+        data[ATTR_MFILTER_STATE] = self.mfilter_state
+
+        supported_features = self.supported_features
+        if supported_features & SUPPORT_FAN_MODE:
+            data[ATTR_FAN_MODE] = self.current_fan_mode
+            if self.fan_list:
+                data[ATTR_FAN_LIST] = self.fan_list
+
+        if supported_features & SUPPORT_OPERATION_MODE:
+            data[ATTR_OPERATION_MODE] = self.current_operation
+            if self.operation_list:
+                data[ATTR_OPERATION_LIST] = self.operation_list
+
+        if supported_features & SUPPORT_SWING_MODE:
+            data[ATTR_SWING_MODE] = self.current_swing_mode
+            if self.swing_list:
+                data[ATTR_SWING_LIST] = self.swing_list
+
+        return data
 
     @property
     def temperature_unit(self):
@@ -111,16 +221,6 @@ class LGDevice(climate.ClimateDevice):
     @property
     def available(self):
         return True
-
-    @property
-    def supported_features(self):
-        return (
-            climate.SUPPORT_TARGET_TEMPERATURE |
-            climate.SUPPORT_OPERATION_MODE |
-            climate.SUPPORT_FAN_MODE |
-            climate.SUPPORT_SWING_MODE |
-            climate.SUPPORT_ON_OFF
-        )
 
     @property
     def min_temp(self):
@@ -141,18 +241,25 @@ class LGDevice(climate.ClimateDevice):
                 return self._state.temp_cur_c
 
     @property
-    def current_humidity(self):
-        import wideq
-        if self._state:
-            return self._state.sensor_humidity(self)
-    """
-    @property
-    def device_state_attributes(self):
+    def current_status(self):
+        if self._state.is_on == True:
+            return 'ON'
+        elif self._state.is_on == False:
+            return 'OFF'
 
-        attrs = {}
-        attrs['SensorHumidity'] = self.current_humidity(self)
-        return attrs
-    """
+    @property
+    def filter_state(self):
+        data = self._ac.get_filter_state()
+        remain = int(data['UseTime'])/int(data['ChangePeriod'])
+        return int(remain * 100)
+
+    @property
+    def mfilter_state(self):
+        data = self._ac.get_mfilter_state()
+        remain = int(data['RemainTime'])/int(data['ChangePeriod'])
+        return int(remain * 100)
+
+
 
     @property
     def target_temperature(self):
