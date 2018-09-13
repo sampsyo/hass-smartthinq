@@ -8,9 +8,7 @@ from homeassistant.helpers.config_validation import PLATFORM_SCHEMA  # noqa
 import homeassistant.helpers.config_validation as cv
 from homeassistant import const
 from homeassistant.const import (
-    ATTR_ENTITY_ID, ATTR_TEMPERATURE, SERVICE_TURN_ON, SERVICE_TURN_OFF,
-    STATE_ON, STATE_OFF, STATE_UNKNOWN, TEMP_CELSIUS, PRECISION_WHOLE,
-    PRECISION_TENTHS, )
+    ATTR_TEMPERATURE, TEMP_CELSIUS, CONF_TOKEN)
 import time
 import wideq
 
@@ -39,35 +37,8 @@ ATTR_STATUS = 'current_status'
 CONVERTIBLE_ATTRIBUTE = [
     ATTR_TEMPERATURE
 ]
-SUPPORT_TARGET_TEMPERATURE = 1
-SUPPORT_FAN_MODE = 64
-SUPPORT_OPERATION_MODE = 128
-SUPPORT_SWING_MODE = 512
-SUPPORT_ON_OFF = 4096
 
 LOGGER = logging.getLogger(__name__)
-
-ON_OFF_SERVICE_SCHEMA = vol.Schema({
-    vol.Optional('refresh_token'): cv.string,
-})
-SET_TEMPERATURE_SCHEMA = vol.Schema({
-    vol.Exclusive(ATTR_TEMPERATURE, 'temperature'): vol.Coerce(float),
-    vol.Optional('refresh_token'): cv.string,
-    vol.Optional(ATTR_OPERATION_MODE): cv.string,
-})
-
-SET_OPERATION_MODE_SCHEMA = vol.Schema({
-    vol.Optional('refresh_token'): cv.string,
-    vol.Required(ATTR_OPERATION_MODE): cv.string,
-})
-SET_FAN_MODE_SCHEMA = vol.Schema({
-    vol.Optional('refresh_token'): cv.entity_ids,
-    vol.Required(ATTR_FAN_MODE): cv.string,
-})
-SET_SWING_MODE_SCHEMA = vol.Schema({
-    vol.Optional('refresh_token'): cv.string,
-    vol.Required(ATTR_SWING_MODE): cv.string,
-})
 
 MODES = {
     'COOL': wideq.STATE_COOL,
@@ -112,7 +83,9 @@ SWINGMODES = {
 
 }
 
-
+PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
+    vol.Required(CONF_TOKEN): cv.string,
+})
 
 MAX_RETRIES = 5
 TRANSIENT_EXP = 5.0  # Report set temperature for 5 seconds.
@@ -122,7 +95,7 @@ TEMP_MAX_C = 26
 def setup_platform(hass, config, add_devices, discovery_info=None):
     import wideq
 
-    refresh_token = config.get('refresh_token')
+    refresh_token = config.get(CONF_TOKEN)
     client = wideq.Client.from_token(refresh_token)
 
     add_devices(
@@ -177,7 +150,6 @@ class LGDevice(climate.ClimateDevice):
                 self.hass, self.target_temperature, self.temperature_unit,
                 self.precision),
         }
-
         data[ATTR_TARGET_TEMPERATURE] = self.target_temperature
         data[ATTR_HUMIDITY] = self._state.humidity
         data[ATTR_SENSORPM1] = self._state.sensorpm1
@@ -190,17 +162,17 @@ class LGDevice(climate.ClimateDevice):
         data[ATTR_MFILTER_STATE] = self.mfilter_state
 
         supported_features = self.supported_features
-        if supported_features & SUPPORT_FAN_MODE:
+        if supported_features & climate.SUPPORT_FAN_MODE:
             data[ATTR_FAN_MODE] = self.current_fan_mode
             if self.fan_list:
                 data[ATTR_FAN_LIST] = self.fan_list
 
-        if supported_features & SUPPORT_OPERATION_MODE:
+        if supported_features & climate.SUPPORT_OPERATION_MODE:
             data[ATTR_OPERATION_MODE] = self.current_operation
             if self.operation_list:
                 data[ATTR_OPERATION_LIST] = self.operation_list
 
-        if supported_features & SUPPORT_SWING_MODE:
+        if supported_features & climate.SUPPORT_SWING_MODE:
             data[ATTR_SWING_MODE] = self.current_swing_mode
             if self.swing_list:
                 data[ATTR_SWING_LIST] = self.swing_list
@@ -250,14 +222,28 @@ class LGDevice(climate.ClimateDevice):
     @property
     def filter_state(self):
         data = self._ac.get_filter_state()
-        remain = int(data['UseTime'])/int(data['ChangePeriod'])
-        return int(remain * 100)
+        usetime = data['UseTime']
+        changeperiod = data['ChangePeriod']
+        use = int(usetime)/int(changeperiod)
+        remain = (1 - use)*100
+
+        if changeperiod == '0':
+            return 'No Filter'
+        else:
+            return int(remain)
 
     @property
     def mfilter_state(self):
         data = self._ac.get_mfilter_state()
-        remain = int(data['RemainTime'])/int(data['ChangePeriod'])
-        return int(remain * 100)
+
+        remaintime = data['RemainTime']
+        changeperiod = data['ChangePeriod']
+        remain = int(remaintime)/int(changeperiod)
+
+        if changeperiod == '0':
+            return 'No mFilter'    
+        else:
+            return int(remain * 100)
 
 
 
