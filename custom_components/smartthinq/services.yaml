@@ -1,0 +1,113 @@
+# Describes the format for available LGE HVAC services
+
+lge_hvac_set_airclean_mode:
+  description: Set the hvac in airclen mode.
+  fields:
+    entity_id:
+      description: Name(s) of the entities to enable/disable airclean mode
+      example: 'climate.air_conditioner'
+    airclean_mode:
+      description: AirClean mode status
+      example: 'ON'
+
+lge_hvac_set_coolpower_mode:
+  description: Set the hvac in coolpower mode.
+  fields:
+    entity_id:
+      description: Name(s) of the entities to enable/disable coolpower mode
+      example: 'climate.air_conditioner'
+    coolpower_mode:
+      description: CoolPower mode status
+      example: 'ON'
+
+lge_hvac_set_autodry_mode:
+  description: Set the hvac in autodry mode.
+  fields:
+    entity_id:
+      description: Name(s) of the entities to enable/disable autodry mode
+      example: 'climate.air_conditioner'
+    autodry_mode:
+      description: AutoDry mode status
+      example: 'ON'
+      
+lge_hvac_set_smartcare_mode:
+  description: Set the hvac in smartcare mode.
+  fields:
+    entity_id:
+      description: Name(s) of the entities to enable/disable smartcare mode
+      example: 'climate.air_conditioner'
+    smartcare_mode:
+      description: SmartCare mode status
+      example: 'ON'
+
+lge_hvac_set_powersave_mode:
+  description: Set the hvac in powersave mode.
+  fields:
+    entity_id:
+      description: Name(s) of the entities to enable/disable powersave mode
+      example: 'climate.air_conditioner'
+    powersave_mode:
+      description: PowerSave mode status
+      example: 'ON'
+
+lge_hvac_set_longpower_mode:
+  description: Set the hvac in longpower mode.
+  fields:
+    entity_id:
+      description: Name(s) of the entities to enable/disable longpower mode
+      example: 'climate.air_conditioner'
+    longpower_mode:
+      description: LongPower mode status
+      example: 'ON'
+            
+lge_hvac_set_up_down_mode:
+  description: Set the hvac in up/down mode.
+  fields:
+    entity_id:
+      description: Name(s) of the entities to enable/disable up/down mode
+      example: 'climate.air_conditioner'
+    up_down_mode:
+      description: up/down mode status
+      example: 'ON'
+
+# Describes the format for available LGE Refrigerator services
+
+lge_ref_set_refrigerator_temperature:
+  description: Set the refrigerator temperature.
+  fields:
+    entity_id:
+      description: Name(s) of the entities to set refrigerator temperature
+      example: 'climate.refrigerator'
+    refrigerator_temperature:
+      description: refrigerator_temperature
+      example: '3'
+
+lge_ref_set_freezer_temperature:
+  description: Set the freezer temperature.
+  fields:
+    entity_id:
+      description: Name(s) of the entities to set freezer temperature
+      example: 'climate.refrigerator'
+    freezer_temperature:
+      description: freezer_temperature
+      example: '-18'
+      
+lge_ref_set_iceplus_mode:
+  description: Set the iceplus mode.
+  fields:
+    entity_id:
+      description: Name(s) of the entities to set iceplus mode
+      example: 'climate.refrigerator'
+    iceplus_mode:
+      description: iceplus_mode
+      example: 'ON'
+      
+lge_ref_set_freshairfilter_mode:
+  description: Set the freshairfilter mode.
+  fields:
+    entity_id:
+      description: Name(s) of the entities to set freshairfilter mode
+      example: 'climate.refrigerator'
+    freshairfilter_mode:
+      description: freshairfilter_mode
+      example: 'AUTO'

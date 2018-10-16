@@ -1,0 +1,14 @@
+# Air Conditioner
+
+- platform: template
+  sensors:
+    ref_iceplus_state:
+      value_template: '{{states.climate.refrigerator.attributes.iceplus_state}}'
+    ref_freshairfilter_state:
+      value_template: '{{states.climate.refrigerator.attributes.freshairfilter_state}}'
+    refrigerator_temperature:
+      value_template: '{{states.climate.refrigerator.attributes.refrigerator_temperature}}'
+      unit_of_measurement: '℃'
+    freezer_temperature:
+      value_template: '{{states.climate.refrigerator.attributes.freezer_temperature}}'
+      unit_of_measurement: '℃'

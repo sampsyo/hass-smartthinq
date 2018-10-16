@@ -1,0 +1,13 @@
+set_ref_temp:
+  name: 냉장실 온도
+  min: 0
+  max: 6
+  step: 1
+  unit_of_measurement: '℃'
+
+set_freezer_temp:
+  name: 냉동실 온도
+  min: -24
+  max: -16
+  step: 1
+  unit_of_measurement: '℃'

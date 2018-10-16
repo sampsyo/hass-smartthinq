@@ -1,0 +1,121 @@
+#Air Conditioner Switch
+
+#Air CLean Mode
+- platform: template
+  switches:
+    set_airclean_mode:
+      friendly_name: "공기청정"
+      value_template: "{% if states.climate.air_conditioner.attributes.airclean_mode == 'ON' %}true{% else %}false{% endif %}"
+      turn_on:
+        service: smartthinq.lge_hvac_set_airclean_mode
+        data:
+          entity_id: climate.air_conditioner
+          airclean_mode: 'ON'
+      turn_off:
+        service: smartthinq.lge_hvac_set_airclean_mode
+        data:
+          entity_id: climate.air_conditioner
+          airclean_mode: 'OFF'
+
+#Auto Dry Mode
+- platform: template
+  switches:
+    set_autodry_mode:
+      friendly_name: "자동건조"
+      value_template: "{% if states.climate.air_conditioner.attributes.autodry_mode == 'ON' %}true{% else %}false{% endif %}"
+      turn_on:
+        service: smartthinq.lge_hvac_set_autodry_mode
+        data:
+          entity_id: climate.air_conditioner
+          autodry_mode: 'ON'
+      turn_off:
+        service: smartthinq.lge_hvac_set_autodry_mode
+        data:
+          entity_id: climate.air_conditioner
+          autodry_mode: 'OFF'
+
+#Smart Care Mode
+- platform: template
+  switches:
+    set_smartcare_mode:
+      friendly_name: "스마트케어"
+      value_template: "{% if states.climate.air_conditioner.attributes.smartcare_mode == 'ON' %}true{% else %}false{% endif %}"
+      turn_on:
+        service: smartthinq.lge_hvac_set_smartcare_mode
+        data:
+          entity_id: climate.air_conditioner
+          smartcare_mode: 'ON'
+      turn_off:
+        service: smartthinq.lge_hvac_set_smartcare_mode
+        data:
+          entity_id: climate.air_conditioner
+          smartcare_mode: 'OFF'
+
+#Power Save Mode
+- platform: template
+  switches:
+    set_powersave_mode:
+      friendly_name: "절전"
+      value_template: "{% if states.climate.air_conditioner.attributes.powersave_mode == 'ON' %}true{% else %}false{% endif %}"
+      turn_on:
+        service: smartthinq.lge_hvac_set_powersave_mode
+        data:
+          entity_id: climate.air_conditioner
+          powersave_mode: 'ON'
+      turn_off:
+        service: smartthinq.lge_hvac_set_powersave_mode
+        data:
+          entity_id: climate.air_conditioner
+          powersave_mode: 'OFF'
+
+#Cool Power Mode
+- platform: template
+  switches:
+    set_coolpower_mode:
+      friendly_name: "쿨파워"
+      value_template: "{% if states.climate.air_conditioner.attributes.coolpower_mode == 'ON' %}true{% else %}false{% endif %}"
+      turn_on:
+        service: smartthinq.lge_hvac_set_coolpower_mode
+        data:
+          entity_id: climate.air_conditioner
+          coolpower_mode: 'ON'
+      turn_off:
+        service: smartthinq.lge_hvac_set_coolpower_mode
+        data:
+          entity_id: climate.air_conditioner
+          coolpower_mode: 'OFF'
+            
+#Long Power Mode
+- platform: template
+  switches:
+    set_longpower_mode:
+      friendly_name: "롱파워"
+      value_template: "{% if states.climate.air_conditioner.attributes.longpower_mode == 'ON' %}true{% else %}false{% endif %}"
+      turn_on:
+        service: smartthinq.lge_hvac_set_longpower_mode
+        data:
+          entity_id: climate.air_conditioner
+          longpower_mode: 'ON'
+      turn_off:
+        service: smartthinq.lge_hvac_set_longpower_mode
+        data:
+          entity_id: climate.air_conditioner
+          longpower_mode: 'OFF'            
+            
+#Wind Up Down Mode
+- platform: template
+  switches:
+    set_up_down_mode:
+      friendly_name: "풍향 상/하 회전"
+      value_template: "{% if states.climate.air_conditioner.attributes.up_down_mode == 'ON' %}true{% else %}false{% endif %}"
+      turn_on:
+        service: smartthinq.lge_hvac_set_up_down_mode
+        data:
+          entity_id: climate.air_conditioner
+          up_down_mode: 'ON'
+      turn_off:
+        service: smartthinq.lge_hvac_set_up_down_mode
+        data:
+          entity_id: climate.air_conditioner
+          up_down_mode: 'OFF'            
+            

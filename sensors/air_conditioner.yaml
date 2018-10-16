@@ -1,0 +1,34 @@
+# Air Conditioner
+
+- platform: template
+  sensors:
+    ac_temperature:
+      value_template: '{{states.climate.air_conditioner.attributes.current_temperature}}'
+      unit_of_measurement: '℃'
+    ac_target_temperature:
+      value_template: '{{states.climate.air_conditioner.attributes.target_temperature}}'
+      unit_of_measurement: '℃'
+    ac_humidity:
+      value_template: '{{states.climate.air_conditioner.attributes.humidity}}'
+      unit_of_measurement: '%'
+    ac_current_operation:  
+      value_template: '{{states.climate.air_conditioner.attributes.operation_mode}}'
+    ac_current_status:
+      value_template: '{{states.climate.air_conditioner.attributes.current_status}}'
+    ac_remain_filter:  
+      value_template: '{{states.climate.air_conditioner.attributes.mfilter_state}}'
+      unit_of_measurement: '%'
+    ac_airclean_mode:
+      value_template: '{{states.climate.air_conditioner.attributes.airclean_mode}}'
+    ac_autodry_mode:
+      value_template: '{{states.climate.air_conditioner.attributes.autodry_mode}}'
+    ac_smartcare_mode:
+      value_template: '{{states.climate.air_conditioner.attributes.smartcare_mode}}'
+    ac_powersave_mode:
+      value_template: '{{states.climate.air_conditioner.attributes.powersave_mode}}'
+    ac_coolpower_mode:
+      value_template: '{{states.climate.air_conditioner.attributes.coolpower_mode}}'
+    ac_longpower_mode:
+      value_template: '{{states.climate.air_conditioner.attributes.longpower_mode}}'
+    ac_up_down_mode:
+      value_template: '{{states.climate.air_conditioner.attributes.up_down_mode}}'

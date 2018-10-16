@@ -1,0 +1,47 @@
+- alias: set_iceplus_mode_on
+  initial_state: 'on'
+  trigger:
+    platform: state
+    entity_id: input_boolean.set_iceplus_mode
+    to: 'on'
+  action:
+    service: smartthinq.lge_ref_set_iceplus_mode
+    data:
+      entity_id: climate.refrigerator
+      iceplus_mode: 'ON'
+
+- alias: set_iceplus_mode_off
+  initial_state: 'on'
+  trigger:
+    platform: state
+    entity_id: input_boolean.set_iceplus_mode
+    to: 'off'
+  action:
+    service: smartthinq.lge_ref_set_iceplus_mode
+    data:
+      entity_id: climate.refrigerator
+      iceplus_mode: 'OFF'
+      
+- alias: input_boolean_iceplus_mode_on
+  initial_state: 'on'
+  trigger:
+    platform: state
+    entity_id: sensor.ref_iceplus_state
+    from: 'OFF'
+    to: 'ON'
+  action:
+    service: input_boolean.turn_on
+    data:
+      entity_id: input_boolean.set_iceplus_mode
+      
+- alias: input_boolean_airclean_mode_off
+  initial_state: 'on'
+  trigger:
+    platform: state
+    entity_id: sensor.ac_iceplus_state
+    from: 'ON'
+    to: 'OFF'
+  action:
+    service: input_boolean.turn_off
+    data:
+      entity_id: input_boolean.set_iceplus_mode

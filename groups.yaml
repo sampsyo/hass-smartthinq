@@ -1,0 +1,30 @@
+Air Conditioner:
+  - climate.air_conditioner
+  - switch.set_airclean_mode
+  - switch.set_autodry_mode
+  - switch.set_smartcare_mode
+  - switch.set_powersave_mode
+  - switch.set_coolpower_mode
+  - switch.set_longpower_mode
+  - switch.set_up_down_mode
+
+Refrigerator:
+  - input_number.set_ref_temp
+  - input_number.set_freezer_temp
+  - switch.set_iceplus_mode
+  - input_select.set_freshairfilter_mode
+
+#      View
+default view:
+  view: yes
+  icon: mdi:home
+  entities:
+    - group.air_conditioner
+    - group.refrigerator
+    
+# automation
+Automation view:
+  view: yes
+  icon: mdi:home-automation
+  entities:
+    - group.all_automations

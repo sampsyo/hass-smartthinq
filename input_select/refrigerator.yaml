@@ -1,0 +1,7 @@
+set_freshairfilter_mode:
+  name: 제균탈취
+  options:
+    - "파워"
+    - "자동"
+    - "꺼짐"
+  icon: mdi:target

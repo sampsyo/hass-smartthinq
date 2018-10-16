@@ -1,0 +1,18 @@
+#Refrigerator Switch
+
+#iceplus mode
+- platform: template
+  switches:
+    set_iceplus_mode:
+      friendly_name: "특급냉동"
+      value_template: "{% if states.climate.refrigerator.attributes.iceplus_state == 'ON' %}true{% else %}false{% endif %}"
+      turn_on:
+        service: smartthinq.lge_ref_set_iceplus_mode
+        data:
+          entity_id: climate.refrigerator
+          iceplus_mode: 'ON'
+      turn_off:
+        service: smartthinq.lge_ref_set_iceplus_mode
+        data:
+          entity_id: climate.refrigerator
+          iceplus_mode: 'OFF'

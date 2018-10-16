@@ -1,0 +1,25 @@
+- alias: set_ref_temperature
+  initial_state: 'on'
+  trigger:
+    platform: state
+    entity_id: input_number.set_ref_temp
+  action:
+    service: smartthinq.lge_ref_set_refrigerator_temperature
+    data_template:
+      entity_id: climate.refrigerator
+      refrigerator_temperature: "{{ trigger.to_state.state | int }}"
+      
+- alias: set_input_number_ref_temperature
+  initial_state: 'on'
+  trigger:
+    platform: state
+    entity_id: sensor.refrigerator_temperature
+  action:
+    - service: automation.turn_off
+      entity_id: automation.set_ref_temperature
+    - service: input_number.set_value
+      data_template:
+        entity_id: input_number.set_ref_temp
+        value: "{{states.climate.refrigerator.attributes.refrigerator_temperature}}"
+    - service: automation.turn_on
+      entity_id: automation.set_ref_temperature
