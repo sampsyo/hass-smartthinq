@@ -16,17 +16,15 @@ Here's how to use this:
 
 1. Install [WideQ][] by typing something like:
 
-       $ cd /config
+       $ cd ~/.homeassistant
        $ mkdir wideq
-       $ git clone https://github.com/wkd8176/wideq.git
+       $ git clone https://github.com/wkd8176/wideq.git wideq
        $ cd wideq
        $ pip3 install -e .
 
-2. Clone this repository into your `~/.homeassistant` directory under `custom_components` and name it `climate`. For example, you might do something like this:
+2. Clone this repository into your `~/.homeassistant` directory
 
        $ cd ~/.homeassistant
-       $ mkdir custom_components
-       $ cd custom_components
        $ git clone https://github.com/wkd8176/hass-smartthinq.git climate
 
 3. Authenticate with the SmartThinQ service to get a refresh token by running the WideQ example script. (Eventually, I would like to add a feature to the Home Assistant component that can let you log in through a UI, but I haven't gotten there yet.) Run this in the `wideq` directory:
