@@ -46,7 +46,10 @@ Here's how to use this:
          - platform: smartthinq_refrigerator
 
 
+5. Add include files to your include folder or something you have
+
    Start up Home Assistant and hope for the best.
+
 
 Credits
 -------
