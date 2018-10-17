@@ -14,7 +14,7 @@ A [Home Assistant][hass] component for controlling LG HVAC devices via their Sma
 
 Here's how to use this:
 
-1. Install [WideQ][] by typing something like:
+1. Install [WideQ][] by typing something like(You may need sudo permision.):
 
        $ cd ~/.homeassistant
        $ mkdir wideq
