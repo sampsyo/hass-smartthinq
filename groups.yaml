@@ -14,6 +14,21 @@ Refrigerator:
   - switch.set_iceplus_mode
   - input_select.set_freshairfilter_mode
 
+Dryer:
+  - sensor.dryer_current_run_state
+  - sensor.dryer_current_course
+  - sensor.dryer_initial_time
+  - sensor.dryer_remain_time
+  - sensor.dryer_reserve_initial_time
+  - sensor.dryer_reserve_remain_time
+  - sensor.dryer_current_process_state  
+  - sensor.dryer_drylevel_state
+  - sensor.dryer_ecohybrid_state
+  - sensor.dryer_anticrease_mode
+  - sensor.dryer_childlock_mode
+  - sensor.dryer_selfcleaning_mode
+  - sensor.dryer_error_state
+
 #      View
 default view:
   view: yes
