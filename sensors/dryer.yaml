@@ -1,0 +1,66 @@
+# Dryer
+
+- platform: smartthinq_dryer
+  scan_interval: 10
+- platform: template
+  sensors:
+    dryer_current_run_state:
+      friendly_name: '동작상태'
+      icon_template: mdi:tumble-dryer
+      value_template: '{{states.sensor.dryer.attributes.run_state}}'
+    dryer_initial_time:
+      friendly_name: '코스시간'
+      icon_template: mdi:clock-outline
+      value_template: '{{states.sensor.dryer.attributes.initial_time}}'
+    dryer_remain_time:
+      friendly_name: '남은시간'
+      icon_template: mdi:clock-outline
+      value_template: '{{states.sensor.dryer.attributes.remain_time}}'
+    dryer_reserve_initial_time:
+      friendly_name: '예약 시간'
+      icon_template: mdi:camera-timer
+      value_template: '{{states.sensor.dryer.attributes.reserve_initial_time}}'      
+    dryer_reserve_remain_time:
+      friendly_name: '예약 남은 시간'
+      icon_template: mdi:camera-timer
+      value_template: '{{states.sensor.dryer.attributes.reserve_remain_time}}'
+    dryer_current_course:
+      friendly_name: '건조코스'
+      icon_template: mdi:pin-outline
+      value_template: '{{states.sensor.dryer.attributes.current_course}}'
+    dryer_error_state:
+      friendly_name: '에러'
+      icon_template: mdi:alert-circle-outline
+      value_template: '{{states.sensor.dryer.attributes.error_state}}'
+    dryer_drylevel_state:
+      friendly_name: '건조정도'
+      icon_template: mdi:gauge
+      value_template: '{{states.sensor.dryer.attributes.drylevel_state}}'      
+    dryer_ecohybrid_state:
+      friendly_name: '절약건조'
+      icon_template: mdi:power-plug-off
+      value_template: '{{states.sensor.dryer.attributes.ecohybrid_state}}'
+    dryer_current_process_state:
+      friendly_name: '현재 Process'
+      icon_template: mid:cached
+      value_template: '{{states.sensor.dryer.attributes.process_state}}'
+    dryer_anticrease_mode:
+      friendly_name: '구김방지'
+      icon_template: mdi:tumble-dryer
+      value_template: '{{states.sensor.dryer.attributes.anticrease_mode}}'
+    dryer_childlock_mode:
+      friendly_name: '버튼잠금'
+      icon_template: mdi:lock-outline
+      value_template: '{{states.sensor.dryer.attributes.childlock_mode}}'
+    dryer_selfcleaning_mode:
+      friendly_name: '자동세척'
+      icon_template: mdi:tumble-dryer
+      value_template: '{{states.sensor.dryer.attributes.selfcleaning_mode}}'
+    dryer_dampdrybeep_mode:
+      friendly_name: '적정 건조 알림'
+      icon_template: mdi:bell-outline
+      value_template: '{{states.sensor.dryer.attributes.dampdrybeep_mode}}'
+    dryer_handiron_mode:
+      friendly_name: '다림질모드'
+      icon_template: mdi:tumble-dryer
+      value_template: '{{states.sensor.dryer.attributes.handiron_mode}}'
