@@ -29,6 +29,25 @@ Dryer:
   - sensor.dryer_selfcleaning_mode
   - sensor.dryer_error_state
 
+Washer:
+  - sensor.washer_current_course
+  - sensor.washer_current_run_state  
+  - sensor.washer_pre_state
+  - sensor.washer_initial_time
+  - sensor.washer_remain_time
+  - sensor.washer_reserve_time
+  - sensor.washer_wash_option_state
+  - sensor.washer_rinsecount_option_state  
+  - sensor.washer_spin_option_state
+  - sensor.washer_watertemp_option_state
+  - sensor.washer_drylevel_state
+  - sensor.washer_load_level
+  - sensor.washer_steam_mode
+  - sensor.washer_turboshot_mode
+  - sensor.washer_childlock_mode
+  - sensor.washer_tubclean_count  
+  - sensor.washer_error_state
+
 #      View
 default view:
   view: yes
@@ -36,6 +55,8 @@ default view:
   entities:
     - group.air_conditioner
     - group.refrigerator
+    - group.dryer
+    - group.washer
     
 # automation
 Automation view:
