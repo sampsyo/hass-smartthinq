@@ -1,0 +1,75 @@
+# Washer
+
+- platform: smartthinq_washer
+  scan_interval: 10
+- platform: template
+  sensors:
+    washer_current_run_state:
+      friendly_name: '현재상태'
+      icon_template: mdi:washing-machine
+      value_template: '{{states.sensor.washer.attributes.run_state}}'
+    washer_pre_state:
+      friendly_name: '이전상태'
+      icon_template: mdi:washing-machine
+      value_template: '{{states.sensor.washer.attributes.pre_state}}'
+    washer_initial_time:
+      friendly_name: '코스시간'
+      icon_template: mdi:clock-outline
+      value_template: '{{states.sensor.washer.attributes.initial_time}}'
+    washer_remain_time:
+      friendly_name: '남은시간'
+      icon_template: mdi:clock-outline
+      value_template: '{{states.sensor.washer.attributes.remain_time}}'
+    washer_reserve_time:
+      friendly_name: '예약시간'
+      icon_template: mdi:camera-timer
+      value_template: '{{states.sensor.washer.attributes.reserve_time}}'
+    washer_current_course:
+      friendly_name: '세탁코스'
+      icon_template: mdi:pin-outline
+      value_template: '{{states.sensor.washer.attributes.current_course}}'
+    washer_error_state:
+      friendly_name: '에러'
+      icon_template: mdi:alert-circle-outline
+      value_template: '{{states.sensor.washer.attributes.error_state}}'
+    washer_wash_option_state:
+      friendly_name: '세탁'
+      icon_template: mdi:washing-machine
+      value_template: '{{states.sensor.washer.attributes.wash_option_state}}'
+    washer_rinsecount_option_state:
+      friendly_name: '헹굼'
+      icon_template: mdi:washing-machine
+      value_template: '{{states.sensor.washer.attributes.rinsecount_option_state}}'
+    washer_spin_option_state:
+      friendly_name: '탈수'
+      icon_template: mdi:washing-machine
+      value_template: '{{states.sensor.washer.attributes.spin_option_state}}'
+    washer_watertemp_option_state:
+      friendly_name: '물온도'
+      icon_template: mdi:washing-machine
+      value_template: '{{states.sensor.washer.attributes.watertemp_option_state}}'
+    washer_drylevel_state:
+      friendly_name: '건조'
+      icon_template: mdi:washing-machine
+      value_template: '{{states.sensor.washer.attributes.drylevel_state}}'
+    washer_childlock_mode:
+      friendly_name: '버튼잠금'
+      icon_template: mdi:washing-machine
+      value_template: '{{states.sensor.washer.attributes.childlock_mode}}'
+    washer_steam_mode:
+      friendly_name: '스팀'
+      icon_template: mdi:washing-machine
+      value_template: '{{states.sensor.washer.attributes.steam_mode}}'
+    washer_turboshot_mode:
+      friendly_name: '터보샷'
+      icon_template: mdi:washing-machine
+      value_template: '{{states.sensor.washer.attributes.turboshot_mode}}'
+    washer_tubclean_count:
+      friendly_name: '통세척 - 30회 주기'
+      icon_template: mdi:washing-machine
+      value_template: '{{states.sensor.washer.attributes.tubclean_count}}'
+      unit_of_measurement: '회'
+    washer_load_level:
+      friendly_name: '세탁물량'
+      icon_template: mdi:washing-machine
+      value_template: '{{states.sensor.washer.attributes.load_level}}'
