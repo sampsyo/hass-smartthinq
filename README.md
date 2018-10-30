@@ -4,7 +4,7 @@ Support for LG Smartthinq device.
 This is made for korean only.
 If you want to apply other county devices, you have to change this code for your country
 
-This is made by sampsyo, I forked and improved it
+This is made by sampsyo, I forked and add more device in it
 
 
 A [Home Assistant][hass] component for controlling LG HVAC devices via their SmartThinQ platform, based on [WideQ][].
@@ -42,6 +42,9 @@ Here's how to use this:
        climate:
          - platform: smartthinq_hvac
          - platform: smartthinq_refrigerator
+       sensor:
+         - platform: smartthinq_dryer
+         - platform: smartthinq_washer
 
 
 5. Add include files to your include folder or something you have
