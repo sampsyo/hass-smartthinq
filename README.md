@@ -25,7 +25,7 @@ Here's how to use this:
 2. Clone this repository into your `~/.homeassistant` directory
 
        $ cd ~/.homeassistant
-       $ git clone https://github.com/wkd8176/hass-smartthinq.git climate
+       $ git clone https://github.com/wkd8176/hass-smartthinq.git
 
 3. Authenticate with the SmartThinQ service to get a refresh token by running the WideQ example script. (Eventually, I would like to add a feature to the Home Assistant component that can let you log in through a UI, but I haven't gotten there yet.) Run this in the `wideq` directory:
 
