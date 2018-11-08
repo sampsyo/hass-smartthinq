@@ -10,6 +10,8 @@ from custom_components.smartthinq import (
 import homeassistant.helpers.config_validation as cv
 from homeassistant.const import (
     ATTR_ENTITY_ID, CONF_TOKEN, CONF_ENTITY_ID)
+from homeassistant.exceptions import PlatformNotReady
+
 
 import wideq
 
@@ -162,7 +164,11 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
         device = client.get_device(device_id)
 
         if device.type == wideq.DeviceType.WASHER:
-            washer_entity = LGEWASHERDEVICE(client, device)
+            try:
+            	washer_entity = LGEWASHERDEVICE(client, device)
+            except wideq.NotConnectError:
+                LOGGER.info('Connection Lost. Retrying.')
+                raise PlatformNotReady
             hass.data[LGE_WASHER_DEVICES].append(washer_entity)
     add_entities(hass.data[LGE_WASHER_DEVICES])
 
@@ -177,24 +183,11 @@ class LGEWASHERDEVICE(LGEDevice):
         import wideq
         self._washer = wideq.WasherDevice(client, device)
 
-
-        LOGGER.info('Connecting %s.', self.name)
-        while True:
-            try:
-                self._washer.monitor_start()
-            
-            except wideq.NotConnectError:
-                LOGGER.info('Connection Lost. Retrying.')
-                self._client.refresh()
-                time.sleep(60)
-                continue
-
-            break
-        
-        LOGGER.info('%s Connected. Now Monitoring', self.name)
+        self._washer.monitor_start()
+        self._washer.monitor_start()
         self._washer.delete_permission()
         self._washer.delete_permission()
-        
+
         # The response from the monitoring query.
         self._state = None
 
