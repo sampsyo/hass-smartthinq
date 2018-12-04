@@ -38,7 +38,7 @@ Here's how to use this:
 4. Add a stanza to your Home Assistant `configuration.yaml` like this:
 
        smartthinq:
-         refresh_token: YOUR_TOKEN_HERE
+         token: YOUR_TOKEN_HERE
        climate:
          - platform: smartthinq_hvac
          - platform: smartthinq_refrigerator
