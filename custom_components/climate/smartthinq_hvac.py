@@ -13,7 +13,7 @@ from homeassistant.helpers.config_validation import PLATFORM_SCHEMA  # noqa
 import homeassistant.helpers.config_validation as cv
 from homeassistant import const
 from homeassistant.const import (
-    ATTR_ENTITY_ID, ATTR_TEMPERATURE, TEMP_CELSIUS, CONF_TOKEN, CONF_ENTITY_ID)
+    ATTR_ENTITY_ID, ATTR_TEMPERATURE, TEMP_CELSIUS, CONF_NAME, CONF_TOKEN, CONF_ENTITY_ID)
 import time
 import wideq
 
@@ -190,6 +190,7 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
     import wideq
     refresh_token = hass.data[CONF_TOKEN]
     client = wideq.Client.from_token(refresh_token)
+    name = config[CONF_NAME]
 
     """Set up the LGE HVAC components."""
 
@@ -202,7 +203,7 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
         device = client.get_device(device_id)
 
         if device.type == wideq.DeviceType.AC:
-            hvac_entity = LGEHVACDEVICE(client, device)
+            hvac_entity = LGEHVACDEVICE(client, device, name)
             hass.data[LGE_HVAC_DEVICES].append(hvac_entity)
     add_entities(hass.data[LGE_HVAC_DEVICES])
 
@@ -259,7 +260,7 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
 
 class LGEHVACDEVICE(LGEDevice, ClimateDevice):
 
-    def __init__(self, client, device, celsius=True):
+    def __init__(self, client, device, name, celsius=True):
         """initialize a LGE HAVC Device."""
         LGEDevice.__init__(self, client, device)
         self._celsius = celsius
@@ -278,8 +279,13 @@ class LGEHVACDEVICE(LGEDevice, ClimateDevice):
         # store the timestamp for when we set this value.
         self._transient_temp = None
         self._transient_time = None
+        self._name = name
 
         self.update()
+
+    @property
+    def name(self):
+    	return self._name
 
     @property
     def supported_features(self):
