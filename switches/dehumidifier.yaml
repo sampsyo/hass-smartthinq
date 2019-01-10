@@ -1,0 +1,18 @@
+#Dehumidifier Switch
+
+#airremoval mode
+- platform: template
+  switches:
+    set_airremoval_mode:
+      friendly_name: "공기제균"
+      value_template: "{% if states.climate.dehum.attributes.airremoval_mode == '켜짐' %}true{% else %}false{% endif %}"
+      turn_on:
+        service: smartthinq.lge_dehumidifier_set_airremoval_mode
+        data:
+          entity_id: climate.dehum
+          airremoval_mode: '켜짐'
+      turn_off:
+        service: smartthinq.lge_dehumidifier_set_airremoval_mode
+        data:
+          entity_id: climate.dehum
+          airremoval_mode: '꺼짐'
