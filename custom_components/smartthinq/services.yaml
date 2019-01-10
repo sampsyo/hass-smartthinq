@@ -111,3 +111,23 @@ lge_ref_set_freshairfilter_mode:
     freshairfilter_mode:
       description: freshairfilter_mode
       example: 'AUTO'
+
+lge_ref_set_activesaving_mode:
+  description: Set the activesaving mode.
+  fields:
+    entity_id:
+      description: Name(s) of the entities to set activesaving mode
+      example: 'climate.refrigerator'
+    activesaving_mode:
+      description: activesaving_mode
+      example: '1'      
+      
+lge_dehumidifier_set_airremoval_mode:
+  description: Set the airrrmoval mode.
+  fields:
+    entity_id:
+      description: Name(s) of the entities to set airremoval mode
+      example: 'climate.dehumidifier'
+    activesaving_mode:
+      description: airremoval_mode
+      example: '켜짐'          
