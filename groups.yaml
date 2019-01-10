@@ -48,6 +48,10 @@ Washer:
   - sensor.washer_tubclean_count  
   - sensor.washer_error_state
 
+Dehumidifier:
+  - climate.dehum
+  - switch.set_airremoval_mode
+
 #      View
 default view:
   view: yes
@@ -57,6 +61,7 @@ default view:
     - group.refrigerator
     - group.dryer
     - group.washer
+    - group.dehumidifier
     
 # automation
 Automation view:
