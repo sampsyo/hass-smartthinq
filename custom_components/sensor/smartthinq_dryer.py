@@ -9,7 +9,7 @@ from custom_components.smartthinq import (
 	DOMAIN, LGE_DEVICES, LGEDevice)
 import homeassistant.helpers.config_validation as cv
 from homeassistant.const import (
-    ATTR_ENTITY_ID, CONF_TOKEN, CONF_ENTITY_ID)
+    ATTR_ENTITY_ID, CONF_NAME, CONF_TOKEN, CONF_ENTITY_ID)
 
 import wideq
 
@@ -140,6 +140,7 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
     import wideq
     refresh_token = hass.data[CONF_TOKEN]
     client = wideq.Client.from_token(refresh_token)
+    name = config[CONF_NAME]
 
     """Set up the LGE Dryer components."""
 
@@ -152,14 +153,14 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
         device = client.get_device(device_id)
 
         if device.type == wideq.DeviceType.DRYER:
-            dryer_entity = LGEDRYERDEVICE(client, device)
+            dryer_entity = LGEDRYERDEVICE(client, device, name)
             hass.data[LGE_DRYER_DEVICES].append(dryer_entity)
     add_entities(hass.data[LGE_DRYER_DEVICES])
 
     LOGGER.debug("LGE Dryer is added")
     
 class LGEDRYERDEVICE(LGEDevice):
-    def __init__(self, client, device):
+    def __init__(self, client, device, name):
         
         """initialize a LGE Dryer Device."""
         LGEDevice.__init__(self, client, device)
@@ -174,8 +175,13 @@ class LGEDRYERDEVICE(LGEDevice):
 
         # The response from the monitoring query.
         self._state = None
-
+        self._name = name
+        
         self.update()
+
+    @property
+    def name(self):
+        return self._name
 
     @property
     def supported_features(self):
