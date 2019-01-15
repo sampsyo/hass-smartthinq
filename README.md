@@ -41,10 +41,16 @@ Here's how to use this:
          token: YOUR_TOKEN_HERE
        climate:
          - platform: smartthinq_hvac
+           name: DEVICE_NAME_WHAT_YOU_WANT
          - platform: smartthinq_refrigerator
+           name: DEVICE_NAME_WHAT_YOU_WANT
+         - platform: smartthinq_dehumidifier
+           name: DEVICE_NAME_WHAT_YOU_WANT
        sensor:
          - platform: smartthinq_dryer
+           name: DEVICE_NAME_WHAT_YOU_WANT
          - platform: smartthinq_washer
+           name: DEVICE_NAME_WHAT_YOU_WANT
 
 
 5. Add include files to your include folder or something you have
