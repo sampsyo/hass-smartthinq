@@ -1,0 +1,92 @@
+# Water Purifier
+
+- platform: smartthinq_waterpurifier
+  name: waterpurifier
+  
+  
+- platform: template
+  sensors:
+    cold_water_usage_day:
+      friendly_name: '오늘 냉수 사용량'
+      icon_template: mdi:cup-water
+      value_template: '{{states.sensor.waterpurifier.attributes.cold_water_usage_day}}'
+      unit_of_measurement: 'L'
+    normal_water_usage_day:
+      friendly_name: '오늘 정수 사용량'
+      icon_template: mdi:cup-water
+      value_template: '{{states.sensor.waterpurifier.attributes.normal_water_usage_day}}'
+      unit_of_measurement: 'L'
+    hot_water_usage_day:
+      friendly_name: '오늘 온수 사용량'
+      icon_template: mdi:cup-water
+      value_template: '{{states.sensor.waterpurifier.attributes.hot_water_usage_day}}'
+      unit_of_measurement: 'L'
+    total_water_usage_day:
+      friendly_name: '오늘 물 사용량'
+      icon_template: mdi:cup-water
+      value_template: '{{states.sensor.waterpurifier.attributes.total_water_usage_day}}'
+      unit_of_measurement: 'L'
+    cold_water_usage_week:
+      friendly_name: '이번주 냉수 사용량'
+      icon_template: mdi:cup-water
+      value_template: '{{states.sensor.waterpurifier.attributes.cold_water_usage_week}}'
+      unit_of_measurement: 'L'
+    normal_water_usage_week:
+      friendly_name: '이번주 정수 사용량'
+      icon_template: mdi:cup-water
+      value_template: '{{states.sensor.waterpurifier.attributes.normal_water_usage_week}}'
+      unit_of_measurement: 'L'
+    hot_water_usage_week:
+      friendly_name: '이번주 온수 사용량'
+      icon_template: mdi:cup-water
+      value_template: '{{states.sensor.waterpurifier.attributes.hot_water_usage_week}}'
+      unit_of_measurement: 'L'
+    total_water_usage_week:
+      friendly_name: '이번주 물 사용량'
+      icon_template: mdi:cup-water
+      value_template: '{{states.sensor.waterpurifier.attributes.total_water_usage_week}}'
+      unit_of_measurement: 'L'
+    cold_water_usage_month:
+      friendly_name: '이번달 냉수 사용량'
+      icon_template: mdi:cup-water
+      value_template: '{{states.sensor.waterpurifier.attributes.cold_water_usage_month}}'
+      unit_of_measurement: 'L'
+    normal_water_usage_month:
+      friendly_name: '이번달 정수 사용량'
+      icon_template: mdi:cup-water
+      value_template: '{{states.sensor.waterpurifier.attributes.normal_water_usage_month}}'
+      unit_of_measurement: 'L'
+    hot_water_usage_month:
+      friendly_name: '이번달 온수 사용량'
+      icon_template: mdi:cup-water
+      value_template: '{{states.sensor.waterpurifier.attributes.hot_water_usage_month}}'
+      unit_of_measurement: 'L'
+    total_water_usage_month:
+      friendly_name: '이번달 물 사용량'
+      icon_template: mdi:cup-water
+      value_template: '{{states.sensor.waterpurifier.attributes.total_water_usage_month}}'
+      unit_of_measurement: 'L'
+    cold_water_usage_year:
+      friendly_name: '올해 냉수 사용량'
+      icon_template: mdi:cup-water
+      value_template: '{{states.sensor.waterpurifier.attributes.cold_water_usage_year}}'
+      unit_of_measurement: 'L'
+    normal_water_usage_year:
+      friendly_name: '올해 정수 사용량'
+      icon_template: mdi:cup-water
+      value_template: '{{states.sensor.waterpurifier.attributes.normal_water_usage_year}}'
+      unit_of_measurement: 'L'
+    hot_water_usage_year:
+      friendly_name: '올해 온수 사용량'
+      icon_template: mdi:cup-water
+      value_template: '{{states.sensor.waterpurifier.attributes.hot_water_usage_year}}'
+      unit_of_measurement: 'L'
+    total_water_usage_year:
+      friendly_name: '올해 물 사용량'
+      icon_template: mdi:cup-water
+      value_template: '{{states.sensor.waterpurifier.attributes.total_water_usage_year}}'
+      unit_of_measurement: 'L'
+    cockcelan_state:
+      friendly_name: '셀프케어'
+      icon_template: mdi:brightness-7
+      value_template: '{{states.sensor.waterpurifier.attributes.cockcelan_state}}'
