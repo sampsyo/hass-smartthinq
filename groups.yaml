@@ -52,6 +52,25 @@ Dehumidifier:
   - climate.dehum
   - switch.set_airremoval_mode
 
+Water Purifier:
+  - sensor.cockcelan_state
+  - sensor.cold_water_usage_day
+  - sensor.normal_water_usage_day
+  - sensor.hot_water_usage_day
+  - sensor.total_water_usage_day
+  - sensor.cold_water_usage_week
+  - sensor.normal_water_usage_week
+  - sensor.hot_water_usage_week
+  - sensor.total_water_usage_week    
+  - sensor.cold_water_usage_month
+  - sensor.normal_water_usage_month
+  - sensor.hot_water_usage_month
+  - sensor.total_water_usage_month
+  - sensor.cold_water_usage_year
+  - sensor.normal_water_usage_year
+  - sensor.hot_water_usage_year
+  - sensor.total_water_usage_year
+
 #      View
 default view:
   view: yes
@@ -62,6 +81,7 @@ default view:
     - group.dryer
     - group.washer
     - group.dehumidifier
+    - group.water_purifier
     
 # automation
 Automation view:
