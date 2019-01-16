@@ -51,6 +51,8 @@ Here's how to use this:
            name: DEVICE_NAME_WHAT_YOU_WANT
          - platform: smartthinq_washer
            name: DEVICE_NAME_WHAT_YOU_WANT
+         - platform: smartthinq_waterpurifier
+           name: DEVICE_NAME_WHAT_YOU_WANT
 
 
 5. Add include files to your include folder or something you have
