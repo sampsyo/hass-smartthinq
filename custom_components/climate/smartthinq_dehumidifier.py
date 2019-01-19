@@ -34,11 +34,6 @@ ATTR_HUMIDITY = 'humidity'
 ATTR_MAX_HUMIDITY = 'max_humidity'
 ATTR_MIN_HUMIDITY = 'min_humidity'
 ATTR_TARGET_HUMIDITY_STEP = 'humidity_step'
-ATTR_SENSORPM1 = 'PM1'
-ATTR_SENSORPM2 = 'PM2'
-ATTR_SENSORPM10 = 'PM10'
-ATTR_TOTALAIRPOLUTION = 'total_air_polution'
-ATTR_AIRPOLUTION = 'air_polution'
 ATTR_OPERATION_MODE = 'operation_mode'
 ATTR_OPERATION_LIST = 'operation_list'
 ATTR_FAN_MODE = 'fan_mode'
@@ -168,11 +163,6 @@ class LGEDEHUMDEVICE(LGEDevice, ClimateDevice):
         """Return the optional state attributes."""
         data = {}
         data[ATTR_AIRREMOVAL_MODE] = self.is_airremoval_mode
-        data[ATTR_SENSORPM1] = self._state.sensorpm1
-        data[ATTR_SENSORPM2] = self._state.sensorpm2
-        data[ATTR_SENSORPM10] = self._state.sensorpm10
-        data[ATTR_TOTALAIRPOLUTION] = self._state.total_air_polution
-        data[ATTR_AIRPOLUTION] = self._state.air_polution
         data[ATTR_STATUS] = self.current_status
 
         if self.target_humidity_step is not None:
