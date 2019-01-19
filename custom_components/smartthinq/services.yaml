@@ -128,6 +128,6 @@ lge_dehumidifier_set_airremoval_mode:
     entity_id:
       description: Name(s) of the entities to set airremoval mode
       example: 'climate.dehumidifier'
-    activesaving_mode:
+    airremoval_mode_mode:
       description: airremoval_mode
       example: '켜짐'          
