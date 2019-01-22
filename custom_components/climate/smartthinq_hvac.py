@@ -534,10 +534,19 @@ class LGEHVACDEVICE(LGEDevice, ClimateDevice):
             if self.device_type == 'PAC':
                 return 'Not Supported'
             elif self.device_type == 'RAC':
-                mode = self._state.wdirvstep_state
+                try:
+                    mode = self._state.wdirvstep_state
+                    return WDIRVSTEP[mode.name]
+                except ValueError:
+                    fourvain_mode = self._state.fourvain_wdirvstep_state
+                    return WDIRVSTEP[fourvain_mode.name]
             elif self.device_type == 'SAC_CST':
-                mode = self._state.wdirvstep_state
-            return WDIRVSTEP[mode.name]
+                try:
+                    mode = self._state.wdirvstep_state
+                    return WDIRVSTEP[mode.name]
+                except ValueError:
+                    fourvain_mode = self._state.fourvain_wdirvstep_state
+                    return WDIRVSTEP[fourvain_mode.name]
 
     def wdirvstep_mode(self, wdirvstep_mode):
 
@@ -547,9 +556,17 @@ class LGEHVACDEVICE(LGEDevice, ClimateDevice):
         if self.device_type == 'PAC':
             return 'Not Supported'
         elif self.device_type == 'RAC':
-            mode = wideq.WDIRVSTEP[wdirvstepmodes_inv[wdirvstep_mode]]
+            vstep_state = self._state.wdirvstep_state
+            if int(vstep_state.value) < 10:
+                mode = wideq.WDIRVSTEP[wdirvstepmodes_inv[wdirvstep_mode]]
+            elif int(vstep_state.value) > 10:
+                mode = wideq.FOURVAIN_WDIRVSTEP[wdirvstepmodes_inv[wdirvstep_mode]]
         elif self.device_type == 'SAC_CST':
-            mode = wideq.WDIRVSTEP[wdirvstepmodes_inv[wdirvstep_mode]]
+            vstep_state = self._state.wdirvstep_state
+            if int(vstep_state.value) < 10:
+                mode = wideq.WDIRVSTEP[wdirvstepmodes_inv[wdirvstep_mode]]
+            elif int(vstep_state.value) > 10:
+                mode = wideq.FOURVAIN_WDIRVSTEP[wdirvstepmodes_inv[wdirvstep_mode]]
         self._ac.set_wdirvstep(mode)
 
     @property
