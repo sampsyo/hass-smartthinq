@@ -1,0 +1,12 @@
+set_wdirvstep_mode:
+  name: 바람각 설정
+  options:
+    - "꺼짐"
+    - "1단계"
+    - "2단계"
+    - "3단계"
+    - "4단계"
+    - "5단계"
+    - "6단계"
+  initial: "꺼짐"
+  icon: mdi:target
