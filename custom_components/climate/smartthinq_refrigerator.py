@@ -22,6 +22,8 @@ CONF_FREEZER_TEMPERATURE = 'freezer_temperature'
 CONF_ICEPLUS_MODE = 'iceplus_mode'
 CONF_FRESHAIRFILTER_MODE = 'freshairfilter_mode'
 
+CONF_MAC = 'mac'
+
 ATTR_REFRIGERATOR_TEMPERATURE = 'refrigerator_temperature'
 ATTR_FREEZER_TEMPERATURE = 'freezer_temperature'
 ATTR_ICEPLUS_STATE = 'iceplus_state'
@@ -34,6 +36,7 @@ ATTR_DOOR_STATE = 'door_state'
 ATTR_SMARTSAVING_STATE = 'smartsaving_state'
 ATTR_LOCKING_STATE = 'locking_state'
 ATTR_ACTIVESAVING_STATE = 'activesaving_state'
+ATTR_DEVICE_TYPE = 'device_type'
 
 SERVICE_SET_REFRIGERATOR_TEMPERATURE = 'lge_ref_set_refrigerator_temperature'
 SERVICE_SET_FREEZER_TEMPERATURE = 'lge_ref_set_freezer_temperature'
@@ -49,6 +52,13 @@ FRESHAIRFILTERMODES = {
     'POWER' : wideq.STATE_FRESH_AIR_FILTER_POWER,
     'AUTO' : wideq.STATE_FRESH_AIR_FILTER_AUTO,
     'OFF' : wideq.STATE_FRESH_AIR_FILTER_OFF,
+}
+
+SMARTCAREMODES = {
+    'SMARTCARE_ON' : wideq.STATE_FRESH_AIR_FILTER_SMART_CARE_ON,
+    'SMARTCARE_OFF' : wideq.STATE_FRESH_AIR_FILTER_SMART_CARE_OFF,
+    'SMARTCARE_WAIT' : wideq.STATE_FRESH_AIR_FILTER_SMART_CARE_WAIT,
+    'REPLACE_FILTER' : wideq.STATE_FRESH_AIR_FILTER_REPLACE_FILTER,
 }
 
 SMARTSAVINGMODES = {
@@ -85,22 +95,24 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
     import wideq
     refresh_token = hass.data[CONF_TOKEN]
     client = wideq.Client.from_token(refresh_token)
-    name = config[CONF_NAME]
 
     """Set up the LGE Refrigerator components."""
 
     LOGGER.debug("Creating new LGE Refrigerator")
 
-    if LGE_REF_DEVICES not in hass.data:
-        hass.data[LGE_REF_DEVICES] = []
+    LGE_REF_DEVICES = []
 
     for device_id in (d for d in hass.data[LGE_DEVICES]):
         device = client.get_device(device_id)
-
+        model = client.model_info(device)
         if device.type == wideq.DeviceType.REFRIGERATOR:
-            ref_entity = LGEREFDEVICE(client, device, name)
-            hass.data[LGE_REF_DEVICES].append(ref_entity)
-    add_entities(hass.data[LGE_REF_DEVICES])
+            name = config[CONF_NAME]
+            mac = device.macaddress
+            model_type = model.model_type
+            if mac == config[CONF_MAC]:
+                ref_entity = LGEREFDEVICE(client, device, name, model_type)
+                LGE_REF_DEVICES.append(ref_entity)
+    add_entities(LGE_REF_DEVICES)
 
     LOGGER.debug("LGE Refrigerator is added")
     
@@ -135,7 +147,7 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
         schema=LGE_REF_SET_FRESHAIRFILTER_MODE_SCHEMA)
 
 class LGEREFDEVICE(LGEDevice):
-    def __init__(self, client, device, name):
+    def __init__(self, client, device, name, model_type):
         
         """initialize a LGE Refrigerator Device."""
         LGEDevice.__init__(self, client, device)
@@ -155,6 +167,7 @@ class LGEREFDEVICE(LGEDevice):
         self._transient_temp = None
         self._transient_time = None
         self._name = name
+        self._type = model_type
 
         self.update()
 
@@ -163,6 +176,10 @@ class LGEREFDEVICE(LGEDevice):
     	return self._name
 
     @property
+    def device_type(self):
+        return self._type
+        
+    @property
     def supported_features(self):
         """ none """
 
@@ -170,6 +187,7 @@ class LGEREFDEVICE(LGEDevice):
     def state_attributes(self):
         """Return the optional state attributes."""
         data={}
+        data[ATTR_DEVICE_TYPE] = self.device_type
         data[ATTR_REFRIGERATOR_TEMPERATURE] = self.current_reftemp
         data[ATTR_FREEZER_TEMPERATURE] = self.current_freezertemp
         data[ATTR_ICEPLUS_STATE] = self.ice_plus_state
@@ -222,21 +240,33 @@ class LGEREFDEVICE(LGEDevice):
 
     @property
     def fresh_air_filter_list(self):
-        return list(FRESHAIRFILTERMODES.values())
+        if self._state:
+            mode = self._state.freshairfilter_state
+            if mode.name in FRESHAIRFILTERMODES:
+                return list(FRESHAIRFILTERMODES.values())
+            elif mode.name in SMARTCAREMODES:
+                return list(SMARTCAREMODES.values())
 
     @property
     def fresh_air_filter_state(self):
         if self._state:
             mode = self._state.freshairfilter_state
-            return FRESHAIRFILTERMODES[mode.name]
+            if mode.name in FRESHAIRFILTERMODES:
+                return FRESHAIRFILTERMODES[mode.name]
+            elif mode.name in SMARTCAREMODES:
+                return SMARTCAREMODES[mode.name]
 
     def set_fresh_air_filter_mode(self, freshairfilter_mode):
         import wideq
 
         # Invert the modes mapping.
         modes_inv = {v: k for k, v in FRESHAIRFILTERMODES.items()}
+        smartmodes_inv = {v: k for k, v in SMARTCAREMODES.items()}
 
-        mode = wideq.FRESHAIRFILTER[modes_inv[freshairfilter_mode]]
+        if freshairfilter_mode in modes_inv:
+            mode = wideq.FRESHAIRFILTER[modes_inv[freshairfilter_mode]]
+        elif freshairfilter_mode in smartmodes_inv:
+            mode = wideq.FRESHAIRFILTER[smartmodes_inv[freshairfilter_mode]]
         self._ref.set_freshairfilter(mode)
 
     @property
