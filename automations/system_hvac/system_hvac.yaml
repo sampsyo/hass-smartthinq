@@ -1,0 +1,40 @@
+- alias: set_wdirvstep_mode
+  initial_state: 'on'
+  trigger:
+    platform: state
+    entity_id: input_select.set_wdirvstep_mode
+  action:
+    service: smartthinq.lge_hvac_set_wdirvstep_mode
+    data_template:
+      entity_id: climate.system_hvac
+      wdirvstep_mode: >
+          {% if is_state("input_select.set_wdirvstep_mode", "1단계") %}
+          1단계
+          {%-elif is_state("input_select.set_wdirvstep_mode", "2단계") %}
+          2단계
+          {%-elif is_state("input_select.set_wdirvstep_mode", "3단계") %}
+          3단계
+          {%-elif is_state("input_select.set_wdirvstep_mode", "4단계") %}
+          4단계
+          {%-elif is_state("input_select.set_wdirvstep_mode", "5단계") %}
+          5단계
+          {%-elif is_state("input_select.set_wdirvstep_mode", "6단계") %}
+          6단계
+          {%-elif is_state("input_select.set_wdirvstep_mode", "꺼짐") %}
+          꺼짐
+          {% endif %}
+      
+- alias: set_input_select_wdirvstep_mode
+  initial_state: 'on'
+  trigger:
+    platform: state
+    entity_id: sensor.system_hvac_wdirvstep_mode
+  action:
+    - service: automation.turn_off
+      entity_id: automation.set_wdirvstep_mode
+    - service: input_select.select_option
+      data_template:
+        entity_id: input_select.set_wdirvstep_mode    
+        option: "{{states.climate.system_hvac.attributes.wdirvstep_mode}}"
+    - service: automation.turn_on
+      entity_id: automation.set_wdirvstep_mode
