@@ -8,6 +8,16 @@ Air Conditioner:
   - switch.set_longpower_mode
   - switch.set_up_down_mode
 
+System HVAC:
+  - climate.system_hvac
+  - switch.system_hvac_set_up_down_mode
+  - switch.system_hvac_set_power_mode
+  - switch.system_hvac_set_powersave_mode
+  - switch.system_hvac_set_airclean_mode
+  - switch.system_hvac_set_autodry_mode
+  - switch.system_hvac_set_indirectwind_mode
+  - input_select.set_wdirvstep_mode
+
 Refrigerator:
   - input_number.set_ref_temp
   - input_number.set_freezer_temp
