@@ -20,6 +20,8 @@ DEPENDENCIES = ['smartthinq']
 
 LGE_WASHER_DEVICES = 'lge_washer_devices'
 
+CONF_MAC = 'mac'
+
 ATTR_CURRENT_STATUS = 'current_status'
 ATTR_RUN_STATE = 'run_state'
 ATTR_PRE_STATE = 'pre_state'
@@ -39,6 +41,7 @@ ATTR_STEAM_MODE = 'steam_mode'
 ATTR_TURBOSHOT_MODE = 'turboshot_mode'
 ATTR_TUBCLEAN_COUNT = 'tubclean_count'
 ATTR_LOAD_LEVEL = 'load_level'
+ATTR_DEVICE_TYPE = 'device_type'
 
 RUNSTATES = {
     'OFF': wideq.STATE_WASHER_POWER_OFF,
@@ -152,31 +155,33 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
     import wideq
     refresh_token = hass.data[CONF_TOKEN]
     client = wideq.Client.from_token(refresh_token)
-    name = config[CONF_NAME]
 
     """Set up the LGE Washer components."""
 
     LOGGER.debug("Creating new LGE Washer")
 
-    if LGE_WASHER_DEVICES not in hass.data:
-        hass.data[LGE_WASHER_DEVICES] = []
+    LGE_WASHER_DEVICES = []
 
     for device_id in (d for d in hass.data[LGE_DEVICES]):
         device = client.get_device(device_id)
-
+        model = client.model_info(device)
         if device.type == wideq.DeviceType.WASHER:
-            try:
-            	washer_entity = LGEWASHERDEVICE(client, device, name)
-            except wideq.NotConnectError:
-                LOGGER.info('Connection Lost. Retrying.')
-                raise PlatformNotReady
-            hass.data[LGE_WASHER_DEVICES].append(washer_entity)
+            name = config[CONF_NAME]
+            mac = device.macaddress
+            model_type = model.model_type
+            if mac == config[CONF_MAC]:
+                try:
+                    washer_entity = LGEWASHERDEVICE(client, device, name, model_type)
+                except wideq.NotConnectError:
+                    LOGGER.info('Connection Lost. Retrying.')
+                    raise PlatformNotReady
+                LGE_WASHER_DEVICES.append(washer_entity)
     add_entities(hass.data[LGE_WASHER_DEVICES])
 
     LOGGER.debug("LGE Washer is added")
     
 class LGEWASHERDEVICE(LGEDevice):
-    def __init__(self, client, device, name):
+    def __init__(self, client, device, name, model_type):
         
         """initialize a LGE Washer Device."""
         LGEDevice.__init__(self, client, device)
@@ -192,12 +197,17 @@ class LGEWASHERDEVICE(LGEDevice):
         # The response from the monitoring query.
         self._state = None
         self._name = name
+        self._type = model_type
 
         self.update()
 
     @property
     def name(self):
-        return self._name
+    	return self._name
+
+    @property
+    def device_type(self):
+        return self._type
 
     @property
     def supported_features(self):
@@ -207,6 +217,7 @@ class LGEWASHERDEVICE(LGEDevice):
     def state_attributes(self):
         """Return the optional state attributes."""
         data={}
+        data[ATTR_DEVICE_TYPE] = self.device_type
         data[ATTR_RUN_STATE] = self.current_run_state
         data[ATTR_PRE_STATE] = self.pre_state
         data[ATTR_REMAIN_TIME] = self.remain_time
