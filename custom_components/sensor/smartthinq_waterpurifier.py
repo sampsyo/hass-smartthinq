@@ -18,6 +18,8 @@ DEPENDENCIES = ['smartthinq']
 
 LGE_WATERPURIFIER_DEVICES = 'lge_waterpurifier_devices'
 
+CONF_MAC = 'mac'
+
 ATTR_COLD_WATER_USAGE_DAY = 'cold_water_usage_day'
 ATTR_NORMAL_WATER_USAGE_DAY = 'normal_water_usage_day'
 ATTR_HOT_WATER_USAGE_DAY = 'hot_water_usage_day'
@@ -39,6 +41,7 @@ ATTR_HOT_WATER_USAGE_YEAR = 'hot_water_usage_year'
 ATTR_TOTAL_WATER_USAGE_YEAR = 'total_water_usage_year'
 
 ATTR_COCKCLEAN_STATE = 'cockcelan_state'
+ATTR_DEVICE_TYPE = 'device_type'
 
 COCKCLEANMODES = {
     'WAITING': wideq.STATE_WATERPURIFIER_COCKCLEAN_WAIT,
@@ -59,21 +62,24 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
 
     LOGGER.debug("Creating new LGE WATER PURIFIER")
 
-    if LGE_WATERPURIFIER_DEVICES not in hass.data:
-        hass.data[LGE_WATERPURIFIER_DEVICES] = []
+    LGE_WATERPURIFIER_DEVICES = []
 
     for device_id in (d for d in hass.data[LGE_DEVICES]):
         device = client.get_device(device_id)
-
+        model = client.model_info(device)
         if device.type == wideq.DeviceType.WATER_PURIFIER:
-            waterpurifier_entity = LGEWATERPURIFIERDEVICE(client, device, name)
-            hass.data[LGE_WATERPURIFIER_DEVICES].append(waterpurifier_entity)
-    add_entities(hass.data[LGE_WATERPURIFIER_DEVICES])
+            name = config[CONF_NAME]
+            mac = device.macaddress
+            model_type = model.model_type
+            if mac == config[CONF_MAC]:
+                waterpurifier_entity = LGEWATERPURIFIERDEVICE(client, device, name, model_type)
+                LGE_WATERPURIFIER_DEVICES.append(waterpurifier_entity)
+    add_entities(LGE_WATERPURIFIER_DEVICES)
 
     LOGGER.debug("LGE WATER PURIFIER is added")
     
 class LGEWATERPURIFIERDEVICE(LGEDevice):
-    def __init__(self, client, device, name):
+    def __init__(self, client, device, name, model_type):
         
         """initialize a LGE WATER PURIFIER Device."""
         LGEDevice.__init__(self, client, device)
@@ -89,12 +95,17 @@ class LGEWATERPURIFIERDEVICE(LGEDevice):
         # The response from the monitoring query.
         self._state = None
         self._name = name
-        
+        self._type = model_type
+
         self.update()
 
     @property
     def name(self):
-        return self._name
+    	return self._name
+
+    @property
+    def device_type(self):
+        return self._type
 
     @property
     def supported_features(self):
@@ -104,6 +115,7 @@ class LGEWATERPURIFIERDEVICE(LGEDevice):
     def state_attributes(self):
         """Return the optional state attributes."""
         data={}
+        data[ATTR_DEVICE_TYPE] = self.device_type
         data[ATTR_COLD_WATER_USAGE_DAY] = self.cold_water_usage_day
         data[ATTR_NORMAL_WATER_USAGE_DAY] = self.normal_water_usage_day
         data[ATTR_HOT_WATER_USAGE_DAY] = self.hot_water_usage_day
