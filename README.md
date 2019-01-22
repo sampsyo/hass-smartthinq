@@ -34,6 +34,7 @@ Here's how to use this:
    The script will ask you to open a browser, log in, and then paste the URL you're redirected to. It will then write a JSON file called `wideq_state.json`.
 
    Look inside this file for a key called `"refresh_token"` and copy the value.
+   And you can find another json file called `my_device_list.json`, there is your device info and mac address.
 
 4. Add a stanza to your Home Assistant `configuration.yaml` like this:
 
@@ -42,17 +43,23 @@ Here's how to use this:
        climate:
          - platform: smartthinq_hvac
            name: DEVICE_NAME_WHAT_YOU_WANT
+           mac: YOUR_DEVICE'S_MAC_ADDRESS
          - platform: smartthinq_refrigerator
            name: DEVICE_NAME_WHAT_YOU_WANT
+           mac: YOUR_DEVICE'S_MAC_ADDRESS
          - platform: smartthinq_dehumidifier
            name: DEVICE_NAME_WHAT_YOU_WANT
+           mac: YOUR_DEVICE'S_MAC_ADDRESS
        sensor:
          - platform: smartthinq_dryer
            name: DEVICE_NAME_WHAT_YOU_WANT
+           mac: YOUR_DEVICE'S_MAC_ADDRESS
          - platform: smartthinq_washer
            name: DEVICE_NAME_WHAT_YOU_WANT
+           mac: YOUR_DEVICE'S_MAC_ADDRESS
          - platform: smartthinq_waterpurifier
            name: DEVICE_NAME_WHAT_YOU_WANT
+           mac: YOUR_DEVICE'S_MAC_ADDRESS
 
 
 5. Add include files to your include folder or something you have
@@ -60,10 +67,3 @@ Here's how to use this:
    Start up Home Assistant and hope for the best.
 
 
-Credits
--------
-
-This is by [Adrian Sampson][adrian]. The license is [MIT][].
-
-[adrian]: http://www.cs.cornell.edu/~asampson/
-[mit]: https://opensource.org/licenses/MIT
