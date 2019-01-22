@@ -18,6 +18,8 @@ DEPENDENCIES = ['smartthinq']
 
 LGE_DRYER_DEVICES = 'lge_dryer_devices'
 
+CONF_MAC = 'mac'
+
 ATTR_RUN_STATE = 'run_state'
 ATTR_RUN_LIST = 'run_list'
 ATTR_REMAIN_TIME = 'remain_time'
@@ -41,6 +43,7 @@ ATTR_DAMPDRYBEEP_MODE = 'dampdrybeep_mode'
 ATTR_HANDIRON_MODE = 'handiron_mode'
 ATTR_RESERVE_INITIAL_TIME = 'reserve_initial_time'
 ATTR_RESERVE_REMAIN_TIME = 'reserve_remain_time'
+ATTR_DEVICE_TYPE = 'device_type'
 
 RUNSTATES = {
     'OFF': wideq.STATE_DRYER_POWER_OFF,
@@ -140,27 +143,29 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
     import wideq
     refresh_token = hass.data[CONF_TOKEN]
     client = wideq.Client.from_token(refresh_token)
-    name = config[CONF_NAME]
 
     """Set up the LGE Dryer components."""
 
     LOGGER.debug("Creating new LGE Dryer")
 
-    if LGE_DRYER_DEVICES not in hass.data:
-        hass.data[LGE_DRYER_DEVICES] = []
+    LGE_DRYER_DEVICES = []
 
     for device_id in (d for d in hass.data[LGE_DEVICES]):
         device = client.get_device(device_id)
-
+        model = client.model_info(device)
         if device.type == wideq.DeviceType.DRYER:
-            dryer_entity = LGEDRYERDEVICE(client, device, name)
-            hass.data[LGE_DRYER_DEVICES].append(dryer_entity)
-    add_entities(hass.data[LGE_DRYER_DEVICES])
+            name = config[CONF_NAME]
+            mac = device.macaddress
+            model_type = model.model_type
+            if mac == config[CONF_MAC]:
+                dryer_entity = LGEDRYERDEVICE(client, device, name, model_type)
+                LGE_DRYER_DEVICES.append(dryer_entity)
+    add_entities(LGE_DRYER_DEVICES)
 
     LOGGER.debug("LGE Dryer is added")
     
 class LGEDRYERDEVICE(LGEDevice):
-    def __init__(self, client, device, name):
+    def __init__(self, client, device, name, model_type):
         
         """initialize a LGE Dryer Device."""
         LGEDevice.__init__(self, client, device)
@@ -176,12 +181,17 @@ class LGEDRYERDEVICE(LGEDevice):
         # The response from the monitoring query.
         self._state = None
         self._name = name
+        self._type = model_type
         
         self.update()
 
     @property
     def name(self):
-        return self._name
+    	return self._name
+
+    @property
+    def device_type(self):
+        return self._type
 
     @property
     def supported_features(self):
@@ -191,6 +201,7 @@ class LGEDRYERDEVICE(LGEDevice):
     def state_attributes(self):
         """Return the optional state attributes."""
         data={}
+        data[ATTR_DEVICE_TYPE] = self.device_type
         data[ATTR_RUN_STATE] = self.current_run_state
         data[ATTR_RUN_LIST] = self.run_list
         data[ATTR_REMAIN_TIME] = self.remain_time
