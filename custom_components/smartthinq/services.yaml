@@ -70,6 +70,46 @@ lge_hvac_set_up_down_mode:
       description: up/down mode status
       example: 'ON'
 
+lge_hvac_set_sensormon_mode:
+  description: Set the hvac in sensormon mode.
+  fields:
+    entity_id:
+      description: Name(s) of the entities to enable/disable sensormon mode
+      example: 'climate.air_conditioner'
+    sensormon_mode:
+      description: sensormon mode status
+      example: 'ON'
+
+lge_hvac_set_jet_mode:
+  description: Set the hvac in jet mode.
+  fields:
+    entity_id:
+      description: Name(s) of the entities to enable/disable jet mode
+      example: 'climate.air_conditioner'
+    jet_mode:
+      description: jet mode status
+      example: 'ON'
+
+lge_hvac_set_wdirvstep_mode:
+  description: Set the hvac in wdirvstep mode.
+  fields:
+    entity_id:
+      description: Name(s) of the entities to enable/disable wdirvstep mode
+      example: 'climate.air_conditioner'
+    wdirvstep_mode:
+      description: wdirvstep mode status
+      example: '1단계'
+
+lge_hvac_set_wswirl_mode:
+  description: Set the hvac in wswirl mode.
+  fields:
+    entity_id:
+      description: Name(s) of the entities to enable/disable wswirl mode
+      example: 'climate.air_conditioner'
+    wswirl_mode:
+      description: wswirl mode status
+      example: 'ON'
+
 # Describes the format for available LGE Refrigerator services
 
 lge_ref_set_refrigerator_temperature:
@@ -111,23 +151,3 @@ lge_ref_set_freshairfilter_mode:
     freshairfilter_mode:
       description: freshairfilter_mode
       example: 'AUTO'
-
-lge_ref_set_activesaving_mode:
-  description: Set the activesaving mode.
-  fields:
-    entity_id:
-      description: Name(s) of the entities to set activesaving mode
-      example: 'climate.refrigerator'
-    activesaving_mode:
-      description: activesaving_mode
-      example: '1'      
-      
-lge_dehumidifier_set_airremoval_mode:
-  description: Set the airrrmoval mode.
-  fields:
-    entity_id:
-      description: Name(s) of the entities to set airremoval mode
-      example: 'climate.dehumidifier'
-    airremoval_mode_mode:
-      description: airremoval_mode
-      example: '켜짐'          
