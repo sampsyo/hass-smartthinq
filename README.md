@@ -34,6 +34,7 @@ Here's how to use this:
    The script will ask you to open a browser, log in, and then paste the URL you're redirected to. It will then write a JSON file called `wideq_state.json`.
 
    Look inside this file for a key called `"refresh_token"` and copy the value.
+   
    And you can find another json file called `my_device_list.json`, there is your device info and mac address.
 
 4. Add a stanza to your Home Assistant `configuration.yaml` like this:
