@@ -13,7 +13,7 @@ from homeassistant.helpers.config_validation import PLATFORM_SCHEMA  # noqa
 import homeassistant.helpers.config_validation as cv
 from homeassistant import const
 from homeassistant.const import (
-    ATTR_ENTITY_ID, ATTR_TEMPERATURE, TEMP_CELSIUS, CONF_NAME, CONF_TOKEN, CONF_ENTITY_ID)
+    ATTR_ENTITY_ID, ATTR_TEMPERATURE, TEMP_CELSIUS, CONF_NAME, CONF_TOKEN, CONF_ENTITY_ID,)
 import time
 import wideq
 
@@ -36,7 +36,11 @@ CONF_SMARTCARE_MODE = 'smartcare_mode'
 CONF_POWERSAVE_MODE = 'powersave_mode'
 CONF_LONGPOWER_MODE = 'longpower_mode'
 CONF_WDIRUPDOWN_MODE = 'up_down_mode'
+CONF_SENSORMON_MODE = 'sensormon_mode'
+CONF_JET_MODE = 'jet_mode'
+CONF_WDIRVSTEP_MODE = 'wdirvstep_mode'
 
+CONF_MAC = 'mac'
 
 ATTR_CURRENT_TEMPERATURE = 'current_temperature'
 ATTR_MAX_TEMP = 'max_temp'
@@ -64,6 +68,10 @@ ATTR_SMARTCARE_MODE = 'smartcare_mode'
 ATTR_POWERSAVE_MODE = 'powersave_mode'
 ATTR_LONGPOWER_MODE = 'longpower_mode'
 ATTR_UP_DOWN_MODE = 'up_down_mode'
+ATTR_SENSORMON_MODE = 'sensormon_mode'
+ATTR_JET_MODE = 'jet_mode'
+ATTR_WDIRVSTEP_MODE = 'wdirvstep_mode'
+ATTR_DEVICE_TYPE = 'device_type'
 
 CONVERTIBLE_ATTRIBUTE = [
     ATTR_TEMPERATURE
@@ -76,10 +84,21 @@ SERVICE_SET_SMARTCARE_MODE = 'lge_hvac_set_smartcare_mode'
 SERVICE_SET_POWERSAVE_MODE = 'lge_hvac_set_powersave_mode'
 SERVICE_SET_LONGPOWER_MODE = 'lge_hvac_set_longpower_mode'
 SERVICE_SET_WDIRUPDOWN_MODE = 'lge_hvac_set_up_down_mode'
+SERVICE_SET_SENSORMON_MODE = 'lge_hvac_set_sensormon_mode'
+SERVICE_SET_JET_MODE = 'lge_hvac_set_jet_mode'
+SERVICE_SET_WDIRVSTEP_MODE = 'lge_hvac_set_wdirvstep_mode'
 
 MODES = {
     'COOL': wideq.STATE_COOL,
     'DRY': wideq.STATE_DRY,
+}
+
+RAC_SACMODES = {
+    'COOL': wideq.STATE_COOL,
+    'DRY': wideq.STATE_DRY,   
+    'HEAT': wideq.STATE_HEAT,
+    'AI': wideq.STATE_AI,
+    'FAN': wideq.STATE_FAN,
 }
 
 FANMODES = {
@@ -98,50 +117,42 @@ FANMODES = {
     'RIGHT_MID_LEFT_HIGH': wideq.STATE_RIGHT_MID_LEFT_HIGH,
     'RIGHT_HIGH_LEFT_LOW': wideq.STATE_RIGHT_HIGH_LEFT_LOW,
     'RIGHT_HIGH_LEFT_MID': wideq.STATE_RIGHT_HIGH_LEFT_MID,
-
 }
+
+RAC_SACFANMODES = {
+    'SYSTEM_LOW': wideq.STATE_LOW,
+    'SYSTEM_MID': wideq.STATE_MID,
+    'SYSTEM_HIGH': wideq.STATE_HIGH,
+    'SYSTEM_AUTO': wideq.STATE_AUTO,
+    'SYSTEM_POWER': wideq.STATE_POWER,
+}
+
 
 SWINGMODES = {
     'LEFT_RIGHT': wideq.STATE_LEFT_RIGHT,
     'RIGHTSIDE_LEFT_RIGHT': wideq.STATE_RIGHTSIDE_LEFT_RIGHT,
     'LEFTSIDE_LEFT_RIGHT': wideq.STATE_LEFTSIDE_LEFT_RIGHT,
     'LEFT_RIGHT_STOP': wideq.STATE_LEFT_RIGHT_STOP,
-
 }
 
-AIRCLEANMODES = {
-    'ON': wideq.STATE_AIRCLEAN,
-    'OFF': wideq.STATE_AIRCLEAN_OFF,
+RAC_SACSWINGMODES = {
+    'LEFT_RIGTH_ON': wideq.STATE_LEFT_RIGHT_ON,
+    'LEFT_RIGHT_STOP': wideq.STATE_LEFT_RIGHT_STOP,
 }
 
-COOLPOWERMODES = {
-    'ON': wideq.STATE_COOLPOWER,
-    'OFF': wideq.STATE_COOLPOWER_OFF,
+WDIRVSTEP = {
+    'OFF': wideq.STATE_WDIRVSTEP_OFF,
+    'FIRST': wideq.STATE_WDIRVSTEP_FIRST,
+    'SECOND': wideq.STATE_WDIRVSTEP_SECOND,
+    'THIRD': wideq.STATE_WDIRVSTEP_THIRD,
+    'FOURTH': wideq.STATE_WDIRVSTEP_FOURTH,
+    'FIFTH': wideq.STATE_WDIRVSTEP_FIFTH,
+    'SIXTH': wideq.STATE_WDIRVSTEP_SIXTH,
 }
 
-AUTODRYMODES = {
-    'ON': wideq.STATE_AUTODRY,
-    'OFF': wideq.STATE_AUTODRY_OFF,
-}
-
-SMARTCAREMODES = {
-    'ON': wideq.STATE_SMARTCARE,
-    'OFF': wideq.STATE_SMARTCARE_OFF,
-}
-
-POWERSAVEMODES = {
-    'ON': wideq.STATE_POWERSAVE,
-    'OFF': wideq.STATE_POWERSAVE_OFF,
-}
-
-LONGPOWERMODES = {
-    'ON': wideq.STATE_LONGPOWER,
-    'OFF': wideq.STATE_LONGPOWER_OFF,
-}
-
-WDIRUPDOWNMODES = {
-    'ON': wideq.STATE_UP_DOWN,
-    'OFF': wideq.STATE_UP_DOWN_STOP,
+ACETCMODES = {
+    'ON': wideq.STATE_MODE_ON,
+    'OFF': wideq.STATE_MODE_OFF,
 }
 
 LGE_HVAC_SET_AIRCLEAN_MODE_SCHEMA = vol.Schema({
@@ -178,11 +189,25 @@ LGE_HVAC_SET_WDIRUPDOWN_MODE_SCHEMA = vol.Schema({
     vol.Required(CONF_ENTITY_ID): cv.entity_id,
     vol.Required(CONF_WDIRUPDOWN_MODE): cv.string,
 })
+LGE_HVAC_SET_SENSORMON_MODE_SCHEMA = vol.Schema({
+    vol.Required(CONF_ENTITY_ID): cv.entity_id,
+    vol.Required(CONF_SENSORMON_MODE): cv.string,
+})
+LGE_HVAC_SET_JET_MODE_SCHEMA = vol.Schema({
+    vol.Required(CONF_ENTITY_ID): cv.entity_id,
+    vol.Required(CONF_JET_MODE): cv.string,
+})
+LGE_HVAC_SET_WDIRVSTEP_MODE_SCHEMA = vol.Schema({
+    vol.Required(CONF_ENTITY_ID): cv.entity_id,
+    vol.Required(CONF_WDIRVSTEP_MODE): cv.string,
+})
 
 MAX_RETRIES = 5
 TRANSIENT_EXP = 5.0  # Report set temperature for 5 seconds.
 TEMP_MIN_C = 18
+TEMP_MIN_HEAT_C = 16
 TEMP_MAX_C = 26
+TEMP_MAX_HEAT_C = 30
 
 LOGGER = logging.getLogger(__name__)
 
@@ -190,28 +215,30 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
     import wideq
     refresh_token = hass.data[CONF_TOKEN]
     client = wideq.Client.from_token(refresh_token)
-    name = config[CONF_NAME]
 
     """Set up the LGE HVAC components."""
 
     LOGGER.debug("Creating new LGE HVAC")
 
-    if LGE_HVAC_DEVICES not in hass.data:
-        hass.data[LGE_HVAC_DEVICES] = []
+    LGE_HVAC_DEVICES = []
 
     for device_id in (d for d in hass.data[LGE_DEVICES]):
         device = client.get_device(device_id)
-
+        model = client.model_info(device)
         if device.type == wideq.DeviceType.AC:
-            hvac_entity = LGEHVACDEVICE(client, device, name)
-            hass.data[LGE_HVAC_DEVICES].append(hvac_entity)
-    add_entities(hass.data[LGE_HVAC_DEVICES])
+            name = config[CONF_NAME]
+            mac = device.macaddress
+            model_type = model.model_type
+            if mac == config[CONF_MAC]:
+                hvac_entity = LGEHVACDEVICE(client, device, name, model_type)
+                LGE_HVAC_DEVICES.append(hvac_entity)
+    add_entities(LGE_HVAC_DEVICES)
 
     LOGGER.debug("LGE HVAC is added")
 
     def service_handle(service):
         """Handle the HVAC services."""
-        entity_id = service.data.get(CONF_ENTITY_ID)
+        entity_ids = service.data.get(ATTR_ENTITY_ID)
         airclean_mode = service.data.get(CONF_AIRCLEAN_MODE)
         coolpower_mode = service.data.get(CONF_COOLPOWER_MODE)
         autodry_mode = service.data.get(CONF_AUTODRY_MODE)
@@ -219,7 +246,11 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
         powersave_mode = service.data.get(CONF_POWERSAVE_MODE)
         longpower_mode = service.data.get(CONF_LONGPOWER_MODE)
         up_down_mode = service.data.get(CONF_WDIRUPDOWN_MODE)
-        
+        sensormon_mode = service.data.get(CONF_SENSORMON_MODE)
+        jet_mode = service.data.get(CONF_JET_MODE)
+        wdirvstep_mode = service.data.get(CONF_WDIRVSTEP_MODE)
+
+
         if service.service == SERVICE_SET_AIRCLEAN_MODE:
             hvac_entity.airclean_mode(airclean_mode)
         elif service.service == SERVICE_SET_COOLPOWER_MODE:
@@ -234,7 +265,13 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
             hvac_entity.longpower_mode(longpower_mode)
         elif service.service == SERVICE_SET_WDIRUPDOWN_MODE:
             hvac_entity.up_down_mode(up_down_mode)    
-              
+        elif service.service == SERVICE_SET_SENSORMON_MODE:
+            hvac_entity.sensormon_mode(sensormon_mode)
+        elif service.service == SERVICE_SET_JET_MODE:
+            hvac_entity.jet_mode(jet_mode)
+        elif service.service == SERVICE_SET_WDIRVSTEP_MODE:
+            hvac_entity.wdirvstep_mode(wdirvstep_mode)
+
     # Register hvac service(s)
     hass.services.register(
         DOMAIN, SERVICE_SET_AIRCLEAN_MODE, service_handle,
@@ -256,11 +293,21 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
         schema=LGE_HVAC_SET_LONGPOWER_MODE_SCHEMA)
     hass.services.register(
         DOMAIN, SERVICE_SET_WDIRUPDOWN_MODE, service_handle,
-        schema=LGE_HVAC_SET_WDIRUPDOWN_MODE_SCHEMA) 
+        schema=LGE_HVAC_SET_WDIRUPDOWN_MODE_SCHEMA)
+    hass.services.register(
+        DOMAIN, SERVICE_SET_SENSORMON_MODE, service_handle,
+        schema=LGE_HVAC_SET_SENSORMON_MODE_SCHEMA)
+    hass.services.register(
+        DOMAIN, SERVICE_SET_JET_MODE, service_handle,
+        schema=LGE_HVAC_SET_JET_MODE_SCHEMA)
+    hass.services.register(
+        DOMAIN, SERVICE_SET_WDIRVSTEP_MODE, service_handle,
+        schema=LGE_HVAC_SET_WDIRVSTEP_MODE_SCHEMA)
+
 
 class LGEHVACDEVICE(LGEDevice, ClimateDevice):
 
-    def __init__(self, client, device, name, celsius=True):
+    def __init__(self, client, device, name, model_type, celsius=True):
         """initialize a LGE HAVC Device."""
         LGEDevice.__init__(self, client, device)
         self._celsius = celsius
@@ -280,12 +327,17 @@ class LGEHVACDEVICE(LGEDevice, ClimateDevice):
         self._transient_temp = None
         self._transient_time = None
         self._name = name
+        self._type = model_type
 
         self.update()
 
     @property
     def name(self):
     	return self._name
+
+    @property
+    def device_type(self):
+        return self._type
 
     @property
     def supported_features(self):
@@ -309,11 +361,12 @@ class LGEHVACDEVICE(LGEDevice, ClimateDevice):
                 self.precision),
             ATTR_MAX_TEMP: show_temp(
                 self.hass, self.max_temp, self.temperature_unit,
-                self.precision),
+                self.precision),      
             ATTR_TEMPERATURE: show_temp(
                 self.hass, self.target_temperature, self.temperature_unit,
                 self.precision),
         }
+        data[ATTR_DEVICE_TYPE] = self.device_type
         data[ATTR_TARGET_TEMPERATURE] = self.target_temperature
         data[ATTR_AIRCLEAN_MODE] = self.is_airclean_mode
         data[ATTR_COOLPOWER_MODE] = self.is_coolpower_mode
@@ -322,12 +375,14 @@ class LGEHVACDEVICE(LGEDevice, ClimateDevice):
         data[ATTR_POWERSAVE_MODE] = self.is_powersave_mode
         data[ATTR_LONGPOWER_MODE] = self.is_longpower_mode
         data[ATTR_UP_DOWN_MODE] = self.is_up_down_mode
-        data[ATTR_HUMIDITY] = self._state.humidity
-        data[ATTR_SENSORPM1] = self._state.sensorpm1
-        data[ATTR_SENSORPM2] = self._state.sensorpm2
-        data[ATTR_SENSORPM10] = self._state.sensorpm10
-        data[ATTR_TOTALAIRPOLUTION] = self._state.total_air_polution
-        data[ATTR_AIRPOLUTION] = self._state.air_polution
+        data[ATTR_SENSORMON_MODE] = self.is_sensormon_mode
+        data[ATTR_WDIRVSTEP_MODE] = self.is_wdirvstep_mode
+        data[ATTR_HUMIDITY] = self.humidity
+        data[ATTR_SENSORPM1] = self.sensorpm1
+        data[ATTR_SENSORPM2] = self.sensorpm2
+        data[ATTR_SENSORPM10] = self.sensorpm10
+        data[ATTR_TOTALAIRPOLUTION] = self.total_air_polution
+        data[ATTR_AIRPOLUTION] = self.air_polution
         data[ATTR_STATUS] = self.current_status
         data[ATTR_FILTER_STATE] = self.filter_state
         data[ATTR_MFILTER_STATE] = self.mfilter_state
@@ -355,9 +410,9 @@ class LGEHVACDEVICE(LGEDevice, ClimateDevice):
 
     @property
     def current_status(self):
-        if self._state.is_on == True:
+        if self.is_on == True:
             return 'ON'
-        elif self._state.is_on == False:
+        elif self.is_on == False:
             return 'OFF'
 
     def turn_on(self):
@@ -372,147 +427,299 @@ class LGEHVACDEVICE(LGEDevice, ClimateDevice):
 
     @property
     def operation_list(self):
-        return list(MODES.values())
+        if self.device_type == 'PAC':
+            return list(MODES.values())
+        elif self.device_type == 'RAC':
+            return list(RAC_SACMODES.values())
+        elif self.device_type == 'SAC_CST':
+            return list(RAC_SACMODES.values())
 
     @property
     def current_operation(self):
         if self._state:
             mode = self._state.mode
-            return MODES[mode.name]
+            if self.device_type == 'PAC':
+                return MODES[mode.name]
+            if self.device_type == 'RAC':
+                return RAC_SACMODES[mode.name]
+            elif self.device_type == 'SAC_CST':
+                return RAC_SACMODES[mode.name]
             
     def set_operation_mode(self, operation_mode):
         import wideq
 
         # Invert the modes mapping.
         modes_inv = {v: k for k, v in MODES.items()}
-
-        mode = wideq.ACMode[modes_inv[operation_mode]]
+        rac_sacmodes_inv = {v: k for k, v in RAC_SACMODES.items()}
+        
+        if self.device_type == 'PAC':
+            mode = wideq.ACMode[modes_inv[operation_mode]]
+        elif self.device_type == 'RAC':
+            mode = wideq.ACMode[rac_sacmodes_inv[operation_mode]]
+        elif self.device_type == 'SAC_CST':
+            mode = wideq.ACMode[rac_sacmodes_inv[operation_mode]]
         self._ac.set_mode(mode)
 
     @property
     def fan_list(self):
-        return list(FANMODES.values())
+        if self.device_type == 'PAC':
+            return list(FANMODES.values())
+        elif self.device_type == 'RAC':
+            return list(RAC_SACFANMODES.values())            
+        elif self.device_type == 'SAC_CST':
+            return list(RAC_SACFANMODES.values())
 
     @property
     def current_fan_mode(self):
         if self._state:
             mode = self._state.windstrength_state
-            return FANMODES[mode.name]
+            if self.device_type == 'PAC':
+                return FANMODES[mode.name]
+            elif self.device_type == 'RAC':
+                return RAC_SACFANMODES[mode.name]                
+            elif self.device_type == 'SAC_CST':
+                return RAC_SACFANMODES[mode.name]
                     
     def set_fan_mode(self, fan_mode):
         import wideq
         # Invert the modes mapping.
         fanmodes_inv = {v: k for k, v in FANMODES.items()}
+        rac_sacfanmodes_inv = {v: k for k, v in RAC_SACFANMODES.items()}
 
-        mode = wideq.ACWindstrength[fanmodes_inv[fan_mode]]
+        if self.device_type == 'PAC':
+            mode = wideq.ACWindstrength[fanmodes_inv[fan_mode]]
+        elif self.device_type == 'RAC':
+            mode = wideq.ACWindstrength[rac_sacfanmodes_inv[fan_mode]]            
+        elif self.device_type == 'SAC_CST':
+            mode = wideq.ACWindstrength[rac_sacfanmodes_inv[fan_mode]]
         self._ac.set_windstrength(mode)
 
     @property
     def swing_list(self):
-        return list(SWINGMODES.values())
+        if self.device_type == 'PAC':
+            return list(SWINGMODES.values())
+        elif self.device_type == 'RAC':
+            return list(RAC_SACSWINGMODES.values())
+        elif self.device_type == 'SAC_CST':
+            return list(RAC_SACSWINGMODES.values())
 
     @property
     def current_swing_mode(self):
         if self._state:
             mode = self._state.wdirleftright_state
-            return SWINGMODES[mode.name]
+            if self.device_type == 'PAC':
+                return SWINGMODES[mode.name]
+            elif self.device_type == 'RAC':
+                return RAC_SACWINGMODES[mode.name]     
+            elif self.device_type == 'SAC_CST':
+                return RAC_SACSWINGMODES[mode.name]
             
     def set_swing_mode(self, swing_mode):
 
         import wideq
-
         swingmodes_inv = {v: k for k, v in SWINGMODES.items()}
+        rac_sacswingmodes_inv = {v: k for k, v in RAC_SACSWINGMODES.items()}
 
-        mode = wideq.WDIRLEFTRIGHT[swingmodes_inv[swing_mode]]
+        if self.device_type == 'PAC':
+            mode = wideq.WDIRLEFTRIGHT[swingmodes_inv[swing_mode]]
+        elif self.device_type == 'RAC':
+            mode = wideq.WDIRLEFTRIGHT[rac_sacswingmodes_inv[swing_mode]]
+        elif self.device_type == 'SAC_CST':
+            mode = wideq.WDIRLEFTRIGHT[rac_sacswingmodes_inv[swing_mode]]
         self._ac.set_wind_leftright(mode)
 
+    @property
+    def is_wdirvstep_mode(self):
+        if self._state:
+            if self.device_type == 'PAC':
+                return 'Not Supported'
+            elif self.device_type == 'RAC':
+                mode = self._state.wdirvstep_state
+            elif self.device_type == 'SAC_CST':
+                mode = self._state.wdirvstep_state
+            return WDIRVSTEP[mode.name]
+
+    def wdirvstep_mode(self, wdirvstep_mode):
+
+        import wideq
+        wdirvstepmodes_inv = {v: k for k, v in WDIRVSTEP.items()}
+
+        if self.device_type == 'PAC':
+            return 'Not Supported'
+        elif self.device_type == 'RAC':
+            mode = wideq.WDIRVSTEP[wdirvstepmodes_inv[wdirvstep_mode]]
+        elif self.device_type == 'SAC_CST':
+            mode = wideq.WDIRVSTEP[wdirvstepmodes_inv[wdirvstep_mode]]
+        self._ac.set_wdirvstep(mode)
 
     @property
     def is_airclean_mode(self):
         if self._state:
-            mode = self._state.airclean_state
-            return AIRCLEANMODES[mode.name]
+            if self.device_type == 'PAC':
+                mode = self._state.airclean_state
+            elif self.device_type == 'RAC':
+                mode = self._state.airclean_state
+            elif self.device_type == 'SAC_CST':
+                mode = self._state.sac_airclean_state
+            return ACETCMODES[mode.name]
     
-
     def airclean_mode(self, airclean_mode):
+        name = 'AirClean'
         if airclean_mode == 'ON':
-            self._ac.set_airclean(True)
+            if self.device_type == 'PAC':
+                self._ac.set_airclean(True)
+            elif self.device_type == 'RAC':
+                self._ac.set_airclean(True)
+            elif self.device_type == 'SAC_CST':
+                self._ac.set_etc_mode(name, True)
         elif airclean_mode == 'OFF':
-            self._ac.set_airclean(False)
+            if self.device_type == 'PAC':
+                self._ac.set_airclean(False)
+            elif self.device_type == 'RAC':
+                self._ac.set_airclean(False)
+            elif self.device_type == 'SAC_CST':
+                self._ac.set_etc_mode(name, False)
 
     @property
     def is_autodry_mode(self):
         if self._state:
             mode = self._state.autodry_state
-            return AUTODRYMODES[mode.name]
+            return ACETCMODES[mode.name]
 
 
     def autodry_mode(self, autodry_mode):
+        name = 'AutoDry'
         if autodry_mode == 'ON':
-            self._ac.set_autodry(True)
+            self._ac.set_etc_mode(name, True)
         elif autodry_mode == 'OFF':
-            self._ac.set_autodry(False)
+            self._ac.set_etc_mode(name, False)
 
     @property
     def is_smartcare_mode(self):
         if self._state:
-            mode = self._state.smartcare_state
-            return SMARTCAREMODES[mode.name]
+            if self.device_type == 'PAC':
+                mode = self._state.smartcare_state
+                return ACETCMODES[mode.name]
+            elif self.device_type == 'RAC':
+                return 'Not Supported'
+            elif self.device_type == 'SAC_CST':
+                return 'Not Supported'
 
     def smartcare_mode(self, smartcare_mode):
-        if smartcare_mode == 'ON':
-            self._ac.set_smartcare(True)
-        elif smartcare_mode == 'OFF':
-            self._ac.set_smartcare(False)
+        name = 'SmartCare'
+        if self.device_type == 'PAC':
+            if smartcare_mode == 'ON':
+                self._ac.set_etc_mode(name, True)
+            elif smartcare_mode == 'OFF':
+                self._ac.set_etc_mode(name, False)
+            
 
     @property
     def is_powersave_mode(self):
         if self._state:
             mode = self._state.powersave_state
-            return POWERSAVEMODES[mode.name]
+            return ACETCMODES[mode.name]
 
 
     def powersave_mode(self, powersave_mode):
+        name = 'PowerSave'
         if powersave_mode == 'ON':
-            self._ac.set_powersave(True)
+            self._ac.set_etc_mode(name, True)
 
     @property
     def is_coolpower_mode(self):
         if self._state:
-            mode = self._state.icevalley_state
-            return COOLPOWERMODES[mode.name]
-
+            if self.device_type == 'PAC':
+                mode = self._state.icevalley_state
+                return ACETCMODES[mode.name]
+            elif self.device_type == 'RAC':
+                return 'Not Supported'
+            elif self.device_type == 'SAC_CST':
+                return 'Not Supported'
 
     def coolpower_mode(self, coolpower_mode):
-        if coolpower_mode == 'ON':
-            self._ac.set_icevalley(True)
-        elif coolpower_mode == 'OFF':
-            self._ac.set_icevalley(False)
+        name = 'IceValley'
+        if self.device_type == 'PAC':
+            if coolpower_mode == 'ON':
+                self._ac.set_etc_mode(name, True)
+            elif coolpower_mode == 'OFF':
+                self._ac.set_etc_mode(name, False)
 
     @property
     def is_longpower_mode(self):
         if self._state:
-            mode = self._state.longpower_state
-            return LONGPOWERMODES[mode.name]
-
+            if self.device_type == 'PAC':
+                mode = self._state.longpower_state
+                return ACETCMODES[mode.name]
+            elif self.device_type == 'RAC':
+                return 'Not Supported'
+            elif self.device_type == 'SAC_CST':
+                return 'Not Supported'
 
     def longpower_mode(self, longpower_mode):
-        if longpower_mode == 'ON':
-            self._ac.set_longpower(True)
-        elif longpower_mode == 'OFF':
-            self._ac.set_longpower(False)
+        name = 'FlowLongPower'
+        if self.device_type == 'PAC':
+            if longpower_mode == 'ON':
+                self._ac.set_etc_mode(name, True)
+            elif longpower_mode == 'OFF':
+                self._ac.set_etc_mode(name, False)
 
     @property
     def is_up_down_mode(self):
         if self._state:
             mode = self._state.wdirupdown_state
-            return WDIRUPDOWNMODES[mode.name]
+            return ACETCMODES[mode.name]
 
     def up_down_mode(self, up_down_mode):
+        name = 'WDirUpDown'
         if up_down_mode == 'ON':
-            self._ac.set_wind_updown(True)
+            self._ac.set_etc_mode(name, True)
         elif up_down_mode == 'OFF':
-            self._ac.set_wind_updown(False)
+            self._ac.set_etc_mode(name, False)
+
+    @property
+    def is_sensormon_mode(self):
+        if self._state:
+            if self.device_type == 'PAC':
+                mode = self._state.sensormon_state
+                return ACETCMODES[mode.name]
+            elif self.device_type == 'RAC':
+                return 'Not Supported'
+            elif self.device_type == 'SAC_CST':
+                return 'Not Supported'
+
+    def sensormon_mode(self, sensormon_mode):
+        name = 'SensorMon'
+        if self.device_type == 'PAC':
+            if sensormon_mode == 'ON':
+                self._ac.set_etc_mode(name, True)
+            elif sensormon_mode == 'OFF':
+                self._ac.set_etc_mode(name, False)
+
+    @property
+    def is_jet_mode(self):
+        if self._state:
+            if self.device_type == 'PAC':
+                return 'Not Supported'
+            elif self.device_type == 'RAC':
+                mode = self._state.jet_state
+                return ACETCMODES[mode.name]
+            elif self.device_type == 'SAC_CST':
+                mode = self._state.jet_state
+                return ACETCMODES[mode.name]
+
+    def jet_mode(self, jet_mode):
+        name = 'Jet'
+        if self.device_type == 'RAC':
+            if jet_mode == 'ON':
+                self._ac.set_etc_mode(name, True)
+            elif jet_mode == 'OFF':
+                self._ac.set_etc_mode(name, False)
+        elif self.device_type == 'SAC_CST':
+            if jet_mode == 'ON':
+                self._ac.set_etc_mode(name, True)
+            elif jet_mode == 'OFF':
+                self._ac.set_etc_mode(name, False)
 
     @property
     def filter_state(self):
@@ -540,6 +747,65 @@ class LGEHVACDEVICE(LGEDevice, ClimateDevice):
         else:
             return int(remain * 100)
 
+    @property
+    def humidity(self):
+        if self._state:
+            if self.device_type == 'PAC':
+                return self._state.humidity
+            elif self.device_type == 'RAC':
+                return 'Not Supported'
+            elif self.device_type == 'SAC_CST':
+                return 'Not Supported'
+    
+    @property
+    def sensorpm1(self):
+        if self._state:
+            if self.device_type == 'PAC':
+                return self._state.sensorpm1
+            elif self.device_type == 'RAC':
+                return 'Not Supported'
+            elif self.device_type == 'SAC_CST':
+                return 'Not Supported'
+
+    @property
+    def sensorpm2(self):
+        if self._state:
+            if self.device_type == 'PAC':
+                return self._state.sensorpm2
+            elif self.device_type == 'RAC':
+                return 'Not Supported'
+            elif self.device_type == 'SAC_CST':
+                return 'Not Supported'
+
+    @property
+    def sensorpm10(self):
+        if self._state:
+            if self.device_type == 'PAC':
+                return self._state.sensorpm10
+            elif self.device_type == 'RAC':
+                return 'Not Supported'
+            elif self.device_type == 'SAC_CST':
+                return 'Not Supported'
+
+    @property
+    def air_polution(self):
+        if self._state:
+            if self.device_type == 'PAC':
+                return self._state.air_polution
+            elif self.device_type == 'RAC':
+                return 'Not Supported'
+            elif self.device_type == 'SAC_CST':
+                return 'Not Supported'
+            
+    @property
+    def total_air_polution(self):
+        if self._state:
+            if self.device_type == 'PAC':
+                return self._state.total_air_polution
+            elif self.device_type == 'RAC':
+                return 'Not Supported'
+            elif self.device_type == 'SAC_CST':
+                return 'Not Supported'
 
     @property
     def temperature_unit(self):
@@ -551,13 +817,23 @@ class LGEHVACDEVICE(LGEDevice, ClimateDevice):
     @property
     def min_temp(self):
         if self._celsius:
-            return TEMP_MIN_C
+            if self.device_type == 'PAC':
+                return TEMP_MIN_C
+            elif self.device_type == 'RAC':
+                return TEMP_MIN_HEAT_C
+            elif self.device_type == 'SAC_CST':
+                return TEMP_MIN_HEAT_C
         return climate.ClimateDevice.min_temp.fget(self)
 
     @property
     def max_temp(self):
         if self._celsius:
-            return TEMP_MAX_C
+            if self.device_type == 'PAC':
+                return TEMP_MAX_C
+            elif self.device_type == 'RAC':
+                return TEMP_MAX_HEAT_C
+            elif self.device_type == 'SAC_CST':
+                return TEMP_MAX_HEAT_C
         return climate.ClimateDevice.max_temp.fget(self)
 
     @property
