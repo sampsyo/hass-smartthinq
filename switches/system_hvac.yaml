@@ -1,0 +1,88 @@
+#Kidsplayroom HVAC Switch
+
+#Air CLean Mode
+- platform: template
+  switches:
+    system_hvac_set_airclean_mode:
+      friendly_name: "공기청정"
+      value_template: "{% if states.climate.system_hvac.attributes.airclean_mode == 'ON' %}true{% else %}false{% endif %}"
+      turn_on:
+        service: smartthinq.lge_hvac_set_airclean_mode
+        data:
+          entity_id: climate.system_hvac
+          airclean_mode: 'ON'
+      turn_off:
+        service: smartthinq.lge_hvac_set_airclean_mode
+        data:
+          entity_id: climate.system_hvac
+          airclean_mode: 'OFF'
+#Auto Dry Mode
+    system_hvac_set_autodry_mode:
+      friendly_name: "자동건조"
+      value_template: "{% if states.climate.system_hvac.attributes.autodry_mode == 'ON' %}true{% else %}false{% endif %}"
+      turn_on:
+        service: smartthinq.lge_hvac_set_autodry_mode
+        data:
+          entity_id: climate.system_hvac
+          autodry_mode: 'ON'
+      turn_off:
+        service: smartthinq.lge_hvac_set_autodry_mode
+        data:
+          entity_id: climate.system_hvac
+          autodry_mode: 'OFF'
+#Power Save Mode
+    system_hvac_set_powersave_mode:
+      friendly_name: "절전냉방"
+      value_template: "{% if states.climate.system_hvac.attributes.powersave_mode == 'ON' %}true{% else %}false{% endif %}"
+      turn_on:
+        service: smartthinq.lge_hvac_set_powersave_mode
+        data:
+          entity_id: climate.system_hvac
+          powersave_mode: 'ON'
+      turn_off:
+        service: smartthinq.lge_hvac_set_powersave_mode
+        data:
+          entity_id: climate.system_hvac
+          powersave_mode: 'OFF'             
+#Wind Up Down Mode
+    system_hvac_set_up_down_mode:
+      friendly_name: "풍향 상/하 회전"
+      value_template: "{% if states.climate.system_hvac.attributes.up_down_mode == 'ON' %}true{% else %}false{% endif %}"
+      turn_on:
+        service: smartthinq.lge_hvac_set_up_down_mode
+        data:
+          entity_id: climate.system_hvac
+          up_down_mode: 'ON'
+      turn_off:
+        service: smartthinq.lge_hvac_set_up_down_mode
+        data:
+          entity_id: climate.system_hvac
+          up_down_mode: 'OFF'
+# Power Mode
+    system_hvac_set_power_mode:
+      friendly_name: "파워냉방"
+      value_template: "{% if states.climate.system_hvac.attributes.fan_mode == '파워' %}true{% else %}false{% endif %}"
+      turn_on:
+        service: climate.set_fan_mode
+        data:
+          entity_id: climate.system_hvac
+          fan_mode: '파워'
+      turn_off:
+        service: climate.set_fan_mode
+        data:
+          entity_id: climate.system_hvac
+          fan_mode: '자동'
+# 간접풍  Mode
+    system_hvac_set_indirectwind_mode:
+      friendly_name: "간접풍모드"
+      value_template: "{% if states.climate.system_hvac.attributes.wdirvstep_mode == '2단계' %}true{% else %}false{% endif %}"
+      turn_on:
+        service: smartthinq.lge_hvac_set_wdirvstep_mode
+        data:
+          entity_id: climate.system_hvac
+          wdirvstep_mode: '2단계'
+      turn_off:
+        service: smartthinq.lge_hvac_set_wdirvstep_mode
+        data:
+          entity_id: climate.system_hvac
+          wdirvstep_mode: '6단계'
