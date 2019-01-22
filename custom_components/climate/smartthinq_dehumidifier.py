@@ -21,6 +21,7 @@ DEPENDENCIES = ['smartthinq']
 LGE_DEHUMIDIFIER_DEVICES = 'lge_dehumidifier_devices'
 
 CONF_AIRREMOVAL_MODE = 'airremoval_mode'
+CONF_MAC = 'mac'
 
 SUPPORT_TARGET_HUMIDITY = 8
 SUPPORT_TARGET_HUMIDITY_HIGH = 16
@@ -93,16 +94,19 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
 
     LOGGER.debug("Creating new LGE DEHUMIDIFIER")
 
-    if LGE_DEHUMIDIFIER_DEVICES not in hass.data:
-        hass.data[LGE_DEHUMIDIFIER_DEVICES] = []
+    LGE_DEHUMIDIFIER_DEVICES = []
 
     for device_id in (d for d in hass.data[LGE_DEVICES]):
         device = client.get_device(device_id)
-
+        model = client.model_info(device)
         if device.type == wideq.DeviceType.DEHUMIDIFIER:
-            hvac_entity = LGEDEHUMDEVICE(client, device, name)
-            hass.data[LGE_DEHUMIDIFIER_DEVICES].append(hvac_entity)
-    add_entities(hass.data[LGE_DEHUMIDIFIER_DEVICES])
+            name = config[CONF_NAME]
+            mac = device.macaddress
+            model_type = model.model_type
+            if mac == config[CONF_MAC]:
+                hvac_entity = LGEDEHUMDEVICE(client, device, name, model_type)
+                LGE_DEHUMIDIFIER_DEVICES.append(hvac_entity)
+    add_entities(LGE_DEHUMIDIFIER_DEVICES)
 
     LOGGER.debug("LGE DEHUMIDIFIER is added")
 
@@ -121,7 +125,7 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
 
 class LGEDEHUMDEVICE(LGEDevice, ClimateDevice):
 
-    def __init__(self, client, device, name):
+    def __init__(self, client, device, name, model_type):
         """initialize a LGE HAVC Device."""
         LGEDevice.__init__(self, client, device)
 
@@ -139,6 +143,7 @@ class LGEDEHUMDEVICE(LGEDevice, ClimateDevice):
         self._transient_hum = None
         self._transient_time = None
         self._name = name
+        self._type = model_type
 
         self.update()
 
@@ -146,6 +151,9 @@ class LGEDEHUMDEVICE(LGEDevice, ClimateDevice):
     def name(self):
     	return self._name
 
+    @property
+    def device_type(self):
+        return self._type
 
     @property
     def supported_features(self):
