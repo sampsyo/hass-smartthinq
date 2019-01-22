@@ -1,0 +1,27 @@
+# system hvac
+
+- platform: template
+  sensors:
+    system_hvac_temperature:
+      value_template: '{{states.climate.system_hvac.attributes.current_temperature}}'
+      unit_of_measurement: '℃'
+    system_hvac_target_temperature:
+      value_template: '{{states.climate.system_hvac.attributes.target_temperature}}'
+      unit_of_measurement: '℃'
+    system_hvac_current_operation:  
+      value_template: '{{states.climate.system_hvac.attributes.operation_mode}}'
+    system_hvac_current_status:
+      value_template: '{{states.climate.system_hvac.attributes.current_status}}'
+    system_hvac_remain_filter:  
+      value_template: '{{states.climate.system_hvac.attributes.mfilter_state}}'
+      unit_of_measurement: '%'
+    system_hvac_airclean_mode:
+      value_template: '{{states.climate.system_hvac.attributes.airclean_mode}}'
+    system_hvac_autodry_mode:
+      value_template: '{{states.climate.system_hvac.attributes.autodry_mode}}'
+    system_hvac_up_down_mode:
+      value_template: '{{states.climate.system_hvac.attributes.up_down_mode}}'
+    system_hvac_jet_mode:
+      value_template: '{{states.climate.system_hvac.attributes.jet_mode}}'
+    system_hvac_wdirvstep_mode:
+      value_template: '{{states.climate.system_hvac.attributes.wdirvstep_mode}}'
