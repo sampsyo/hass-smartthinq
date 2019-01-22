@@ -510,7 +510,7 @@ class LGEHVACDEVICE(LGEDevice, ClimateDevice):
             if self.device_type == 'PAC':
                 return SWINGMODES[mode.name]
             elif self.device_type == 'RAC':
-                return RAC_SACWINGMODES[mode.name]     
+                return RAC_SACSWINGMODES[mode.name]     
             elif self.device_type == 'SAC_CST':
                 return RAC_SACSWINGMODES[mode.name]
             
