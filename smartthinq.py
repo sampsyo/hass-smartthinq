@@ -32,14 +32,18 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
 
     refresh_token = config.get('refresh_token')
     client = wideq.Client.from_token(refresh_token)
-    add_devices(_ac_devices(client))
+    add_devices(_ac_devices(hass, client))
 
 
-def _ac_devices(client):
+def _ac_devices(hass, client):
     """Generate all the AC (climate) devices associated with the user's
     LG account.
+
+    Log errors for devices that can't be used for whatever reason.
     """
     import wideq
+
+    persistent_notification = hass.components.persistent_notification
 
     for device in client.devices:
         if device.type == wideq.DeviceType.AC:
@@ -48,6 +52,10 @@ def _ac_devices(client):
             except wideq.NotConnectedError:
                 LOGGER.error(
                     'SmartThinQ device not available: %s', device.name
+                )
+                persistent_notification.async_create(
+                    'SmartThinQ device not available: %s' % device.name,
+                    title='SmartThinQ Error',
                 )
             else:
                 yield d
