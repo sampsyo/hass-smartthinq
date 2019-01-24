@@ -32,12 +32,25 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
 
     refresh_token = config.get('refresh_token')
     client = wideq.Client.from_token(refresh_token)
+    add_devices(_ac_devices(client))
 
-    add_devices(
-        LGDevice(client, device)
-        for device in client.devices
-        if device.type == wideq.DeviceType.AC
-    )
+
+def _ac_devices(client):
+    """Generate all the AC (climate) devices associated with the user's
+    LG account.
+    """
+    import wideq
+
+    for device in client.devices:
+        if device.type == wideq.DeviceType.AC:
+            try:
+                d = LGDevice(client, device)
+            except wideq.NotConnectedError:
+                LOGGER.error(
+                    'SmartThinQ device not available: %s', device.name
+                )
+            else:
+                yield d
 
 
 class LGDevice(climate.ClimateDevice):
