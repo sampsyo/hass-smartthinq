@@ -176,7 +176,7 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
                     LOGGER.info('Connection Lost. Retrying.')
                     raise PlatformNotReady
                 LGE_WASHER_DEVICES.append(washer_entity)
-    add_entities(hass.data[LGE_WASHER_DEVICES])
+    add_entities(LGE_WASHER_DEVICES)
 
     LOGGER.debug("LGE Washer is added")
     
