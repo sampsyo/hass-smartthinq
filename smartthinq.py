@@ -142,11 +142,13 @@ class LGDevice(climate.ClimateDevice):
 
     @property
     def operation_list(self):
-        return list(MODES.values())
+        return list(MODES.values()) + [const.STATE_OFF]
 
     @property
     def current_operation(self):
         if self._state:
+            if not self.is_on:
+                return const.STATE_OFF
             mode = self._state.mode
             return MODES[mode.name]
 
@@ -156,6 +158,10 @@ class LGDevice(climate.ClimateDevice):
             return self._state.is_on
 
     def set_operation_mode(self, operation_mode):
+        if operation_mode == const.STATE_OFF:
+            self.turn_off()
+            return
+
         import wideq
 
         # Invert the modes mapping.
