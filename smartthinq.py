@@ -32,7 +32,7 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
 
     refresh_token = config.get('refresh_token')
     client = wideq.Client.from_token(refresh_token)
-    add_devices(_ac_devices(hass, client))
+    add_devices(_ac_devices(hass, client), True)
 
 
 def _ac_devices(hass, client):
@@ -78,8 +78,6 @@ class LGDevice(climate.ClimateDevice):
         # store the timestamp for when we set this value.
         self._transient_temp = None
         self._transient_time = None
-
-        self.update()
 
     @property
     def temperature_unit(self):
