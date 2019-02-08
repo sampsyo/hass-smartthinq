@@ -108,10 +108,14 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
         if device.type == wideq.DeviceType.REFRIGERATOR:
             name = config[CONF_NAME]
             mac = device.macaddress
+            conf_mac = config[CONF_MAC]
             model_type = model.model_type
-            if mac == config[CONF_MAC]:
+            if mac == conf_mac.lower():
                 ref_entity = LGEREFDEVICE(client, device, name, model_type)
                 LGE_REF_DEVICES.append(ref_entity)
+            else:
+                LOGGER.error("MAC Address is not matched")
+
     add_entities(LGE_REF_DEVICES)
 
     LOGGER.debug("LGE Refrigerator is added")
@@ -178,7 +182,7 @@ class LGEREFDEVICE(LGEDevice):
     @property
     def device_type(self):
         return self._type
-        
+            
     @property
     def supported_features(self):
         """ none """
@@ -203,6 +207,13 @@ class LGEREFDEVICE(LGEDevice):
         data[ATTR_ACTIVESAVING_STATE] = self.active_saving_state
         return data
 
+    @property
+    def state(self):
+        if self._state:
+            return '켜짐'
+        else:
+            return '꺼'
+            
     @property
     def current_reftemp(self):
         if self._state:
