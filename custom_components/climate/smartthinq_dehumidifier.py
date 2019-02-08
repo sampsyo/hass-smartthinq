@@ -102,10 +102,14 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
         if device.type == wideq.DeviceType.DEHUMIDIFIER:
             name = config[CONF_NAME]
             mac = device.macaddress
+            conf_mac = config[CONF_MAC]
             model_type = model.model_type
-            if mac == config[CONF_MAC]:
+            if mac == conf_mac.lower():
                 hvac_entity = LGEDEHUMDEVICE(client, device, name, model_type)
                 LGE_DEHUMIDIFIER_DEVICES.append(hvac_entity)
+            else:
+                LOGGER.error("MAC Address is not matched")
+
     add_entities(LGE_DEHUMIDIFIER_DEVICES)
 
     LOGGER.debug("LGE DEHUMIDIFIER is added")
