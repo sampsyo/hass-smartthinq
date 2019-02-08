@@ -168,14 +168,18 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
         if device.type == wideq.DeviceType.WASHER:
             name = config[CONF_NAME]
             mac = device.macaddress
+            conf_mac = config[CONF_MAC]
             model_type = model.model_type
-            if mac == config[CONF_MAC]:
+            if mac == conf_mac.lower():
                 try:
                     washer_entity = LGEWASHERDEVICE(client, device, name, model_type)
                 except wideq.NotConnectError:
                     LOGGER.info('Connection Lost. Retrying.')
                     raise PlatformNotReady
                 LGE_WASHER_DEVICES.append(washer_entity)
+            else:
+                LOGGER.error("MAC Address is not matched")
+
     add_entities(LGE_WASHER_DEVICES)
 
     LOGGER.debug("LGE Washer is added")
@@ -239,9 +243,10 @@ class LGEWASHERDEVICE(LGEDevice):
         return data
 
     @property
-    def is_on(self):
+    def state(self):
         if self._state:
-            return self._state.is_on
+            run = self._state.run_state
+            return RUNSTATES[run.name]
 
     @property
     def current_run_state(self):
