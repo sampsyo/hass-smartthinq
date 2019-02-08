@@ -156,10 +156,14 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
         if device.type == wideq.DeviceType.DRYER:
             name = config[CONF_NAME]
             mac = device.macaddress
+            conf_mac = config[CONF_MAC]
             model_type = model.model_type
-            if mac == config[CONF_MAC]:
+            if mac == conf_mac.lower():
                 dryer_entity = LGEDRYERDEVICE(client, device, name, model_type)
                 LGE_DRYER_DEVICES.append(dryer_entity)
+            else:
+                LOGGER.error("MAC Address is not matched")
+
     add_entities(LGE_DRYER_DEVICES)
 
     LOGGER.debug("LGE Dryer is added")
@@ -231,6 +235,12 @@ class LGEDRYERDEVICE(LGEDevice):
     def is_on(self):
         if self._state:
             return self._state.is_on
+
+    @property
+    def state(self):
+        if self._state:
+            run = self._state.run_state
+            return RUNSTATES[run.name]
 
     @property
     def current_run_state(self):
