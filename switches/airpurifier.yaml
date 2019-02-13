@@ -1,0 +1,46 @@
+#airpurifier Switch
+
+#Air CLean Mode
+- platform: template
+  switches:
+    airpurifier_set_airremoval_mode:
+      friendly_name: "공기제균"
+      value_template: "{% if states.climate.airpurifier.attributes.airremoval_mode == '켜짐' %}true{% else %}false{% endif %}"
+      turn_on:
+        service: smartthinq.lge_airpurifier_set_airremoval_mode
+        data:
+          entity_id: climate.airpurifier
+          airremoval_mode: '켜짐'
+      turn_off:
+        service: smartthinq.lge_airpurifier_set_airremoval_mode
+        data:
+          entity_id: climate.airpurifier
+          airremoval_mode: '꺼짐'
+# CirculateDir Mode
+    airpurifier_set_circulatedir_mode:
+      friendly_name: "순환팬 회전"
+      value_template: "{% if states.climate.airpurifier.attributes.circulatedir_mode == '켜짐' %}true{% else %}false{% endif %}"
+      turn_on:
+        service: smartthinq.lge_airpurifier_set_circulatedir_mode
+        data:
+          entity_id: climate.airpurifier
+          circulatedir_mode: '켜짐'
+      turn_off:
+        service: smartthinq.lge_airpurifier_set_circulatedir_mode
+        data:
+          entity_id: climate.airpurifier
+          circulatedir_mode: '꺼짐'
+#SignalLight Mode
+    airpurifier_set_signallighting_mode:
+      friendly_name: "청정표시등"
+      value_template: "{% if states.climate.airpurifier.attributes.signallighting_mode == '켜짐' %}true{% else %}false{% endif %}"
+      turn_on:
+        service: smartthinq.lge_airpurifier_set_signallighting_mode
+        data:
+          entity_id: climate.airpurifier
+          signallighting_mode: '켜짐'
+      turn_off:
+        service: smartthinq.lge_airpurifier_set_signallighting_mode
+        data:
+          entity_id: climate.airpurifier
+          signallighting_mode: '꺼짐'             
