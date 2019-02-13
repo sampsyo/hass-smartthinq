@@ -105,8 +105,8 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
             conf_mac = config[CONF_MAC]
             model_type = model.model_type
             if mac == conf_mac.lower():
-                hvac_entity = LGEDEHUMDEVICE(client, device, name, model_type)
-                LGE_DEHUMIDIFIER_DEVICES.append(hvac_entity)
+                dehum_entity = LGEDEHUMDEVICE(client, device, name, model_type)
+                LGE_DEHUMIDIFIER_DEVICES.append(dehum_entity)
             else:
                 LOGGER.error("MAC Address is not matched")
 
