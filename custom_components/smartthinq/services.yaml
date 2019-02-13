@@ -151,3 +151,47 @@ lge_ref_set_freshairfilter_mode:
     freshairfilter_mode:
       description: freshairfilter_mode
       example: 'AUTO'
+      
+# Describes the format for available LGE Dehumidifier services      
+
+lge_dehumidifier_set_airremoval_mode:
+  description: Set the airrrmoval mode.
+  fields:
+    entity_id:
+      description: Name(s) of the entities to set airremoval mode
+      example: 'climate.dehumidifier'
+    airremoval_mode:
+      description: airremoval_mode
+      example: '켜짐'
+      
+# Describes the format for available LGE AirPurifier services      
+
+lge_airpurifier_set_airremoval_mode:
+  description: Set the airrrmoval mode.
+  fields:
+    entity_id:
+      description: Name(s) of the entities to set airremoval mode
+      example: 'climate.airpurifier'
+    airremoval_mode:
+      description: airremoval_mode
+      example: '켜짐'
+      
+lge_airpurifier_set_circulatedir_mode:
+  description: Set the circulatedir mode.
+  fields:
+    entity_id:
+      description: Name(s) of the entities to set circulatedir mode
+      example: 'climate.airpurifier'
+    circulatedir_mode:
+      description: circulatedir_mode
+      example: '켜짐'
+      
+lge_airpurifier_set_signallighting_mode:
+  description: Set the signallighting mode.
+  fields:
+    entity_id:
+      description: Name(s) of the entities to set signallighting mode
+      example: 'climate.airpurifier'
+    signallighting_mode:
+      description: signallighting_mode
+      example: '켜짐'
