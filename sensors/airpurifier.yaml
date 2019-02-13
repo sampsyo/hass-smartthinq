@@ -1,0 +1,27 @@
+# airpurifier sensor
+
+- platform: template
+  sensors:
+    airpurifier_pm1:
+      friendly_name: '극초미세먼지(PM 1.0)'
+      icon_template: mdi:pine-tree
+      value_template: '{{states.climate.airpurifier.attributes.pm1}}'
+      unit_of_measurement: μm/m³
+    airpurifier_pm2:
+      friendly_name: '초미세먼지(PM 2.5)'
+      icon_template: mdi:pine-tree
+      value_template: '{{states.climate.airpurifier.attributes.pm2}}'
+      unit_of_measurement: μm/m³
+    airpurifier_pm10:
+      friendly_name: '미세먼지(PM 10)'
+      icon_template: mdi:pine-tree
+      value_template: '{{states.climate.airpurifier.attributes.pm10}}'
+      unit_of_measurement: μm/m³
+    airpurifier_total_air_polution:
+      friendly_name: '종합청정도'
+      icon_template: mdi:pine-tree
+      value_template: '{{states.climate.airpurifier.attributes.total_air_polution}}'
+    airpurifier_air_polution:
+      friendly_name: '냄새'
+      icon_template: mdi:pine-tree
+      value_template: '{{states.climate.airpurifier.attributes.air_polution}}'
