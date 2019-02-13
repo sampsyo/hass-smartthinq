@@ -81,6 +81,17 @@ Water Purifier:
   - sensor.hot_water_usage_year
   - sensor.total_water_usage_year
 
+Air Purifier:
+  - climate.airpurifier
+  - switch.airpurifier_set_airremoval_mode
+  - switch.airpurifier_set_circulatedir_mode
+  - switch.airpurifier_set_signallighting_mode
+  - sensor.airpurifier_pm1
+  - sensor.airpurifier_pm2
+  - sensor.airpurifier_pm10
+  - sensor.airpurifier_total_air_polution
+  - sensor.airpurifier_air_polution
+
 #      View
 default view:
   view: yes
@@ -92,6 +103,7 @@ default view:
     - group.washer
     - group.dehumidifier
     - group.water_purifier
+    - group.air_purifier
     
 # automation
 Automation view:
