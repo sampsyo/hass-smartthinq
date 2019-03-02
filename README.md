@@ -15,7 +15,7 @@ A [Home Assistant][hass] component for controlling LG HVAC devices via their Sma
 Here's how to use this:
 
 1. Install [WideQ][] by typing something like(You may need sudo permision.):
-
+smartthinq_hvac
        $ cd ~/.homeassistant
        $ mkdir wideq
        $ git clone https://github.com/wkd8176/wideq.git wideq
@@ -42,26 +42,13 @@ Here's how to use this:
        smartthinq:
          token: YOUR_TOKEN_HERE
        climate:
-         - platform: smartthinq_hvac
-           name: DEVICE_NAME_WHAT_YOU_WANT
-           mac: YOUR_DEVICE'S_MAC_ADDRESS
-         - platform: smartthinq_refrigerator
-           name: DEVICE_NAME_WHAT_YOU_WANT
-           mac: YOUR_DEVICE'S_MAC_ADDRESS
-         - platform: smartthinq_dehumidifier
+         - platform: smartthinq
            name: DEVICE_NAME_WHAT_YOU_WANT
            mac: YOUR_DEVICE'S_MAC_ADDRESS
        sensor:
-         - platform: smartthinq_dryer
+         - platform: smartthinq
            name: DEVICE_NAME_WHAT_YOU_WANT
            mac: YOUR_DEVICE'S_MAC_ADDRESS
-         - platform: smartthinq_washer
-           name: DEVICE_NAME_WHAT_YOU_WANT
-           mac: YOUR_DEVICE'S_MAC_ADDRESS
-         - platform: smartthinq_waterpurifier
-           name: DEVICE_NAME_WHAT_YOU_WANT
-           mac: YOUR_DEVICE'S_MAC_ADDRESS
-
 
 5. Add include files to your include folder or something you have
 
