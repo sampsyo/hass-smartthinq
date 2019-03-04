@@ -17,7 +17,7 @@ from homeassistant.const import (
 import time
 import wideq
 
-REQUIREMENTS = ['wideq']
+REQUIREMENTS = ['https://github.com/wkd8176/wideq/archive/wideq.zip#wideq==0.0.0']
 DEPENDENCIES = ['smartthinq']
 
 LGE_HVAC_DEVICES = 'lge_HVAC_devices'
