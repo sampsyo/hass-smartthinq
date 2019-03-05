@@ -16,7 +16,7 @@ from homeassistant.exceptions import PlatformNotReady
 
 import wideq
 
-REQUIREMENTS = ['wideq_kr == 0.0.1']
+REQUIREMENTS = ['wideq_kr == 0.0.2']
 DEPENDENCIES = ['smartthinq']
 
 LGE_WASHER_DEVICES = 'lge_washer_devices'
@@ -1057,4 +1057,3 @@ class LGEWATERPURIFIERDEVICE(LGEDevice):
         self._wp.monitor_start()
         self._wp.delete_permission()
         self._wp.delete_permission()
-
