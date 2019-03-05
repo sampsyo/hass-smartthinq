@@ -195,3 +195,13 @@ lge_airpurifier_set_signallighting_mode:
     signallighting_mode:
       description: signallighting_mode
       example: '켜짐'
+
+lge_airpurifier_set_airfast_mode:
+  description: Set the airfast mode.
+  fields:
+    entity_id:
+      description: Name(s) of the entities to set airfast mode
+      example: 'climate.airpurifier'
+    airfast_mode:
+      description: airfast_mode
+      example: '켜짐'
