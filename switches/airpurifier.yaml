@@ -1,207 +1,60 @@
-# Describes the format for available LGE HVAC services
+#airpurifier Switch
 
-lge_hvac_set_airclean_mode:
-  description: Set the hvac in airclen mode.
-  fields:
-    entity_id:
-      description: Name(s) of the entities to enable/disable airclean mode
-      example: 'climate.air_conditioner'
-    airclean_mode:
-      description: AirClean mode status
-      example: 'ON'
-
-lge_hvac_set_coolpower_mode:
-  description: Set the hvac in coolpower mode.
-  fields:
-    entity_id:
-      description: Name(s) of the entities to enable/disable coolpower mode
-      example: 'climate.air_conditioner'
-    coolpower_mode:
-      description: CoolPower mode status
-      example: 'ON'
-
-lge_hvac_set_autodry_mode:
-  description: Set the hvac in autodry mode.
-  fields:
-    entity_id:
-      description: Name(s) of the entities to enable/disable autodry mode
-      example: 'climate.air_conditioner'
-    autodry_mode:
-      description: AutoDry mode status
-      example: 'ON'
-      
-lge_hvac_set_smartcare_mode:
-  description: Set the hvac in smartcare mode.
-  fields:
-    entity_id:
-      description: Name(s) of the entities to enable/disable smartcare mode
-      example: 'climate.air_conditioner'
-    smartcare_mode:
-      description: SmartCare mode status
-      example: 'ON'
-
-lge_hvac_set_powersave_mode:
-  description: Set the hvac in powersave mode.
-  fields:
-    entity_id:
-      description: Name(s) of the entities to enable/disable powersave mode
-      example: 'climate.air_conditioner'
-    powersave_mode:
-      description: PowerSave mode status
-      example: 'ON'
-
-lge_hvac_set_longpower_mode:
-  description: Set the hvac in longpower mode.
-  fields:
-    entity_id:
-      description: Name(s) of the entities to enable/disable longpower mode
-      example: 'climate.air_conditioner'
-    longpower_mode:
-      description: LongPower mode status
-      example: 'ON'
-            
-lge_hvac_set_up_down_mode:
-  description: Set the hvac in up/down mode.
-  fields:
-    entity_id:
-      description: Name(s) of the entities to enable/disable up/down mode
-      example: 'climate.air_conditioner'
-    up_down_mode:
-      description: up/down mode status
-      example: 'ON'
-
-lge_hvac_set_sensormon_mode:
-  description: Set the hvac in sensormon mode.
-  fields:
-    entity_id:
-      description: Name(s) of the entities to enable/disable sensormon mode
-      example: 'climate.air_conditioner'
-    sensormon_mode:
-      description: sensormon mode status
-      example: 'ON'
-
-lge_hvac_set_jet_mode:
-  description: Set the hvac in jet mode.
-  fields:
-    entity_id:
-      description: Name(s) of the entities to enable/disable jet mode
-      example: 'climate.air_conditioner'
-    jet_mode:
-      description: jet mode status
-      example: 'ON'
-
-lge_hvac_set_wdirvstep_mode:
-  description: Set the hvac in wdirvstep mode.
-  fields:
-    entity_id:
-      description: Name(s) of the entities to enable/disable wdirvstep mode
-      example: 'climate.air_conditioner'
-    wdirvstep_mode:
-      description: wdirvstep mode status
-      example: '1단계'
-
-lge_hvac_set_wswirl_mode:
-  description: Set the hvac in wswirl mode.
-  fields:
-    entity_id:
-      description: Name(s) of the entities to enable/disable wswirl mode
-      example: 'climate.air_conditioner'
-    wswirl_mode:
-      description: wswirl mode status
-      example: 'ON'
-
-# Describes the format for available LGE Refrigerator services
-
-lge_ref_set_refrigerator_temperature:
-  description: Set the refrigerator temperature.
-  fields:
-    entity_id:
-      description: Name(s) of the entities to set refrigerator temperature
-      example: 'climate.refrigerator'
-    refrigerator_temperature:
-      description: refrigerator_temperature
-      example: '3'
-
-lge_ref_set_freezer_temperature:
-  description: Set the freezer temperature.
-  fields:
-    entity_id:
-      description: Name(s) of the entities to set freezer temperature
-      example: 'climate.refrigerator'
-    freezer_temperature:
-      description: freezer_temperature
-      example: '-18'
-      
-lge_ref_set_iceplus_mode:
-  description: Set the iceplus mode.
-  fields:
-    entity_id:
-      description: Name(s) of the entities to set iceplus mode
-      example: 'climate.refrigerator'
-    iceplus_mode:
-      description: iceplus_mode
-      example: 'ON'
-      
-lge_ref_set_freshairfilter_mode:
-  description: Set the freshairfilter mode.
-  fields:
-    entity_id:
-      description: Name(s) of the entities to set freshairfilter mode
-      example: 'climate.refrigerator'
-    freshairfilter_mode:
-      description: freshairfilter_mode
-      example: 'AUTO'
-      
-# Describes the format for available LGE Dehumidifier services      
-
-lge_dehumidifier_set_airremoval_mode:
-  description: Set the airrrmoval mode.
-  fields:
-    entity_id:
-      description: Name(s) of the entities to set airremoval mode
-      example: 'climate.dehumidifier'
-    airremoval_mode:
-      description: airremoval_mode
-      example: '켜짐'
-      
-# Describes the format for available LGE AirPurifier services      
-
-lge_airpurifier_set_airremoval_mode:
-  description: Set the airrrmoval mode.
-  fields:
-    entity_id:
-      description: Name(s) of the entities to set airremoval mode
-      example: 'climate.airpurifier'
-    airremoval_mode:
-      description: airremoval_mode
-      example: '켜짐'
-      
-lge_airpurifier_set_circulatedir_mode:
-  description: Set the circulatedir mode.
-  fields:
-    entity_id:
-      description: Name(s) of the entities to set circulatedir mode
-      example: 'climate.airpurifier'
-    circulatedir_mode:
-      description: circulatedir_mode
-      example: '켜짐'
-      
-lge_airpurifier_set_signallighting_mode:
-  description: Set the signallighting mode.
-  fields:
-    entity_id:
-      description: Name(s) of the entities to set signallighting mode
-      example: 'climate.airpurifier'
-    signallighting_mode:
-      description: signallighting_mode
-      example: '켜짐'
-
-lge_airpurifier_set_airfast_mode:
-  description: Set the airfast mode.
-  fields:
-    entity_id:
-      description: Name(s) of the entities to set airfast mode
-      example: 'climate.airpurifier'
-    airfast_mode:
-      description: airfast_mode
-      example: '켜짐'
+#Air CLean Mode
+- platform: template
+  switches:
+    airpurifier_set_airremoval_mode:
+      friendly_name: "공기제균"
+      value_template: "{% if states.climate.airpurifier.attributes.airremoval_mode == '켜짐' %}true{% else %}false{% endif %}"
+      turn_on:
+        service: smartthinq.lge_airpurifier_set_airremoval_mode
+        data:
+          entity_id: climate.airpurifier
+          airremoval_mode: '켜짐'
+      turn_off:
+        service: smartthinq.lge_airpurifier_set_airremoval_mode
+        data:
+          entity_id: climate.airpurifier
+          airremoval_mode: '꺼짐'
+# CirculateDir Mode
+    airpurifier_set_circulatedir_mode:
+      friendly_name: "순환팬 회전"
+      value_template: "{% if states.climate.airpurifier.attributes.circulatedir_mode == '켜짐' %}true{% else %}false{% endif %}"
+      turn_on:
+        service: smartthinq.lge_airpurifier_set_circulatedir_mode
+        data:
+          entity_id: climate.airpurifier
+          circulatedir_mode: '켜짐'
+      turn_off:
+        service: smartthinq.lge_airpurifier_set_circulatedir_mode
+        data:
+          entity_id: climate.airpurifier
+          circulatedir_mode: '꺼짐'
+#SignalLight Mode
+    airpurifier_set_signallighting_mode:
+      friendly_name: "청정표시등"
+      value_template: "{% if states.climate.airpurifier.attributes.signallighting_mode == '켜짐' %}true{% else %}false{% endif %}"
+      turn_on:
+        service: smartthinq.lge_airpurifier_set_signallighting_mode
+        data:
+          entity_id: climate.airpurifier
+          signallighting_mode: '켜짐'
+      turn_off:
+        service: smartthinq.lge_airpurifier_set_signallighting_mode
+        data:
+          entity_id: climate.airpurifier
+          signallighting_mode: '꺼짐'             
+#Airfast Mode
+    airpurifier_set_airfast_mode:
+      friendly_name: "쾌속모드(청정)"
+      value_template: "{% if states.climate.airpurifier.attributes.airfast_mode == '켜짐' %}true{% else %}false{% endif %}"
+      turn_on:
+        service: smartthinq.lge_airpurifier_set_airfast_mode
+        data:
+          entity_id: climate.airpurifier
+          airfast_mode: '켜짐'
+      turn_off:
+        service: smartthinq.lge_airpurifier_set_airfast_mode
+        data:
+          entity_id: climate.airpurifier
+          airfast_mode: '꺼짐'   
