@@ -14,7 +14,7 @@ import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.entity import Entity
 
 
-REQUIREMENTS = ['wideq_kr == 0.0.1']
+REQUIREMENTS = ['wideq_kr == 0.0.2']
 
 DOMAIN = 'smartthinq'
 
@@ -60,5 +60,3 @@ class LGEDevice(Entity):
     @property
     def available(self):
         return True
-
-        
