@@ -17,7 +17,7 @@ from homeassistant.const import (
 import time
 import wideq
 
-REQUIREMENTS = ['wideq_kr == 0.0.3']
+REQUIREMENTS = ['wideq_kr == 0.0.4']
 DEPENDENCIES = ['smartthinq']
 
 LGE_HVAC_DEVICES = 'lge_HVAC_devices'
@@ -326,7 +326,7 @@ APMODES = {
     'AUTO': wideq.STATE_AIRPURIFIER_AUTO_MODE,
 }
 
-AP_AIR_910604_KR_MODES = {
+SINGLECLEANMODES = {
     'CLEAN': wideq. STATE_AIRPURIFIER_CLEAN,
 }
 
@@ -338,7 +338,7 @@ APFANMODES = {
     'AUTO': wideq.STATE_AIRPURIFIER_AUTO,
 }
 
-AP_AIR_910604_KR_FANMODES ={
+APSINGLECLEAN_FANMODES ={
     'LOW': wideq.STATE_AIRPURIFIER_LOW,
     'MID': wideq.STATE_AIRPURIFIER_MID,
     'HIGH': wideq.STATE_AIRPURIFIER_HIGH,
@@ -751,7 +751,6 @@ class LGEHVACDEVICE(LGEDevice, ClimateDevice):
     def support_oplist(self):
         return self._state.support_oplist
 
-
     @property
     def operation_list(self):
         if self.device_type == 'PAC':
@@ -1155,25 +1154,22 @@ class LGEHVACDEVICE(LGEDevice, ClimateDevice):
         data = self._ac.get_filter_state()
         usetime = data['UseTime']
         changeperiod = data['ChangePeriod']
-        use = int(usetime)/int(changeperiod)
-        remain = (1 - use)*100
-
         if changeperiod == '0':
-            return 'No Filter'
+            return '지원안함'
         else:
+            use = int(usetime)/int(changeperiod)
+            remain = (1 - use)*100
             return int(remain)
 
     @property
     def mfilter_state(self):
         data = self._ac.get_mfilter_state()
-
         remaintime = data['RemainTime']
         changeperiod = data['ChangePeriod']
-        remain = int(remaintime)/int(changeperiod)
-
         if changeperiod == '0':
-            return 'No mFilter'
+            return '지원안함'
         else:
+            remain = int(remaintime)/int(changeperiod)
             return int(remain * 100)
 
     @property
@@ -1496,7 +1492,7 @@ class LGEREFDEVICE(LGEDevice):
         if self._state:
             data = self._state.waterfilter_state
             if data == '255':
-                return 'NO FILTER'
+                return '지원안함'
             else:
                 return data
     @property
@@ -1664,9 +1660,13 @@ class LGEAPDEVICE(LGEDevice, ClimateDevice):
         LOGGER.info('...done.') 
 
     @property
+    def support_oplist(self):
+        return self._state.support_oplist
+
+    @property
     def operation_list(self):
-        if self._model_name == 'AIR_910604_KR':
-            return list(AP_AIR_910604_KR_MODES.values())
+        if 'CLEAN' in self.support_oplist:
+            return list(SINGLECLEANMODES.values())
         else:
             return list(APMODES.values())
 
@@ -1674,8 +1674,8 @@ class LGEAPDEVICE(LGEDevice, ClimateDevice):
     def current_operation(self):
         if self._state:
             mode = self._state.mode
-            if self._model_name == 'AIR_910604_KR':
-                return AP_AIR_910604_KR_MODES[mode.name]
+            if 'CLEAN' in self.support_oplist:
+                return SINGLECLEANMODES[mode.name]
             else:
                 return APMODES[mode.name]
             
@@ -1684,18 +1684,18 @@ class LGEAPDEVICE(LGEDevice, ClimateDevice):
 
         # Invert the modes mapping.
         modes_inv = {v: k for k, v in APMODES.items()}
-        ap_air_910604_kr_modes_inv = {v: k for k, v in AP_AIR_910604_KR_MODES.items()}
+        singlecleanmodes_inv = {v: k for k, v in SINGLECLEANMODES.items()}
 
-        if self._model_name == 'AIR_910604_KR':
-            mode = wideq.APOPMode[ap_air_910604_kr_modes_inv[operation_mode]]
+        if 'CLEAN' in self.support_oplist:
+            mode = wideq.APOPMode[singlecleanmodes_inv[operation_mode]]
         else:
             mode = wideq.APOPMode[modes_inv[operation_mode]]
         self._ap.set_mode(mode)
 
     @property
     def fan_list(self):
-        if self._model_name == 'AIR_910604_KR':
-            return list(AP_AIR_910604_KR_FANMODES.values())
+        if 'CLEAN' in self.support_oplist:
+            return list(APSINGLECLEAN_FANMODES.values())
         else:
             return list(APFANMODES.values())
 
@@ -1704,8 +1704,8 @@ class LGEAPDEVICE(LGEDevice, ClimateDevice):
     def current_fan_mode(self):
         if self._state:
             mode = self._state.windstrength_state
-            if self._model_name == 'AIR_910604_KR':
-                return AP_AIR_910604_KR_FANMODES[mode.name]
+            if 'CLEAN' in self.support_oplist:
+                return APSINGLECLEAN_FANMODES[mode.name]
             else:
                 return APFANMODES[mode.name]
 
@@ -1713,17 +1713,17 @@ class LGEAPDEVICE(LGEDevice, ClimateDevice):
         import wideq
         # Invert the modes mapping.
         fanmodes_inv = {v: k for k, v in APFANMODES.items()}
-        air_91604_kr_fanmodes_inv = {v: k for k, v in AP_AIR_910604_KR_FANMODES.items()}
+        singleclean_fanmodes_inv = {v: k for k, v in APSINGLECLEAN_FANMODES.items()}
 
-        if self._model_name == 'AIR_910604_KR':
-            mode = wideq.APWindStrength[air_91604_kr_fanmodes_inv[fan_mode]]
+        if 'CLEAN' in self.support_oplist:
+            mode = wideq.APWindStrength[singleclean_fanmodes_inv[fan_mode]]
         else:
             mode = wideq.APWindStrength[fanmodes_inv[fan_mode]]
         self._ap.set_windstrength(mode)
 
     @property
     def circulate_list(self):
-        if self._model_name == 'AIR_910604_KR':
+        if 'CLEAN' in self.support_oplist:
             return '지원안함'
         else:
             return list(APCIRCULATEMODES.values())
@@ -1731,7 +1731,7 @@ class LGEAPDEVICE(LGEDevice, ClimateDevice):
     @property
     def current_circulate_mode(self):
         if self._state:
-            if self._model_name == 'AIR_910604_KR':
+            if 'CLEAN' in self.support_oplist:
                 return '지원안함'
             else:
                 mode = self._state.circulatestrength_state
@@ -1741,7 +1741,7 @@ class LGEAPDEVICE(LGEDevice, ClimateDevice):
 
         import wideq
         circulatemodes_inv = {v: k for k, v in APCIRCULATEMODES.items()}
-        if self._model_name == 'AIR_910604_KR':
+        if 'CLEAN' in self.support_oplist:
             return '지원안함'
         else:
             mode = wideq.APCirculateStrength[circulatemodes_inv[circulate_mode]]
@@ -1762,14 +1762,14 @@ class LGEAPDEVICE(LGEDevice, ClimateDevice):
     @property
     def is_circulatedir_mode(self):
         if self._state:
-            if self._model_name == 'AIR_910604_KR':
+            if 'CLEAN' in self.support_oplist:
                 return '지원안함'
             else:
                 mode = self._state.circulatedir_state
             return APETCMODES[mode.name]
     
     def circulatedir_mode(self, circulatedir_mode):
-        if self._model_name == 'AIR_910604_KR':
+        if 'CLEAN' in self.support_oplist:
             return '지원안함'
         else:
             if circulatedir_mode == '켜짐':
@@ -1780,7 +1780,7 @@ class LGEAPDEVICE(LGEDevice, ClimateDevice):
     @property
     def is_signallighting_mode(self):
         if self._state:
-            if self._model_name == 'AIR_910604_KR':
+            if 'CLEAN' in self.support_oplist:
                 return '지원안함'
             else:
                 mode = self._state.signallighting_state
@@ -1789,14 +1789,14 @@ class LGEAPDEVICE(LGEDevice, ClimateDevice):
     @property
     def is_airfast_mode(self):
         if self._state:
-            if self._model_name == 'AIR_910604_KR':
+            if 'CLEAN' in self.support_oplist:
                 mode = self._state.airfast_state
             else:
                 return '지원안함'
             return APETCMODES[mode.name]
     
     def airfast_mode(self, airfast_mode):
-        if self._model_name == 'AIR_910604_KR':
+        if 'CLEAN' in self.support_oplist:
             if airfast_mode == '켜짐':
                 self._ap.set_airfast(True)
             elif airfast_mode == '꺼짐':
@@ -1810,12 +1810,11 @@ class LGEAPDEVICE(LGEDevice, ClimateDevice):
         data = self._ap.get_filter_state()
         usetime = data['UseTime']
         changeperiod = data['ChangePeriod']
-        use = int(usetime)/int(changeperiod)
-        remain = (1 - use)*100
-
         if changeperiod == '0':
-            return 'No Filter'
+            return '지원안함'
         else:
+            use = int(usetime)/int(changeperiod)
+            remain = (1 - use)*100
             return int(remain)
 
     @property
