@@ -15,7 +15,7 @@ from homeassistant.const import (
 import time
 import wideq
 
-REQUIREMENTS = ['wideq_kr == 0.0.4']
+REQUIREMENTS = ['wideq_kr == 0.0.5']
 DEPENDENCIES = ['smartthinq']
 
 LGE_AIRPURIFIER_DEVICES = 'lge_AirPurifier_devices'
