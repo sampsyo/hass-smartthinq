@@ -26,10 +26,12 @@ LGE_AIRPURIFIER_DEVICES = 'lge_AirPurifier_devices'
 LGE_DEHUMIDIFIER_DEVICES = 'lge_dehumidifier_devices'
 
 CONF_MAC = 'mac'
+CONF_AREA = 'area_code'
 
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
     vol.Required(CONF_NAME): cv.string,
     vol.Required(CONF_MAC): cv.string,
+    vol.Optional(CONF_AREA): cv.string,
 })
 
 # For HVAC
@@ -81,6 +83,14 @@ ATTR_SENSORMON_MODE = 'sensormon_mode'
 ATTR_JET_MODE = 'jet_mode'
 ATTR_WDIRVSTEP_MODE = 'wdirvstep_mode'
 ATTR_DEVICE_TYPE = 'device_type'
+ATTR_OUTDOOR_TEMPERATURE = 'outdoor_temperature'
+ATTR_OUTDOOR_HUMIDITY = 'outdoor_humidity'
+ATTR_OUTDOOR_NOW_PM25 = 'outdoor_now_pm2.5'
+ATTR_OUTDOOR_TODAY_MORNING_PM25 = 'outdoor_today_morning_pm2.5'
+ATTR_OUTDOOR_TODAY_AFTERNOON_PM25 = 'outdoor_today_afternoon_pm2.5'
+ATTR_OUTDOOR_TOMORROW_MORNING_PM25 = 'outdoor_tomorrow_morning_pm2.5'
+ATTR_OUTDOOR_TOMORROW_AFTERNOON_PM25 = 'outdoor_tomorrow_afternoon_pm2.5'
+
 
 CONVERTIBLE_ATTRIBUTE = [
     ATTR_TEMPERATURE
@@ -139,7 +149,6 @@ SINGLE_FANMODES = {
     'SYSTEM_MID': wideq.STATE_MID,
     'SYSTEM_HIGH': wideq.STATE_HIGH,
     'SYSTEM_AUTO': wideq.STATE_AUTO,
-    'SYSTEM_POWER': wideq.STATE_POWER,
 }
 
 RAC_SACFANMODES = {
@@ -455,9 +464,10 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
         mac = device.macaddress
         if device.type == wideq.DeviceType.AC:
             LGE_HVAC_DEVICES = []
+            area = config[CONF_AREA]
             if mac == conf_mac.lower():
                 LOGGER.debug("Creating new LGE HVAC")
-                hvac_entity = LGEHVACDEVICE(client, device, name, model_type)
+                hvac_entity = LGEHVACDEVICE(client, device, name, model_type, area)
                 LGE_HVAC_DEVICES.append(hvac_entity)
                 add_entities(LGE_HVAC_DEVICES)
                 LOGGER.debug("LGE HVAC is added")
@@ -631,7 +641,7 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
 # HVAC Main
 class LGEHVACDEVICE(LGEDevice, ClimateDevice):
 
-    def __init__(self, client, device, name, model_type, celsius=True):
+    def __init__(self, client, device, name, model_type, area, celsius=True):
         """initialize a LGE HAVC Device."""
         LGEDevice.__init__(self, client, device)
         self._celsius = celsius
@@ -652,6 +662,7 @@ class LGEHVACDEVICE(LGEDevice, ClimateDevice):
         self._transient_time = None
         self._name = name
         self._type = model_type
+        self._area = area
         self.update()
 
     @property
@@ -710,6 +721,13 @@ class LGEHVACDEVICE(LGEDevice, ClimateDevice):
         data[ATTR_STATUS] = self.current_status
         data[ATTR_FILTER_STATE] = self.filter_state
         data[ATTR_MFILTER_STATE] = self.mfilter_state
+        data[ATTR_OUTDOOR_TEMPERATURE] = self.outdoor_temp
+        data[ATTR_OUTDOOR_HUMIDITY] = self.outdoor_humidity
+        data[ATTR_OUTDOOR_NOW_PM25] = self.outdoor_now_pm25
+        data[ATTR_OUTDOOR_TODAY_MORNING_PM25] = self.outdoor_today_morning_pm25
+        data[ATTR_OUTDOOR_TODAY_AFTERNOON_PM25] = self.outdoor_today_afternoon_pm25
+        data[ATTR_OUTDOOR_TOMORROW_MORNING_PM25] = self.outdoor_tomorrow_morning_pm25
+        data[ATTR_OUTDOOR_TOMORROW_AFTERNOON_PM25] = self.outdoor_tomorrow_afternoon_pm25
         supported_features = self.supported_features
         if supported_features & SUPPORT_FAN_MODE:
             data[ATTR_FAN_MODE] = self.current_fan_mode
@@ -1173,6 +1191,42 @@ class LGEHVACDEVICE(LGEDevice, ClimateDevice):
         else:
             remain = int(remaintime)/int(changeperiod)
             return int(remain * 100)
+
+    @property
+    def outdoor_temp(self):
+        data = self._ac.get_outdoor_weather(self._area)
+        return data['ct']
+
+    @property
+    def outdoor_humidity(self):
+        data = self._ac.get_outdoor_weather(self._area)
+        return data['ch']
+
+    @property
+    def outdoor_now_pm25(self):
+        data = self._ac.get_outdoor_weather(self._area)
+        return data['pm25']
+
+    @property
+    def outdoor_today_morning_pm25(self):
+        data = self._ac.get_outdoor_weather(self._area)
+        return data['pm25_1']
+
+    @property
+    def outdoor_today_afternoon_pm25(self):
+        data = self._ac.get_outdoor_weather(self._area)
+        return data['pm25_2']
+
+    @property
+    def outdoor_tomorrow_morning_pm25(self):
+        data = self._ac.get_outdoor_weather(self._area)
+        return data['pm25_3']
+
+    @property
+    def outdoor_tomorrow_afternoon_pm25(self):
+        data = self._ac.get_outdoor_weather(self._area)
+        return data['pm25_4']
+
 
     @property
     def humidity(self):
