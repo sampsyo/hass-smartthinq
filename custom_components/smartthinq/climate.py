@@ -464,10 +464,9 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
         mac = device.macaddress
         if device.type == wideq.DeviceType.AC:
             LGE_HVAC_DEVICES = []
-            area = config[CONF_AREA]
             if mac == conf_mac.lower():
                 LOGGER.debug("Creating new LGE HVAC")
-                hvac_entity = LGEHVACDEVICE(client, device, name, model_type, area)
+                hvac_entity = LGEHVACDEVICE(client, device, name, model_type, config)
                 LGE_HVAC_DEVICES.append(hvac_entity)
                 add_entities(LGE_HVAC_DEVICES)
                 LOGGER.debug("LGE HVAC is added")
@@ -641,7 +640,7 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
 # HVAC Main
 class LGEHVACDEVICE(LGEDevice, ClimateDevice):
 
-    def __init__(self, client, device, name, model_type, area, celsius=True):
+    def __init__(self, client, device, name, model_type, config, celsius=True):
         """initialize a LGE HAVC Device."""
         LGEDevice.__init__(self, client, device)
         self._celsius = celsius
@@ -662,7 +661,10 @@ class LGEHVACDEVICE(LGEDevice, ClimateDevice):
         self._transient_time = None
         self._name = name
         self._type = model_type
-        self._area = area
+        try:
+            self._area = config[CONF_AREA]
+        except KeyError:
+            self._area = None
         self.update()
 
     @property
@@ -1194,39 +1196,59 @@ class LGEHVACDEVICE(LGEDevice, ClimateDevice):
 
     @property
     def outdoor_temp(self):
-        data = self._ac.get_outdoor_weather(self._area)
-        return data['ct']
+        if self._area is not None:
+            data = self._ac.get_outdoor_weather(self._area)
+            return data['ct']
+        else:
+            return '지역코드 없음'
 
     @property
     def outdoor_humidity(self):
-        data = self._ac.get_outdoor_weather(self._area)
-        return data['ch']
+        if self._area is not None:
+            data = self._ac.get_outdoor_weather(self._area)
+            return data['ch']
+        else:
+            return '지역코드 없음'
 
     @property
     def outdoor_now_pm25(self):
-        data = self._ac.get_outdoor_weather(self._area)
-        return data['pm25']
+        if self._area is not None:
+            data = self._ac.get_outdoor_weather(self._area)
+            return data['pm25']
+        else:
+            return '지역코드 없음'
 
     @property
     def outdoor_today_morning_pm25(self):
-        data = self._ac.get_outdoor_weather(self._area)
-        return data['pm25_1']
+        if self._area is not None:
+            data = self._ac.get_outdoor_weather(self._area)
+            return data['pm25_1']
+        else:
+            return '지역코드 없음'
 
     @property
     def outdoor_today_afternoon_pm25(self):
-        data = self._ac.get_outdoor_weather(self._area)
-        return data['pm25_2']
+        if self._area is not None:
+            data = self._ac.get_outdoor_weather(self._area)
+            return data['pm25_2']
+        else:
+            return '지역코드 없음'
 
     @property
     def outdoor_tomorrow_morning_pm25(self):
-        data = self._ac.get_outdoor_weather(self._area)
-        return data['pm25_3']
+        if self._area is not None:
+            data = self._ac.get_outdoor_weather(self._area)
+            return data['pm25_3']
+        else:
+            return '지역코드 없음'
 
     @property
     def outdoor_tomorrow_afternoon_pm25(self):
-        data = self._ac.get_outdoor_weather(self._area)
-        return data['pm25_4']
-
+        if self._area is not None:
+            data = self._ac.get_outdoor_weather(self._area)
+            return data['pm25_4']
+        else:
+            return '지역코드 없음'
 
     @property
     def humidity(self):
