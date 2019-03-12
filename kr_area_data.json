@@ -1,0 +1,1896 @@
+{
+	"returnCd": "0000",
+	"returnMsg": "OK",
+	"item": [
+		{
+			"area": 1100000000,
+			"esname": "NA",
+			"ksname": "NA",
+			"ecname": "Seoul",
+			"kcname": "서울"
+		},
+		{
+			"area": 1111000000,
+			"esname": "Seoul",
+			"ksname": "서울",
+			"ecname": "Jongno-gu",
+			"kcname": "종로구"
+		},
+		{
+			"area": 1114000000,
+			"esname": "Seoul",
+			"ksname": "서울",
+			"ecname": "Jung-gu",
+			"kcname": "중구"
+		},
+		{
+			"area": 1117000000,
+			"esname": "Seoul",
+			"ksname": "서울",
+			"ecname": "Yongsan-gu",
+			"kcname": "용산구"
+		},
+		{
+			"area": 1120000000,
+			"esname": "Seoul",
+			"ksname": "서울",
+			"ecname": "Seongdong-gu",
+			"kcname": "성동구"
+		},
+		{
+			"area": 1121500000,
+			"esname": "Seoul",
+			"ksname": "서울",
+			"ecname": "Gwangjin-gu",
+			"kcname": "광진구"
+		},
+		{
+			"area": 1123000000,
+			"esname": "Seoul",
+			"ksname": "서울",
+			"ecname": "Dongdaemun-gu",
+			"kcname": "동대문구"
+		},
+		{
+			"area": 1126000000,
+			"esname": "Seoul",
+			"ksname": "서울",
+			"ecname": "Jungnang-gu",
+			"kcname": "중랑구"
+		},
+		{
+			"area": 1129000000,
+			"esname": "Seoul",
+			"ksname": "서울",
+			"ecname": "Seongbuk-gu",
+			"kcname": "성북구"
+		},
+		{
+			"area": 1130500000,
+			"esname": "Seoul",
+			"ksname": "서울",
+			"ecname": "Gangbuk-gu",
+			"kcname": "강북구"
+		},
+		{
+			"area": 1132000000,
+			"esname": "Seoul",
+			"ksname": "서울",
+			"ecname": "Dobong-gu",
+			"kcname": "도봉구"
+		},
+		{
+			"area": 1135000000,
+			"esname": "Seoul",
+			"ksname": "서울",
+			"ecname": "Nowon-gu",
+			"kcname": "노원구"
+		},
+		{
+			"area": 1138000000,
+			"esname": "Seoul",
+			"ksname": "서울",
+			"ecname": "Eunpyeong-gu",
+			"kcname": "은평구"
+		},
+		{
+			"area": 1141000000,
+			"esname": "Seoul",
+			"ksname": "서울",
+			"ecname": "Seodaemun-gu",
+			"kcname": "서대문구"
+		},
+		{
+			"area": 1144000000,
+			"esname": "Seoul",
+			"ksname": "서울",
+			"ecname": "Mapo-gu",
+			"kcname": "마포구"
+		},
+		{
+			"area": 1147000000,
+			"esname": "Seoul",
+			"ksname": "서울",
+			"ecname": "Yangcheon-gu",
+			"kcname": "양천구"
+		},
+		{
+			"area": 1150000000,
+			"esname": "Seoul",
+			"ksname": "서울",
+			"ecname": "Gangseo-gu",
+			"kcname": "강서구"
+		},
+		{
+			"area": 1153000000,
+			"esname": "Seoul",
+			"ksname": "서울",
+			"ecname": "Guro-gu",
+			"kcname": "구로구"
+		},
+		{
+			"area": 1154500000,
+			"esname": "Seoul",
+			"ksname": "서울",
+			"ecname": "Geumcheon-gu",
+			"kcname": "금천구"
+		},
+		{
+			"area": 1156000000,
+			"esname": "Seoul",
+			"ksname": "서울",
+			"ecname": "Yeongdeungpo-gu",
+			"kcname": "영등포구"
+		},
+		{
+			"area": 1159000000,
+			"esname": "Seoul",
+			"ksname": "서울",
+			"ecname": "Dongjak-gu",
+			"kcname": "동작구"
+		},
+		{
+			"area": 1162000000,
+			"esname": "Seoul",
+			"ksname": "서울",
+			"ecname": "Gwanak-gu",
+			"kcname": "관악구"
+		},
+		{
+			"area": 1165000000,
+			"esname": "Seoul",
+			"ksname": "서울",
+			"ecname": "Seocho-gu",
+			"kcname": "서초구"
+		},
+		{
+			"area": 1168000000,
+			"esname": "Seoul",
+			"ksname": "서울",
+			"ecname": "Gangnam-gu",
+			"kcname": "강남구"
+		},
+		{
+			"area": 1171000000,
+			"esname": "Seoul",
+			"ksname": "서울",
+			"ecname": "Songpa-gu",
+			"kcname": "송파구"
+		},
+		{
+			"area": 1174000000,
+			"esname": "Seoul",
+			"ksname": "서울",
+			"ecname": "Gangdong-gu",
+			"kcname": "강동구"
+		},
+		{
+			"area": 2600000000,
+			"esname": "NA",
+			"ksname": "NA",
+			"ecname": "Busan",
+			"kcname": "부산"
+		},
+		{
+			"area": 2611000000,
+			"esname": "Busan",
+			"ksname": "부산",
+			"ecname": "Jung-gu",
+			"kcname": "중구"
+		},
+		{
+			"area": 2614000000,
+			"esname": "Busan",
+			"ksname": "부산",
+			"ecname": "Seo-gu",
+			"kcname": "서구"
+		},
+		{
+			"area": 2617000000,
+			"esname": "Busan",
+			"ksname": "부산",
+			"ecname": "Dong-gu",
+			"kcname": "동구"
+		},
+		{
+			"area": 2620000000,
+			"esname": "Busan",
+			"ksname": "부산",
+			"ecname": "Yeongdo-gu",
+			"kcname": "영도구"
+		},
+		{
+			"area": 2623000000,
+			"esname": "Busan",
+			"ksname": "부산",
+			"ecname": "Busanjin-gu",
+			"kcname": "부산진구"
+		},
+		{
+			"area": 2626000000,
+			"esname": "Busan",
+			"ksname": "부산",
+			"ecname": "Dongnae-gu",
+			"kcname": "동래구"
+		},
+		{
+			"area": 2629000000,
+			"esname": "Busan",
+			"ksname": "부산",
+			"ecname": "Nam-gu",
+			"kcname": "남구"
+		},
+		{
+			"area": 2632000000,
+			"esname": "Busan",
+			"ksname": "부산",
+			"ecname": "Buk-gu",
+			"kcname": "북구"
+		},
+		{
+			"area": 2635000000,
+			"esname": "Busan",
+			"ksname": "부산",
+			"ecname": "Haeundae-gu",
+			"kcname": "해운대구"
+		},
+		{
+			"area": 2638000000,
+			"esname": "Busan",
+			"ksname": "부산",
+			"ecname": "Saha-gu",
+			"kcname": "사하구"
+		},
+		{
+			"area": 2641000000,
+			"esname": "Busan",
+			"ksname": "부산",
+			"ecname": "Geumjeong-gu",
+			"kcname": "금정구"
+		},
+		{
+			"area": 2644000000,
+			"esname": "Busan",
+			"ksname": "부산",
+			"ecname": "Gangseo-gu",
+			"kcname": "강서구"
+		},
+		{
+			"area": 2647000000,
+			"esname": "Busan",
+			"ksname": "부산",
+			"ecname": "Yeonje-gu",
+			"kcname": "연제구"
+		},
+		{
+			"area": 2650000000,
+			"esname": "Busan",
+			"ksname": "부산",
+			"ecname": "Suyeong-gu",
+			"kcname": "수영구"
+		},
+		{
+			"area": 2653000000,
+			"esname": "Busan",
+			"ksname": "부산",
+			"ecname": "Sasang-gu",
+			"kcname": "사상구"
+		},
+		{
+			"area": 2671000000,
+			"esname": "Busan",
+			"ksname": "부산",
+			"ecname": "Gijang-gun",
+			"kcname": "기장군"
+		},
+		{
+			"area": 2700000000,
+			"esname": "NA",
+			"ksname": "NA",
+			"ecname": "Daegu",
+			"kcname": "대구"
+		},
+		{
+			"area": 2711000000,
+			"esname": "Daegu",
+			"ksname": "대구",
+			"ecname": "Jung-gu",
+			"kcname": "중구"
+		},
+		{
+			"area": 2714000000,
+			"esname": "Daegu",
+			"ksname": "대구",
+			"ecname": "Dong-gu",
+			"kcname": "동구"
+		},
+		{
+			"area": 2717000000,
+			"esname": "Daegu",
+			"ksname": "대구",
+			"ecname": "Seo-gu",
+			"kcname": "서구"
+		},
+		{
+			"area": 2720000000,
+			"esname": "Daegu",
+			"ksname": "대구",
+			"ecname": "Nam-gu",
+			"kcname": "남구"
+		},
+		{
+			"area": 2723000000,
+			"esname": "Daegu",
+			"ksname": "대구",
+			"ecname": "Buk-gu",
+			"kcname": "북구"
+		},
+		{
+			"area": 2726000000,
+			"esname": "Daegu",
+			"ksname": "대구",
+			"ecname": "Suseong-gu",
+			"kcname": "수성구"
+		},
+		{
+			"area": 2729000000,
+			"esname": "Daegu",
+			"ksname": "대구",
+			"ecname": "Dalseo-gu",
+			"kcname": "달서구"
+		},
+		{
+			"area": 2771000000,
+			"esname": "Daegu",
+			"ksname": "대구",
+			"ecname": "Dalseong-gun",
+			"kcname": "달성군"
+		},
+		{
+			"area": 2800000000,
+			"esname": "NA",
+			"ksname": "NA",
+			"ecname": "Incheon",
+			"kcname": "인천"
+		},
+		{
+			"area": 2811000000,
+			"esname": "Incheon",
+			"ksname": "인천",
+			"ecname": "Jung-gu",
+			"kcname": "중구"
+		},
+		{
+			"area": 2814000000,
+			"esname": "Incheon",
+			"ksname": "인천",
+			"ecname": "Dong-gu",
+			"kcname": "동구"
+		},
+		{
+			"area": 2817000000,
+			"esname": "Incheon",
+			"ksname": "인천",
+			"ecname": "Nam-gu",
+			"kcname": "남구"
+		},
+		{
+			"area": 2818500000,
+			"esname": "Incheon",
+			"ksname": "인천",
+			"ecname": "Yeonsu-gu",
+			"kcname": "연수구"
+		},
+		{
+			"area": 2820000000,
+			"esname": "Incheon",
+			"ksname": "인천",
+			"ecname": "Namdong-gu",
+			"kcname": "남동구"
+		},
+		{
+			"area": 2823700000,
+			"esname": "Incheon",
+			"ksname": "인천",
+			"ecname": "Bupyeong-gu",
+			"kcname": "부평구"
+		},
+		{
+			"area": 2824500000,
+			"esname": "Incheon",
+			"ksname": "인천",
+			"ecname": "Gyeyang-gu",
+			"kcname": "계양구"
+		},
+		{
+			"area": 2826000000,
+			"esname": "Incheon",
+			"ksname": "인천",
+			"ecname": "Seo-gu",
+			"kcname": "서구"
+		},
+		{
+			"area": 2871000000,
+			"esname": "Incheon",
+			"ksname": "인천",
+			"ecname": "Ganghwa-gun",
+			"kcname": "강화군"
+		},
+		{
+			"area": 2872000000,
+			"esname": "Incheon",
+			"ksname": "인천",
+			"ecname": "Ongjin-gun",
+			"kcname": "옹진군"
+		},
+		{
+			"area": 2900000000,
+			"esname": "NA",
+			"ksname": "NA",
+			"ecname": "Gwangju",
+			"kcname": "광주"
+		},
+		{
+			"area": 2911000000,
+			"esname": "Gwangju",
+			"ksname": "광주",
+			"ecname": "Dong-gu",
+			"kcname": "동구"
+		},
+		{
+			"area": 2914000000,
+			"esname": "Gwangju",
+			"ksname": "광주",
+			"ecname": "Seo-gu",
+			"kcname": "서구"
+		},
+		{
+			"area": 2915500000,
+			"esname": "Gwangju",
+			"ksname": "광주",
+			"ecname": "Nam-gu",
+			"kcname": "남구"
+		},
+		{
+			"area": 2917000000,
+			"esname": "Gwangju",
+			"ksname": "광주",
+			"ecname": "Buk-gu",
+			"kcname": "북구"
+		},
+		{
+			"area": 2920000000,
+			"esname": "Gwangju",
+			"ksname": "광주",
+			"ecname": "Gwangsan-gu",
+			"kcname": "광산구"
+		},
+		{
+			"area": 3000000000,
+			"esname": "NA",
+			"ksname": "NA",
+			"ecname": "Daejeon",
+			"kcname": "대전"
+		},
+		{
+			"area": 3011000000,
+			"esname": "Daejeon",
+			"ksname": "대전",
+			"ecname": "Dong-gu",
+			"kcname": "동구"
+		},
+		{
+			"area": 3014000000,
+			"esname": "Daejeon",
+			"ksname": "대전",
+			"ecname": "Jung-gu",
+			"kcname": "중구"
+		},
+		{
+			"area": 3017000000,
+			"esname": "Daejeon",
+			"ksname": "대전",
+			"ecname": "Seo-gu",
+			"kcname": "서구"
+		},
+		{
+			"area": 3020000000,
+			"esname": "Daejeon",
+			"ksname": "대전",
+			"ecname": "Yuseong-gu",
+			"kcname": "유성구"
+		},
+		{
+			"area": 3023000000,
+			"esname": "Daejeon",
+			"ksname": "대전",
+			"ecname": "Daedeok-gu",
+			"kcname": "대덕구"
+		},
+		{
+			"area": 3100000000,
+			"esname": "NA",
+			"ksname": "NA",
+			"ecname": "Ulsan",
+			"kcname": "울산"
+		},
+		{
+			"area": 3111000000,
+			"esname": "Ulsan",
+			"ksname": "울산",
+			"ecname": "Jung-gu",
+			"kcname": "중구"
+		},
+		{
+			"area": 3114000000,
+			"esname": "Ulsan",
+			"ksname": "울산",
+			"ecname": "Nam-gu",
+			"kcname": "남구"
+		},
+		{
+			"area": 3117000000,
+			"esname": "Ulsan",
+			"ksname": "울산",
+			"ecname": "Dong-gu",
+			"kcname": "동구"
+		},
+		{
+			"area": 3120000000,
+			"esname": "Ulsan",
+			"ksname": "울산",
+			"ecname": "Buk-gu",
+			"kcname": "북구"
+		},
+		{
+			"area": 3171000000,
+			"esname": "Ulsan",
+			"ksname": "울산",
+			"ecname": "Ulju-gun",
+			"kcname": "울주군"
+		},
+		{
+			"area": 3600000000,
+			"esname": "NA",
+			"ksname": "NA",
+			"ecname": "Sejong",
+			"kcname": "세종시"
+		},
+		{
+			"area": 4111000000,
+			"esname": "Gyeonggi-do",
+			"ksname": "경기도",
+			"ecname": "Suwon",
+			"kcname": "수원시"
+		},
+		{
+			"area": 4111100000,
+			"esname": "Gyeonggi-do Suwon",
+			"ksname": "경기도 수원시",
+			"ecname": "Jangan-gu",
+			"kcname": "장안구"
+		},
+		{
+			"area": 4111300000,
+			"esname": "Gyeonggi-do Suwon",
+			"ksname": "경기도 수원시",
+			"ecname": "Gwonseon-gu",
+			"kcname": "권선구"
+		},
+		{
+			"area": 4111500000,
+			"esname": "Gyeonggi-do Suwon",
+			"ksname": "경기도 수원시",
+			"ecname": "Paldal-gu",
+			"kcname": "팔달구"
+		},
+		{
+			"area": 4111700000,
+			"esname": "Gyeonggi-do Suwon",
+			"ksname": "경기도 수원시",
+			"ecname": "Yeongtong-gu",
+			"kcname": "영통구"
+		},
+		{
+			"area": 4113000000,
+			"esname": "Gyeonggi-do",
+			"ksname": "경기도",
+			"ecname": "Seongnam",
+			"kcname": "성남시"
+		},
+		{
+			"area": 4113100000,
+			"esname": "Gyeonggi-do Seongnam",
+			"ksname": "경기도 성남시",
+			"ecname": "Sujeong-gu",
+			"kcname": "수정구"
+		},
+		{
+			"area": 4113300000,
+			"esname": "Gyeonggi-do Seongnam",
+			"ksname": "경기도 성남시",
+			"ecname": "Jungwon-gu",
+			"kcname": "중원구"
+		},
+		{
+			"area": 4113500000,
+			"esname": "Gyeonggi-do Seongnam",
+			"ksname": "경기도 성남시",
+			"ecname": "Bundang-gu",
+			"kcname": "분당구"
+		},
+		{
+			"area": 4115000000,
+			"esname": "Gyeonggi-do",
+			"ksname": "경기도",
+			"ecname": "Uijeongbu",
+			"kcname": "의정부시"
+		},
+		{
+			"area": 4117000000,
+			"esname": "Gyeonggi-do",
+			"ksname": "경기도",
+			"ecname": "Anyang",
+			"kcname": "안양시"
+		},
+		{
+			"area": 4117100000,
+			"esname": "Gyeonggi-do Anyang",
+			"ksname": "경기도 안양시",
+			"ecname": "Manan-gu",
+			"kcname": "만안구"
+		},
+		{
+			"area": 4117300000,
+			"esname": "Gyeonggi-do Anyang",
+			"ksname": "경기도 안양시",
+			"ecname": "Dongan-gu",
+			"kcname": "동안구"
+		},
+		{
+			"area": 4119000000,
+			"esname": "Gyeonggi-do",
+			"ksname": "경기도",
+			"ecname": "Bucheon",
+			"kcname": "부천시"
+		},
+		{
+			"area": 4119500000,
+			"esname": "Gyeonggi-do Bucheon",
+			"ksname": "경기도 부천시",
+			"ecname": "Wonmi-gu",
+			"kcname": "원미구"
+		},
+		{
+			"area": 4119700000,
+			"esname": "Gyeonggi-do Bucheon",
+			"ksname": "경기도 부천시",
+			"ecname": "Sosa-gu",
+			"kcname": "소사구"
+		},
+		{
+			"area": 4119900000,
+			"esname": "Gyeonggi-do Bucheon",
+			"ksname": "경기도 부천시",
+			"ecname": "Ojeong-gu",
+			"kcname": "오정구"
+		},
+		{
+			"area": 4121000000,
+			"esname": "Gyeonggi-do",
+			"ksname": "경기도",
+			"ecname": "Gwangmyeong",
+			"kcname": "광명시"
+		},
+		{
+			"area": 4122000000,
+			"esname": "Gyeonggi-do",
+			"ksname": "경기도",
+			"ecname": "Pyeongtaek",
+			"kcname": "평택시"
+		},
+		{
+			"area": 4125000000,
+			"esname": "Gyeonggi-do",
+			"ksname": "경기도",
+			"ecname": "Dongducheon",
+			"kcname": "동두천시"
+		},
+		{
+			"area": 4127000000,
+			"esname": "Gyeonggi-do",
+			"ksname": "경기도",
+			"ecname": "Ansan",
+			"kcname": "안산시"
+		},
+		{
+			"area": 4127100000,
+			"esname": "Gyeonggi-do Ansan",
+			"ksname": "경기도 안산시",
+			"ecname": "Sangnok-gu",
+			"kcname": "상록구"
+		},
+		{
+			"area": 4127300000,
+			"esname": "Gyeonggi-do Ansan",
+			"ksname": "경기도 안산시",
+			"ecname": "Danwon-gu",
+			"kcname": "단원구"
+		},
+		{
+			"area": 4128000000,
+			"esname": "Gyeonggi-do",
+			"ksname": "경기도",
+			"ecname": "Goyang",
+			"kcname": "고양시"
+		},
+		{
+			"area": 4128100000,
+			"esname": "Gyeonggi-doGoyang",
+			"ksname": "경기도 고양시",
+			"ecname": "Deogyang-gu",
+			"kcname": "덕양구"
+		},
+		{
+			"area": 4128500000,
+			"esname": "Gyeonggi-do Goyang",
+			"ksname": "경기도 고양시",
+			"ecname": "Ilsandong-gu",
+			"kcname": "일산동구"
+		},
+		{
+			"area": 4128700000,
+			"esname": "Gyeonggi-do Goyang",
+			"ksname": "경기도 고양시",
+			"ecname": "Ilsanseo-gu",
+			"kcname": "일산서구"
+		},
+		{
+			"area": 4129000000,
+			"esname": "Gyeonggi-do",
+			"ksname": "경기도",
+			"ecname": "Gwacheon",
+			"kcname": "과천시"
+		},
+		{
+			"area": 4131000000,
+			"esname": "Gyeonggi-do",
+			"ksname": "경기도",
+			"ecname": "Guri",
+			"kcname": "구리시"
+		},
+		{
+			"area": 4136000000,
+			"esname": "Gyeonggi-do",
+			"ksname": "경기도",
+			"ecname": "Namyangju",
+			"kcname": "남양주시"
+		},
+		{
+			"area": 4137000000,
+			"esname": "Gyeonggi-do",
+			"ksname": "경기도",
+			"ecname": "Osan",
+			"kcname": "오산시"
+		},
+		{
+			"area": 4139000000,
+			"esname": "Gyeonggi-do",
+			"ksname": "경기도",
+			"ecname": "Siheung",
+			"kcname": "시흥시"
+		},
+		{
+			"area": 4141000000,
+			"esname": "Gyeonggi-do",
+			"ksname": "경기도",
+			"ecname": "Gunpo",
+			"kcname": "군포시"
+		},
+		{
+			"area": 4143000000,
+			"esname": "Gyeonggi-do",
+			"ksname": "경기도",
+			"ecname": "Uiwang",
+			"kcname": "의왕시"
+		},
+		{
+			"area": 4145000000,
+			"esname": "Gyeonggi-do",
+			"ksname": "경기도",
+			"ecname": "Hanam",
+			"kcname": "하남시"
+		},
+		{
+			"area": 4146000000,
+			"esname": "Gyeonggi-do",
+			"ksname": "경기도",
+			"ecname": "Yongin",
+			"kcname": "용인시"
+		},
+		{
+			"area": 4146100000,
+			"esname": "Gyeonggi-do Yongin",
+			"ksname": "경기도 용인시",
+			"ecname": "Cheoin-gu",
+			"kcname": "처인구"
+		},
+		{
+			"area": 4146300000,
+			"esname": "Gyeonggi-do Yongin",
+			"ksname": "경기도 용인시",
+			"ecname": "Giheung-gu",
+			"kcname": "기흥구"
+		},
+		{
+			"area": 4146500000,
+			"esname": "Gyeonggi-do Yongin",
+			"ksname": "경기도 용인시",
+			"ecname": "Suji-gu",
+			"kcname": "수지구"
+		},
+		{
+			"area": 4148000000,
+			"esname": "Gyeonggi-do",
+			"ksname": "경기도",
+			"ecname": "Paju",
+			"kcname": "파주시"
+		},
+		{
+			"area": 4150000000,
+			"esname": "Gyeonggi-do",
+			"ksname": "경기도",
+			"ecname": "Icheon",
+			"kcname": "이천시"
+		},
+		{
+			"area": 4155000000,
+			"esname": "Gyeonggi-do",
+			"ksname": "경기도",
+			"ecname": "Anseong",
+			"kcname": "안성시"
+		},
+		{
+			"area": 4157000000,
+			"esname": "Gyeonggi-do",
+			"ksname": "경기도",
+			"ecname": "Gimpo",
+			"kcname": "김포시"
+		},
+		{
+			"area": 4159000000,
+			"esname": "Gyeonggi-do",
+			"ksname": "경기도",
+			"ecname": "Hwaseong",
+			"kcname": "화성시"
+		},
+		{
+			"area": 4161000000,
+			"esname": "Gyeonggi-do",
+			"ksname": "경기도",
+			"ecname": "Gwangju",
+			"kcname": "광주시"
+		},
+		{
+			"area": 4163000000,
+			"esname": "Gyeonggi-do",
+			"ksname": "경기도",
+			"ecname": "Yangju",
+			"kcname": "양주시"
+		},
+		{
+			"area": 4165000000,
+			"esname": "Gyeonggi-do",
+			"ksname": "경기도",
+			"ecname": "Pocheon",
+			"kcname": "포천시"
+		},
+		{
+			"area": 4167000000,
+			"esname": "Gyeonggi-do",
+			"ksname": "경기도",
+			"ecname": "Yeoju",
+			"kcname": "여주시"
+		},
+		{
+			"area": 4180000000,
+			"esname": "Gyeonggi-do",
+			"ksname": "경기도",
+			"ecname": "Yeoncheon",
+			"kcname": "연천군"
+		},
+		{
+			"area": 4182000000,
+			"esname": "Gyeonggi-do",
+			"ksname": "경기도",
+			"ecname": "Gapyeong",
+			"kcname": "가평군"
+		},
+		{
+			"area": 4183000000,
+			"esname": "Gyeonggi-do",
+			"ksname": "경기도",
+			"ecname": "Yangpyeong",
+			"kcname": "양평군"
+		},
+		{
+			"area": 4211000000,
+			"esname": "Gangwon-do",
+			"ksname": "강원도",
+			"ecname": "Chuncheon",
+			"kcname": "춘천시"
+		},
+		{
+			"area": 4213000000,
+			"esname": "Gangwon-do",
+			"ksname": "강원도",
+			"ecname": "Wonju",
+			"kcname": "원주시"
+		},
+		{
+			"area": 4215000000,
+			"esname": "Gangwon-do",
+			"ksname": "강원도",
+			"ecname": "Gangneung",
+			"kcname": "강릉시"
+		},
+		{
+			"area": 4217000000,
+			"esname": "Gangwon-do",
+			"ksname": "강원도",
+			"ecname": "Donghae",
+			"kcname": "동해시"
+		},
+		{
+			"area": 4219000000,
+			"esname": "Gangwon-do",
+			"ksname": "강원도",
+			"ecname": "Taebaek",
+			"kcname": "태백시"
+		},
+		{
+			"area": 4221000000,
+			"esname": "Gangwon-do",
+			"ksname": "강원도",
+			"ecname": "Sokcho",
+			"kcname": "속초시"
+		},
+		{
+			"area": 4223000000,
+			"esname": "Gangwon-do",
+			"ksname": "강원도",
+			"ecname": "Samcheok",
+			"kcname": "삼척시"
+		},
+		{
+			"area": 4272000000,
+			"esname": "Gangwon-do",
+			"ksname": "강원도",
+			"ecname": "Hongcheon",
+			"kcname": "홍천군"
+		},
+		{
+			"area": 4273000000,
+			"esname": "Gangwon-do",
+			"ksname": "강원도",
+			"ecname": "Hoengseong",
+			"kcname": "횡성군"
+		},
+		{
+			"area": 4275000000,
+			"esname": "Gangwon-do",
+			"ksname": "강원도",
+			"ecname": "Yeongwol",
+			"kcname": "영월군"
+		},
+		{
+			"area": 4276000000,
+			"esname": "Gangwon-do",
+			"ksname": "강원도",
+			"ecname": "Pyeongchang",
+			"kcname": "평창군"
+		},
+		{
+			"area": 4277000000,
+			"esname": "Gangwon-do",
+			"ksname": "강원도",
+			"ecname": "Jeongseon",
+			"kcname": "정선군"
+		},
+		{
+			"area": 4278000000,
+			"esname": "Gangwon-do",
+			"ksname": "강원도",
+			"ecname": "Cheorwon",
+			"kcname": "철원군"
+		},
+		{
+			"area": 4279000000,
+			"esname": "Gangwon-do",
+			"ksname": "강원도",
+			"ecname": "Hwacheon",
+			"kcname": "화천군"
+		},
+		{
+			"area": 4280000000,
+			"esname": "Gangwon-do",
+			"ksname": "강원도",
+			"ecname": "Yanggu",
+			"kcname": "양구군"
+		},
+		{
+			"area": 4281000000,
+			"esname": "Gangwon-do",
+			"ksname": "강원도",
+			"ecname": "Inje",
+			"kcname": "인제군"
+		},
+		{
+			"area": 4282000000,
+			"esname": "Gangwon-do",
+			"ksname": "강원도",
+			"ecname": "Goseong",
+			"kcname": "고성군"
+		},
+		{
+			"area": 4283000000,
+			"esname": "Gangwon-do",
+			"ksname": "강원도",
+			"ecname": "Yangyang",
+			"kcname": "양양군"
+		},
+		{
+			"area": 4311000000,
+			"esname": "Chungcheongbuk-do",
+			"ksname": "충청북도",
+			"ecname": "Cheongju",
+			"kcname": "청주시"
+		},
+		{
+			"area": 4311100000,
+			"esname": "Chungcheongbuk-do Cheongju",
+			"ksname": "충청북도 청주시",
+			"ecname": "Sangdang-gu",
+			"kcname": "상당구"
+		},
+		{
+			"area": 4311300000,
+			"esname": "Chungcheongbuk-do Cheongju",
+			"ksname": "충청북도 청주시",
+			"ecname": "Heungdeok-gu",
+			"kcname": "흥덕구"
+		},
+		{
+			"area": 4313000000,
+			"esname": "Chungcheongbuk-do",
+			"ksname": "충청북도",
+			"ecname": "Chungju",
+			"kcname": "충주시"
+		},
+		{
+			"area": 4315000000,
+			"esname": "Chungcheongbuk-do",
+			"ksname": "충청북도",
+			"ecname": "Jecheon",
+			"kcname": "제천시"
+		},
+		{
+			"area": 4372000000,
+			"esname": "Chungcheongbuk-do",
+			"ksname": "충청북도",
+			"ecname": "Boeun",
+			"kcname": "보은군"
+		},
+		{
+			"area": 4373000000,
+			"esname": "Chungcheongbuk-do",
+			"ksname": "충청북도",
+			"ecname": "Okcheon",
+			"kcname": "옥천군"
+		},
+		{
+			"area": 4374000000,
+			"esname": "Chungcheongbuk-do",
+			"ksname": "충청북도",
+			"ecname": "Yeongdong",
+			"kcname": "영동군"
+		},
+		{
+			"area": 4374500000,
+			"esname": "Chungcheongbuk-do",
+			"ksname": "충청북도",
+			"ecname": "Jeungpyeong",
+			"kcname": "증평군"
+		},
+		{
+			"area": 4375000000,
+			"esname": "Chungcheongbuk-do",
+			"ksname": "충청북도",
+			"ecname": "Jincheon",
+			"kcname": "진천군"
+		},
+		{
+			"area": 4376000000,
+			"esname": "Chungcheongbuk-do",
+			"ksname": "충청북도",
+			"ecname": "Goesan",
+			"kcname": "괴산군"
+		},
+		{
+			"area": 4377000000,
+			"esname": "Chungcheongbuk-do",
+			"ksname": "충청북도",
+			"ecname": "Eumseong",
+			"kcname": "음성군"
+		},
+		{
+			"area": 4380000000,
+			"esname": "Chungcheongbuk-do",
+			"ksname": "충청북도",
+			"ecname": "Danyang",
+			"kcname": "단양군"
+		},
+		{
+			"area": 4413000000,
+			"esname": "Chungcheongnam-do",
+			"ksname": "충청남도",
+			"ecname": "Cheonan",
+			"kcname": "천안시"
+		},
+		{
+			"area": 4413100000,
+			"esname": "Chungcheongnam-do Cheonan",
+			"ksname": "충청남도 천안시",
+			"ecname": "DongNam-gu",
+			"kcname": "동남구"
+		},
+		{
+			"area": 4413300000,
+			"esname": "Chungcheongnam-do Cheonan",
+			"ksname": "충청남도 천안시",
+			"ecname": "SeoBuk-gu",
+			"kcname": "서북구"
+		},
+		{
+			"area": 4415000000,
+			"esname": "Chungcheongnam-do",
+			"ksname": "충청남도",
+			"ecname": "Gongju",
+			"kcname": "공주시"
+		},
+		{
+			"area": 4418000000,
+			"esname": "Chungcheongnam-do",
+			"ksname": "충청남도",
+			"ecname": "Boryeong",
+			"kcname": "보령시"
+		},
+		{
+			"area": 4420000000,
+			"esname": "Chungcheongnam-do",
+			"ksname": "충청남도",
+			"ecname": "Asan",
+			"kcname": "아산시"
+		},
+		{
+			"area": 4421000000,
+			"esname": "Chungcheongnam-do",
+			"ksname": "충청남도",
+			"ecname": "Seosan",
+			"kcname": "서산시"
+		},
+		{
+			"area": 4423000000,
+			"esname": "Chungcheongnam-do",
+			"ksname": "충청남도",
+			"ecname": "Nonsan",
+			"kcname": "논산시"
+		},
+		{
+			"area": 4425000000,
+			"esname": "Chungcheongnam-do",
+			"ksname": "충청남도",
+			"ecname": "Gyeryong",
+			"kcname": "계룡시"
+		},
+		{
+			"area": 4427000000,
+			"esname": "Chungcheongnam-do",
+			"ksname": "충청남도",
+			"ecname": "Dangjin",
+			"kcname": "당진시"
+		},
+		{
+			"area": 4471000000,
+			"esname": "Chungcheongnam-do",
+			"ksname": "충청남도",
+			"ecname": "Geumsan",
+			"kcname": "금산군"
+		},
+		{
+			"area": 4476000000,
+			"esname": "Chungcheongnam-do",
+			"ksname": "충청남도",
+			"ecname": "Buyeo",
+			"kcname": "부여군"
+		},
+		{
+			"area": 4477000000,
+			"esname": "Chungcheongnam-do",
+			"ksname": "충청남도",
+			"ecname": "Seocheon",
+			"kcname": "서천군"
+		},
+		{
+			"area": 4479000000,
+			"esname": "Chungcheongnam-do",
+			"ksname": "충청남도",
+			"ecname": "Cheongyang",
+			"kcname": "청양군"
+		},
+		{
+			"area": 4480000000,
+			"esname": "Chungcheongnam-do",
+			"ksname": "충청남도",
+			"ecname": "Hongseong",
+			"kcname": "홍성군"
+		},
+		{
+			"area": 4481000000,
+			"esname": "Chungcheongnam-do",
+			"ksname": "충청남도",
+			"ecname": "Yesan",
+			"kcname": "예산군"
+		},
+		{
+			"area": 4482500000,
+			"esname": "Chungcheongnam-do",
+			"ksname": "충청남도",
+			"ecname": "Taean",
+			"kcname": "태안군"
+		},
+		{
+			"area": 4511000000,
+			"esname": "Jeollabuk-do",
+			"ksname": "전라북도",
+			"ecname": "Jeonju",
+			"kcname": "전주시"
+		},
+		{
+			"area": 4511100000,
+			"esname": "Jeollabuk-do Jeonju",
+			"ksname": "전라북도 전주시",
+			"ecname": "Wansan-gu",
+			"kcname": "완산구"
+		},
+		{
+			"area": 4511300000,
+			"esname": "Jeollabuk-do Jeonju",
+			"ksname": "전라북도 전주시",
+			"ecname": "Deokjin-gu",
+			"kcname": "덕진구"
+		},
+		{
+			"area": 4513000000,
+			"esname": "Jeollabuk-do",
+			"ksname": "전라북도",
+			"ecname": "Gunsan",
+			"kcname": "군산시"
+		},
+		{
+			"area": 4514000000,
+			"esname": "Jeollabuk-do",
+			"ksname": "전라북도",
+			"ecname": "Iksan",
+			"kcname": "익산시"
+		},
+		{
+			"area": 4518000000,
+			"esname": "Jeollabuk-do",
+			"ksname": "전라북도",
+			"ecname": "Jeongeup",
+			"kcname": "정읍시"
+		},
+		{
+			"area": 4519000000,
+			"esname": "Jeollabuk-do",
+			"ksname": "전라북도",
+			"ecname": "Namwon",
+			"kcname": "남원시"
+		},
+		{
+			"area": 4521000000,
+			"esname": "Jeollabuk-do",
+			"ksname": "전라북도",
+			"ecname": "Gimje",
+			"kcname": "김제시"
+		},
+		{
+			"area": 4571000000,
+			"esname": "Jeollabuk-do",
+			"ksname": "전라북도",
+			"ecname": "Wanju",
+			"kcname": "완주군"
+		},
+		{
+			"area": 4572000000,
+			"esname": "Jeollabuk-do",
+			"ksname": "전라북도",
+			"ecname": "Jinan",
+			"kcname": "진안군"
+		},
+		{
+			"area": 4573000000,
+			"esname": "Jeollabuk-do",
+			"ksname": "전라북도",
+			"ecname": "Muju",
+			"kcname": "무주군"
+		},
+		{
+			"area": 4574000000,
+			"esname": "Jeollabuk-do",
+			"ksname": "전라북도",
+			"ecname": "Jangsu",
+			"kcname": "장수군"
+		},
+		{
+			"area": 4575000000,
+			"esname": "Jeollabuk-do",
+			"ksname": "전라북도",
+			"ecname": "Imsil",
+			"kcname": "임실군"
+		},
+		{
+			"area": 4577000000,
+			"esname": "Jeollabuk-do",
+			"ksname": "전라북도",
+			"ecname": "Sunchang",
+			"kcname": "순창군"
+		},
+		{
+			"area": 4579000000,
+			"esname": "Jeollabuk-do",
+			"ksname": "전라북도",
+			"ecname": "Gochang",
+			"kcname": "고창군"
+		},
+		{
+			"area": 4580000000,
+			"esname": "Jeollabuk-do",
+			"ksname": "전라북도",
+			"ecname": "Buan",
+			"kcname": "부안군"
+		},
+		{
+			"area": 4611000000,
+			"esname": "Jeollanam-do",
+			"ksname": "전라남도",
+			"ecname": "Mokpo",
+			"kcname": "목포시"
+		},
+		{
+			"area": 4613000000,
+			"esname": "Jeollanam-do",
+			"ksname": "전라남도",
+			"ecname": "Yeosu",
+			"kcname": "여수시"
+		},
+		{
+			"area": 4615000000,
+			"esname": "Jeollanam-do",
+			"ksname": "전라남도",
+			"ecname": "Suncheon",
+			"kcname": "순천시"
+		},
+		{
+			"area": 4617000000,
+			"esname": "Jeollanam-do",
+			"ksname": "전라남도",
+			"ecname": "Naju",
+			"kcname": "나주시"
+		},
+		{
+			"area": 4623000000,
+			"esname": "Jeollanam-do",
+			"ksname": "전라남도",
+			"ecname": "Gwangyang",
+			"kcname": "광양시"
+		},
+		{
+			"area": 4671000000,
+			"esname": "Jeollanam-do",
+			"ksname": "전라남도",
+			"ecname": "Damyang",
+			"kcname": "담양군"
+		},
+		{
+			"area": 4672000000,
+			"esname": "Jeollanam-do",
+			"ksname": "전라남도",
+			"ecname": "Gokseong",
+			"kcname": "곡성군"
+		},
+		{
+			"area": 4673000000,
+			"esname": "Jeollanam-do",
+			"ksname": "전라남도",
+			"ecname": "Gurye",
+			"kcname": "구례군"
+		},
+		{
+			"area": 4677000000,
+			"esname": "Jeollanam-do",
+			"ksname": "전라남도",
+			"ecname": "Goheung",
+			"kcname": "고흥군"
+		},
+		{
+			"area": 4678000000,
+			"esname": "Jeollanam-do",
+			"ksname": "전라남도",
+			"ecname": "Boseong",
+			"kcname": "보성군"
+		},
+		{
+			"area": 4679000000,
+			"esname": "Jeollanam-do",
+			"ksname": "전라남도",
+			"ecname": "Hwasun",
+			"kcname": "화순군"
+		},
+		{
+			"area": 4680000000,
+			"esname": "Jeollanam-do",
+			"ksname": "전라남도",
+			"ecname": "Jangheung",
+			"kcname": "장흥군"
+		},
+		{
+			"area": 4681000000,
+			"esname": "Jeollanam-do",
+			"ksname": "전라남도",
+			"ecname": "Gangjin",
+			"kcname": "강진군"
+		},
+		{
+			"area": 4682000000,
+			"esname": "Jeollanam-do",
+			"ksname": "전라남도",
+			"ecname": "Haenam",
+			"kcname": "해남군"
+		},
+		{
+			"area": 4683000000,
+			"esname": "Jeollanam-do",
+			"ksname": "전라남도",
+			"ecname": "Yeongam",
+			"kcname": "영암군"
+		},
+		{
+			"area": 4684000000,
+			"esname": "Jeollanam-do",
+			"ksname": "전라남도",
+			"ecname": "Muan",
+			"kcname": "무안군"
+		},
+		{
+			"area": 4686000000,
+			"esname": "Jeollanam-do",
+			"ksname": "전라남도",
+			"ecname": "Hampyeong",
+			"kcname": "함평군"
+		},
+		{
+			"area": 4687000000,
+			"esname": "Jeollanam-do",
+			"ksname": "전라남도",
+			"ecname": "Yeonggwang",
+			"kcname": "영광군"
+		},
+		{
+			"area": 4688000000,
+			"esname": "Jeollanam-do",
+			"ksname": "전라남도",
+			"ecname": "Jangseong",
+			"kcname": "장성군"
+		},
+		{
+			"area": 4689000000,
+			"esname": "Jeollanam-do",
+			"ksname": "전라남도",
+			"ecname": "Wando",
+			"kcname": "완도군"
+		},
+		{
+			"area": 4690000000,
+			"esname": "Jeollanam-do",
+			"ksname": "전라남도",
+			"ecname": "Jindo",
+			"kcname": "진도군"
+		},
+		{
+			"area": 4691000000,
+			"esname": "Jeollanam-do",
+			"ksname": "전라남도",
+			"ecname": "Sinan",
+			"kcname": "신안군"
+		},
+		{
+			"area": 4711000000,
+			"esname": "Gyeongsangbuk-do",
+			"ksname": "경상북도",
+			"ecname": "Pohang",
+			"kcname": "포항시"
+		},
+		{
+			"area": 4711100000,
+			"esname": "Gyeongsangbuk-do Pohang",
+			"ksname": "경상북도 포항시",
+			"ecname": "Nam-gu",
+			"kcname": "남구"
+		},
+		{
+			"area": 4711300000,
+			"esname": "Gyeongsangbuk-do Pohang",
+			"ksname": "경상북도 포항시",
+			"ecname": "Buk-gu",
+			"kcname": "북구"
+		},
+		{
+			"area": 4713000000,
+			"esname": "Gyeongsangbuk-do",
+			"ksname": "경상북도",
+			"ecname": "Gyeongju",
+			"kcname": "경주시"
+		},
+		{
+			"area": 4715000000,
+			"esname": "Gyeongsangbuk-do",
+			"ksname": "경상북도",
+			"ecname": "Gimcheon",
+			"kcname": "김천시"
+		},
+		{
+			"area": 4717000000,
+			"esname": "Gyeongsangbuk-do",
+			"ksname": "경상북도",
+			"ecname": "Andong",
+			"kcname": "안동시"
+		},
+		{
+			"area": 4719000000,
+			"esname": "Gyeongsangbuk-do",
+			"ksname": "경상북도",
+			"ecname": "Gumi",
+			"kcname": "구미시"
+		},
+		{
+			"area": 4721000000,
+			"esname": "Gyeongsangbuk-do",
+			"ksname": "경상북도",
+			"ecname": "Yeongju",
+			"kcname": "영주시"
+		},
+		{
+			"area": 4723000000,
+			"esname": "Gyeongsangbuk-do",
+			"ksname": "경상북도",
+			"ecname": "Yeongcheon",
+			"kcname": "영천시"
+		},
+		{
+			"area": 4725000000,
+			"esname": "Gyeongsangbuk-do",
+			"ksname": "경상북도",
+			"ecname": "Sangju",
+			"kcname": "상주시"
+		},
+		{
+			"area": 4728000000,
+			"esname": "Gyeongsangbuk-do",
+			"ksname": "경상북도",
+			"ecname": "Mungyeong",
+			"kcname": "문경시"
+		},
+		{
+			"area": 4729000000,
+			"esname": "Gyeongsangbuk-do",
+			"ksname": "경상북도",
+			"ecname": "Gyeongsan",
+			"kcname": "경산시"
+		},
+		{
+			"area": 4772000000,
+			"esname": "Gyeongsangbuk-do",
+			"ksname": "경상북도",
+			"ecname": "Gunwi",
+			"kcname": "군위군"
+		},
+		{
+			"area": 4773000000,
+			"esname": "Gyeongsangbuk-do",
+			"ksname": "경상북도",
+			"ecname": "Uiseong",
+			"kcname": "의성군"
+		},
+		{
+			"area": 4775000000,
+			"esname": "Gyeongsangbuk-do",
+			"ksname": "경상북도",
+			"ecname": "Cheongsong",
+			"kcname": "청송군"
+		},
+		{
+			"area": 4776000000,
+			"esname": "Gyeongsangbuk-do",
+			"ksname": "경상북도",
+			"ecname": "Yeongyang",
+			"kcname": "영양군"
+		},
+		{
+			"area": 4777000000,
+			"esname": "Gyeongsangbuk-do",
+			"ksname": "경상북도",
+			"ecname": "Yeongdeok",
+			"kcname": "영덕군"
+		},
+		{
+			"area": 4782000000,
+			"esname": "Gyeongsangbuk-do",
+			"ksname": "경상북도",
+			"ecname": "Cheongdo",
+			"kcname": "청도군"
+		},
+		{
+			"area": 4783000000,
+			"esname": "Gyeongsangbuk-do",
+			"ksname": "경상북도",
+			"ecname": "Goryeong",
+			"kcname": "고령군"
+		},
+		{
+			"area": 4784000000,
+			"esname": "Gyeongsangbuk-do",
+			"ksname": "경상북도",
+			"ecname": "Seongju",
+			"kcname": "성주군"
+		},
+		{
+			"area": 4785000000,
+			"esname": "Gyeongsangbuk-do",
+			"ksname": "경상북도",
+			"ecname": "Chilgok",
+			"kcname": "칠곡군"
+		},
+		{
+			"area": 4790000000,
+			"esname": "Gyeongsangbuk-do",
+			"ksname": "경상북도",
+			"ecname": "Yecheon",
+			"kcname": "예천군"
+		},
+		{
+			"area": 4792000000,
+			"esname": "Gyeongsangbuk-do",
+			"ksname": "경상북도",
+			"ecname": "Bonghwa",
+			"kcname": "봉화군"
+		},
+		{
+			"area": 4793000000,
+			"esname": "Gyeongsangbuk-do",
+			"ksname": "경상북도",
+			"ecname": "Uljin",
+			"kcname": "울진군"
+		},
+		{
+			"area": 4794000000,
+			"esname": "Gyeongsangbuk-do",
+			"ksname": "경상북도",
+			"ecname": "Ulleung",
+			"kcname": "울릉도"
+		},
+		{
+			"area": 4812000000,
+			"esname": "Gyeongsangnam-do",
+			"ksname": "경상남도",
+			"ecname": "Changwon",
+			"kcname": "창원시"
+		},
+		{
+			"area": 4812100000,
+			"esname": "Gyeongsangnam-do Changwon",
+			"ksname": "경상남도 창원시",
+			"ecname": "Uichang-gu",
+			"kcname": "의창구"
+		},
+		{
+			"area": 4812300000,
+			"esname": "Gyeongsangnam-do Changwon",
+			"ksname": "경상남도 창원시",
+			"ecname": "Seongsan-gu",
+			"kcname": "성산구"
+		},
+		{
+			"area": 4812500000,
+			"esname": "Gyeongsangnam-do Changwon",
+			"ksname": "경상남도 창원시",
+			"ecname": "MasanHappo-gu",
+			"kcname": "마산합포구"
+		},
+		{
+			"area": 4812700000,
+			"esname": "Gyeongsangnam-do Changwon",
+			"ksname": "경상남도 창원시",
+			"ecname": "MasanHoewon-gu",
+			"kcname": "마산회원구"
+		},
+		{
+			"area": 4812900000,
+			"esname": "Gyeongsangnam-do Changwon",
+			"ksname": "경상남도 창원시",
+			"ecname": "Jinhae-gu",
+			"kcname": "진해구"
+		},
+		{
+			"area": 4817000000,
+			"esname": "Gyeongsangnam-do",
+			"ksname": "경상남도",
+			"ecname": "Jinju",
+			"kcname": "진주시"
+		},
+		{
+			"area": 4822000000,
+			"esname": "Gyeongsangnam-do",
+			"ksname": "경상남도",
+			"ecname": "Tongyeong",
+			"kcname": "통영시"
+		},
+		{
+			"area": 4824000000,
+			"esname": "Gyeongsangnam-do",
+			"ksname": "경상남도",
+			"ecname": "Sacheon",
+			"kcname": "사천시"
+		},
+		{
+			"area": 4825000000,
+			"esname": "Gyeongsangnam-do",
+			"ksname": "경상남도",
+			"ecname": "Gimhae",
+			"kcname": "김해시"
+		},
+		{
+			"area": 4827000000,
+			"esname": "Gyeongsangnam-do",
+			"ksname": "경상남도",
+			"ecname": "Miryang",
+			"kcname": "밀양시"
+		},
+		{
+			"area": 4831000000,
+			"esname": "Gyeongsangnam-do",
+			"ksname": "경상남도",
+			"ecname": "Geoje",
+			"kcname": "거제시"
+		},
+		{
+			"area": 4833000000,
+			"esname": "Gyeongsangnam-do",
+			"ksname": "경상남도",
+			"ecname": "Yangsan",
+			"kcname": "양산시"
+		},
+		{
+			"area": 4872000000,
+			"esname": "Gyeongsangnam-do",
+			"ksname": "경상남도",
+			"ecname": "Uiryeong",
+			"kcname": "의령군"
+		},
+		{
+			"area": 4873000000,
+			"esname": "Gyeongsangnam-do",
+			"ksname": "경상남도",
+			"ecname": "Haman",
+			"kcname": "함안군"
+		},
+		{
+			"area": 4874000000,
+			"esname": "Gyeongsangnam-do",
+			"ksname": "경상남도",
+			"ecname": "Changnyeong",
+			"kcname": "창녕군"
+		},
+		{
+			"area": 4882000000,
+			"esname": "Gyeongsangnam-do",
+			"ksname": "경상남도",
+			"ecname": "Goseong",
+			"kcname": "고성군"
+		},
+		{
+			"area": 4884000000,
+			"esname": "Gyeongsangnam-do",
+			"ksname": "경상남도",
+			"ecname": "Namhae",
+			"kcname": "남해군"
+		},
+		{
+			"area": 4885000000,
+			"esname": "Gyeongsangnam-do",
+			"ksname": "경상남도",
+			"ecname": "Hadong",
+			"kcname": "하동군"
+		},
+		{
+			"area": 4886000000,
+			"esname": "Gyeongsangnam-do",
+			"ksname": "경상남도",
+			"ecname": "Sancheong",
+			"kcname": "산청군"
+		},
+		{
+			"area": 4887000000,
+			"esname": "Gyeongsangnam-do",
+			"ksname": "경상남도",
+			"ecname": "Hamyang",
+			"kcname": "함양군"
+		},
+		{
+			"area": 4888000000,
+			"esname": "Gyeongsangnam-do",
+			"ksname": "경상남도",
+			"ecname": "Geochang",
+			"kcname": "거창군"
+		},
+		{
+			"area": 4889000000,
+			"esname": "Gyeongsangnam-do",
+			"ksname": "경상남도",
+			"ecname": "Hapcheon",
+			"kcname": "합천군"
+		},
+		{
+			"area": 5000000000,
+			"esname": "NA",
+			"ksname": "NA",
+			"ecname": "Jeju",
+			"kcname": "제주"
+		},
+		{
+			"area": 5011000000,
+			"esname": "Jeju",
+			"ksname": "제주",
+			"ecname": "Jeju",
+			"kcname": "제주시"
+		},
+		{
+			"area": 5013000000,
+			"esname": "Jeju",
+			"ksname": "제주",
+			"ecname": "Seogwipo",
+			"kcname": "서귀포시"
+		}
+	]
+}
