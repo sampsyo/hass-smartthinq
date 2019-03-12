@@ -325,7 +325,10 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
             LGE_DRYER_DEVICES = []
             if mac == conf_mac.lower():
                 LOGGER.debug("Creating new LGE Dryer")
-                dryer_entity = LGEDRYERDEVICE(client, device, name, model_type)
+                try:
+                    dryer_entity = LGEDRYERDEVICE(client, device, name, model_type)
+                except wideq.NotConnectError:
+                    raise PlatformNotReady
                 LGE_DRYER_DEVICES.append(dryer_entity)
                 add_entities(LGE_DRYER_DEVICES)
                 LOGGER.debug("LGE Dryer is added")
@@ -1057,3 +1060,4 @@ class LGEWATERPURIFIERDEVICE(LGEDevice):
         self._wp.monitor_start()
         self._wp.delete_permission()
         self._wp.delete_permission()
+
