@@ -110,6 +110,16 @@ lge_hvac_set_wswirl_mode:
       description: wswirl mode status
       example: 'ON'
 
+lge_hvac_set_sleep_timer:
+  description: Set the hvac in sleep timer
+  fields:
+    entity_id:
+      description: Name(s) of the entities to set sleep timer
+      example: 'climate.air_conditioner'
+    sleep_time:
+      description: sleep time
+      example: '30'
+      
 # Describes the format for available LGE Refrigerator services
 
 lge_ref_set_refrigerator_temperature:
