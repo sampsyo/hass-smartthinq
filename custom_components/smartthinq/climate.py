@@ -17,7 +17,7 @@ from homeassistant.const import (
 import time
 import wideq
 
-REQUIREMENTS = ['wideq_kr == 0.0.5']
+REQUIREMENTS = ['wideq_kr == 0.0.6']
 DEPENDENCIES = ['smartthinq']
 
 LGE_HVAC_DEVICES = 'lge_HVAC_devices'
@@ -52,6 +52,7 @@ CONF_WDIRUPDOWN_MODE = 'up_down_mode'
 CONF_SENSORMON_MODE = 'sensormon_mode'
 CONF_JET_MODE = 'jet_mode'
 CONF_WDIRVSTEP_MODE = 'wdirvstep_mode'
+CONF_SLEEP_TIME = 'sleep_time'
 
 ATTR_CURRENT_TEMPERATURE = 'current_temperature'
 ATTR_MAX_TEMP = 'max_temp'
@@ -90,7 +91,13 @@ ATTR_OUTDOOR_TODAY_MORNING_PM25 = 'outdoor_today_morning_pm2.5'
 ATTR_OUTDOOR_TODAY_AFTERNOON_PM25 = 'outdoor_today_afternoon_pm2.5'
 ATTR_OUTDOOR_TOMORROW_MORNING_PM25 = 'outdoor_tomorrow_morning_pm2.5'
 ATTR_OUTDOOR_TOMORROW_AFTERNOON_PM25 = 'outdoor_tomorrow_afternoon_pm2.5'
-
+ATTR_OUTDOOR_TOTAL_INSTANTPOWER = 'outdoor_total_instant_power'
+ATTR_INOUTDOOR_INSTANTPOWER = 'in/outdoor_instant_power'
+ATTR_POWER_USAGE_DAY = 'power_usage_day'
+ATTR_POWER_USAGE_WEEK = 'power_usage_week'
+ATTR_POWER_USAGE_MONTH = 'power_usage_month'
+ATTR_ELEC_FARE = 'electric_fare'
+ATTR_SLEEP_TIME = 'sleep_time'
 
 CONVERTIBLE_ATTRIBUTE = [
     ATTR_TEMPERATURE
@@ -106,6 +113,7 @@ SERVICE_SET_WDIRUPDOWN_MODE = 'lge_hvac_set_up_down_mode'
 SERVICE_SET_SENSORMON_MODE = 'lge_hvac_set_sensormon_mode'
 SERVICE_SET_JET_MODE = 'lge_hvac_set_jet_mode'
 SERVICE_SET_WDIRVSTEP_MODE = 'lge_hvac_set_wdirvstep_mode'
+SERVICE_SET_SLEEP_TIMER = 'lge_hvac_set_sleep_timer'
 
 MODES = {
     'COOL': wideq.STATE_COOL,
@@ -231,6 +239,11 @@ LGE_HVAC_SET_JET_MODE_SCHEMA = vol.Schema({
 LGE_HVAC_SET_WDIRVSTEP_MODE_SCHEMA = vol.Schema({
     vol.Required(CONF_ENTITY_ID): cv.entity_id,
     vol.Required(CONF_WDIRVSTEP_MODE): cv.string,
+})
+
+LGE_HVAC_SET_SLEEP_TIMER_SCHEMA = vol.Schema({
+    vol.Required(CONF_ENTITY_ID): cv.entity_id,
+    vol.Required(CONF_SLEEP_TIME): cv.string,
 })
 
 TRANSIENT_EXP = 5.0  # Report set temperature for 5 seconds.
@@ -506,7 +519,7 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
         sensormon_mode = service.data.get(CONF_SENSORMON_MODE)
         jet_mode = service.data.get(CONF_JET_MODE)
         wdirvstep_mode = service.data.get(CONF_WDIRVSTEP_MODE)
-
+        sleep_timer = service.data.get(CONF_SLEEP_TIME)
 
         if service.service == SERVICE_SET_AIRCLEAN_MODE:
             hvac_entity.airclean_mode(airclean_mode)
@@ -528,6 +541,8 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
             hvac_entity.jet_mode(jet_mode)
         elif service.service == SERVICE_SET_WDIRVSTEP_MODE:
             hvac_entity.wdirvstep_mode(wdirvstep_mode)
+        elif service.service == SERVICE_SET_SLEEP_TIMER:
+            hvac_entity.sleep_timer(sleep_timer)
 
     def ref_service_handle(service):
         """Handle the Refrigerator services."""
@@ -603,6 +618,9 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
     hass.services.register(
         DOMAIN, SERVICE_SET_WDIRVSTEP_MODE, hvac_service_handle,
         schema=LGE_HVAC_SET_WDIRVSTEP_MODE_SCHEMA)
+    hass.services.register(
+        DOMAIN, SERVICE_SET_SLEEP_TIMER, hvac_service_handle,
+        schema=LGE_HVAC_SET_SLEEP_TIMER_SCHEMA) 
  
     # Register refrigerator service(s)
     hass.services.register(
@@ -677,13 +695,21 @@ class LGEHVACDEVICE(LGEDevice, ClimateDevice):
 
     @property
     def supported_features(self):
-        return (
-            SUPPORT_TARGET_TEMPERATURE |
-            SUPPORT_OPERATION_MODE |
-            SUPPORT_FAN_MODE |
-            SUPPORT_SWING_MODE |
-            SUPPORT_ON_OFF
-        )
+        if 'LEFTRIGHT' in self.support_swingmode:
+            return (
+                SUPPORT_TARGET_TEMPERATURE |
+                SUPPORT_OPERATION_MODE |
+                SUPPORT_FAN_MODE |
+                SUPPORT_SWING_MODE |
+                SUPPORT_ON_OFF
+            )
+        else:
+            return (
+                SUPPORT_TARGET_TEMPERATURE |
+                SUPPORT_OPERATION_MODE |
+                SUPPORT_FAN_MODE |
+                SUPPORT_ON_OFF
+            )
 
     @property
     def state_attributes(self):
@@ -723,24 +749,33 @@ class LGEHVACDEVICE(LGEDevice, ClimateDevice):
         data[ATTR_STATUS] = self.current_status
         data[ATTR_FILTER_STATE] = self.filter_state
         data[ATTR_MFILTER_STATE] = self.mfilter_state
-        data[ATTR_OUTDOOR_TEMPERATURE] = self.outdoor_temp
-        data[ATTR_OUTDOOR_HUMIDITY] = self.outdoor_humidity
-        data[ATTR_OUTDOOR_NOW_PM25] = self.outdoor_now_pm25
-        data[ATTR_OUTDOOR_TODAY_MORNING_PM25] = self.outdoor_today_morning_pm25
-        data[ATTR_OUTDOOR_TODAY_AFTERNOON_PM25] = self.outdoor_today_afternoon_pm25
-        data[ATTR_OUTDOOR_TOMORROW_MORNING_PM25] = self.outdoor_tomorrow_morning_pm25
-        data[ATTR_OUTDOOR_TOMORROW_AFTERNOON_PM25] = self.outdoor_tomorrow_afternoon_pm25
+        data[ATTR_OUTDOOR_TOTAL_INSTANTPOWER] = self.outtotalinstantpower
+        data[ATTR_INOUTDOOR_INSTANTPOWER] = self.inoutinstantpower
+        """
+        data[ATTR_POWER_USAGE_DAY] = self.get_energy_usage_day
+        data[ATTR_POWER_USAGE_WEEK] = self.get_energy_usage_week
+        data[ATTR_POWER_USAGE_MONTH] = self.get_energy_usage_month
+        data[ATTR_ELEC_FARE] = self.elec_fare
+        """
+        data[ATTR_SLEEP_TIME] = self.is_sleep_timer
+        if self._area is not None:
+            data[ATTR_OUTDOOR_TEMPERATURE] = self.outdoor_weather('ct')
+            data[ATTR_OUTDOOR_HUMIDITY] = self.outdoor_weather('ch')
+            data[ATTR_OUTDOOR_NOW_PM25] = self.outdoor_weather('pm25')
+            data[ATTR_OUTDOOR_TODAY_MORNING_PM25] = self.outdoor_weather('pm25_1')
+            data[ATTR_OUTDOOR_TODAY_AFTERNOON_PM25] = self.outdoor_weather('pm25_2')
+            data[ATTR_OUTDOOR_TOMORROW_MORNING_PM25] = self.outdoor_weather('pm25_3')
+            data[ATTR_OUTDOOR_TOMORROW_AFTERNOON_PM25] = self.outdoor_weather('pm25_4')
+
         supported_features = self.supported_features
         if supported_features & SUPPORT_FAN_MODE:
             data[ATTR_FAN_MODE] = self.current_fan_mode
             if self.fan_list:
                 data[ATTR_FAN_LIST] = self.fan_list
-
         if supported_features & SUPPORT_OPERATION_MODE:
             data[ATTR_OPERATION_MODE] = self.current_operation
             if self.operation_list:
                 data[ATTR_OPERATION_LIST] = self.operation_list
-
         if supported_features & SUPPORT_SWING_MODE:
             data[ATTR_SWING_MODE] = self.current_swing_mode
             if self.swing_list:
@@ -772,6 +807,30 @@ class LGEHVACDEVICE(LGEDevice, ClimateDevice):
     @property
     def support_oplist(self):
         return self._state.support_oplist
+
+    @property
+    def support_fanlist(self):
+        mode = self._state.windstrength_state
+        if mode.name in SINGLE_FANMODES.keys():
+            return self._state.support_fanlist
+        else:
+            return mode.name
+
+    @property
+    def support_windmode(self):
+        return self._state.support_windmode
+
+    @property
+    def support_pacmode(self):
+        return self._state.support_pacmode
+
+    @property
+    def support_swingmode(self):
+        return self._state.support_swingmode      
+
+    @property
+    def support_reservemode(self):
+        return self._state.support_reservemode      
 
     @property
     def operation_list(self):
@@ -817,14 +876,6 @@ class LGEHVACDEVICE(LGEDevice, ClimateDevice):
         elif self.device_type == 'SAC_CST':
             mode = wideq.ACMode[rac_sacmodes_inv[operation_mode]]
         self._ac.set_mode(mode)
-
-    @property
-    def support_fanlist(self):
-        mode = self._state.windstrength_state
-        if mode.name in SINGLE_FANMODES.keys():
-            return self._state.support_fanlist
-        else:
-            return mode.name
 
     @property
     def fan_list(self):
@@ -873,10 +924,10 @@ class LGEHVACDEVICE(LGEDevice, ClimateDevice):
     @property
     def swing_list(self):
         if self.device_type == 'PAC':
-            if 'SYSTEM_LOW' in self.support_fanlist:
-                return '지원안함'
-            else:
+            if 'LEFTRIGHT' in self.support_swingmode:
                 return list(SWINGMODES.values())
+            else:
+                return '지원안함'
         elif self.device_type == 'RAC':
             return list(RAC_SACSWINGMODES.values())
         elif self.device_type == 'SAC_CST':
@@ -887,10 +938,10 @@ class LGEHVACDEVICE(LGEDevice, ClimateDevice):
         if self._state:
             mode = self._state.wdirleftright_state
             if self.device_type == 'PAC':
-                if 'SYSTEM_LOW' in self.support_fanlist:
-                    return '지원안함'
-                else:
+                if 'LEFTRIGHT' in self.support_swingmode:
                     return SWINGMODES[mode.name]
+                else:
+                    return '지원안함'
             elif self.device_type == 'RAC':
                 return RAC_SACSWINGMODES[mode.name]     
             elif self.device_type == 'SAC_CST':
@@ -903,10 +954,10 @@ class LGEHVACDEVICE(LGEDevice, ClimateDevice):
         rac_sacswingmodes_inv = {v: k for k, v in RAC_SACSWINGMODES.items()}
 
         if self.device_type == 'PAC':
-            if 'SYSTEM_LOW' in self.support_fanlist:
-                return '지원안함'
-            else:
+            if 'LEFTRIGHT' in self.support_swingmode:
                 mode = wideq.WDIRLEFTRIGHT[swingmodes_inv[swing_mode]]
+            else:
+                return '지원안함'
         elif self.device_type == 'RAC':
             mode = wideq.WDIRLEFTRIGHT[rac_sacswingmodes_inv[swing_mode]]
         elif self.device_type == 'SAC_CST':
@@ -958,10 +1009,10 @@ class LGEHVACDEVICE(LGEDevice, ClimateDevice):
     def is_airclean_mode(self):
         if self._state:
             if self.device_type == 'PAC':
-                if 'FAN' in self.support_oplist:
-                    return '지원안함'
-                else:
+                if 'AIRCLEAN' in self.support_pacmode:
                     mode = self._state.airclean_state
+                else:
+                    return '지원안함'
             elif self.device_type == 'RAC':
                 mode = self._state.airclean_state
             elif self.device_type == 'SAC_CST':
@@ -972,20 +1023,20 @@ class LGEHVACDEVICE(LGEDevice, ClimateDevice):
         name = 'AirClean'
         if airclean_mode == 'ON':
             if self.device_type == 'PAC':
-                if 'FAN' in self.support_oplist:
-                    return '지원안함'
-                else:
+                if 'AIRCLEAN' in self.support_pacmode:
                     self._ac.set_airclean(True)
+                else:
+                    return '지원안함'
             elif self.device_type == 'RAC':
                 self._ac.set_airclean(True)
             elif self.device_type == 'SAC_CST':
                 self._ac.set_etc_mode(name, True)
         elif airclean_mode == 'OFF':
             if self.device_type == 'PAC':
-                if 'FAN' in self.support_oplist:
-                    return '지원안함'
-                else:
+                if 'AIRCLEAN' in self.support_pacmode:
                     self._ac.set_airclean(False)
+                else:
+                    return '지원안함'
             elif self.device_type == 'RAC':
                 self._ac.set_airclean(False)
             elif self.device_type == 'SAC_CST':
@@ -994,25 +1045,29 @@ class LGEHVACDEVICE(LGEDevice, ClimateDevice):
     @property
     def is_autodry_mode(self):
         if self._state:
-            mode = self._state.autodry_state
-            return ACETCMODES[mode.name]
+            if 'AUTODRY'in self.support_pacmode:
+                mode = self._state.autodry_state
+                return ACETCMODES[mode.name]
+            else:
+                return '지원안함'
 
 
     def autodry_mode(self, autodry_mode):
         name = 'AutoDry'
-        if autodry_mode == 'ON':
-            self._ac.set_etc_mode(name, True)
-        elif autodry_mode == 'OFF':
-            self._ac.set_etc_mode(name, False)
+        if 'AUTODRY'in self.support_pacmode:
+            if autodry_mode == 'ON':
+                self._ac.set_etc_mode(name, True)
+            elif autodry_mode == 'OFF':
+                self._ac.set_etc_mode(name, False)
 
     @property
     def is_smartcare_mode(self):
         if self._state:
             if self.device_type == 'PAC':
-                if 'FAN' in self.support_oplist:
-                    return '지원안함'
-                else:
+                if 'SMARTCARE' in self.support_windmode:
                     mode = self._state.smartcare_state
+                else:
+                    return '지원안함'
                 return ACETCMODES[mode.name]
             elif self.device_type == 'RAC':
                 return '지원안함'
@@ -1022,23 +1077,23 @@ class LGEHVACDEVICE(LGEDevice, ClimateDevice):
     def smartcare_mode(self, smartcare_mode):
         name = 'SmartCare'
         if self.device_type == 'PAC':
-            if 'FAN' in self.support_oplist:
-                return '지원안함'
-            else:
+            if 'SMARTCARE' in self.support_windmode:
                 if smartcare_mode == 'ON':
                     self._ac.set_etc_mode(name, True)
                 elif smartcare_mode == 'OFF':
                     self._ac.set_etc_mode(name, False)
+            else:
+                return '지원안함'
             
 
     @property
     def is_powersave_mode(self):
         if self._state:
             if self.device_type == 'PAC':
-                if 'FAN' in self.support_oplist:
-                    return '지원안함'
-                else:
+                if 'POWERSAVE'in self.support_pacmode:
                     mode = self._state.powersave_state
+                else:
+                    return '지원안함'
             else:
                 mode = self._state.powersave_state                    
             return ACETCMODES[mode.name]
@@ -1047,11 +1102,11 @@ class LGEHVACDEVICE(LGEDevice, ClimateDevice):
     def powersave_mode(self, powersave_mode):
         name = 'PowerSave'
         if self.device_type == 'PAC':
-            if 'FAN' in self.support_oplist:
-                return '지원안함'
-            else:
+            if 'POWERSAVE'in self.support_pacmode:
                 if powersave_mode == 'ON':
                     self._ac.set_etc_mode(name, True) 
+            else:
+                return '지원안함'
         else:
             if powersave_mode == 'ON':
                 self._ac.set_etc_mode(name, True)
@@ -1060,11 +1115,11 @@ class LGEHVACDEVICE(LGEDevice, ClimateDevice):
     def is_coolpower_mode(self):
         if self._state:
             if self.device_type == 'PAC':
-                if 'SYSTEM_LOW' in self.support_fanlist:
-                    return '지원안함'
-                else:
+                if 'ICEVALLEY' in self.support_windmode:
                     mode = self._state.icevalley_state
-                return ACETCMODES[mode.name]
+                    return ACETCMODES[mode.name]             
+                else:
+                    return '지원안함'
             elif self.device_type == 'RAC':
                 return '지원안함'
             elif self.device_type == 'SAC_CST':
@@ -1073,23 +1128,24 @@ class LGEHVACDEVICE(LGEDevice, ClimateDevice):
     def coolpower_mode(self, coolpower_mode):
         name = 'IceValley'
         if self.device_type == 'PAC':
-            if 'SYSTEM_LOW' in self.support_fanlist:
-                return '지원안함'
-            else:
+            if 'ICEVALLEY' in self.support_windmode:
                 if coolpower_mode == 'ON':
                     self._ac.set_etc_mode(name, True)
                 elif coolpower_mode == 'OFF':
                     self._ac.set_etc_mode(name, False)
+            else:
+                return '지원안함'
+
 
     @property
     def is_longpower_mode(self):
         if self._state:
             if self.device_type == 'PAC':
-                if 'SYSTEM_LOW' in self.support_fanlist:
-                    return '지원안함'
-                else:
+                if 'LONGPOWER' in self.support_windmode:
                     mode = self._state.longpower_state
-                return ACETCMODES[mode.name]
+                    return ACETCMODES[mode.name]
+                else:
+                    return '지원안함'
             elif self.device_type == 'RAC':
                 return '지원안함'
             elif self.device_type == 'SAC_CST':
@@ -1098,34 +1154,35 @@ class LGEHVACDEVICE(LGEDevice, ClimateDevice):
     def longpower_mode(self, longpower_mode):
         name = 'FlowLongPower'
         if self.device_type == 'PAC':
-            if 'SYSTEM_LOW' in self.support_fanlist:
-                return '지원안함'
-            else:
+            if 'LONGPOWER' in self.support_windmode:
                 if longpower_mode == 'ON':
                     self._ac.set_etc_mode(name, True)
                 elif longpower_mode == 'OFF':
                     self._ac.set_etc_mode(name, False)
+            else:
+                return '지원안함'
+
 
     @property
     def is_up_down_mode(self):
         if self._state:
             if self.device_type == 'PAC':
-                if 'SYSTEM_LOW' in self.support_fanlist:
-                    return '지원안함'
-                else:
+                if 'UPDOWN' in self.support_swingmode:
                     mode = self._state.wdirupdown_state
                     return ACETCMODES[mode.name]
+                else:
+                    return '지원안함'
 
     def up_down_mode(self, up_down_mode):
         name = 'WDirUpDown'
         if self.device_type == 'PAC':
-            if 'SYSTEM_LOW' in self.support_fanlist:
-                return '지원안함'
-            else:
+            if 'UPDOWN' in self.support_swingmode:
                 if up_down_mode == 'ON':
                     self._ac.set_etc_mode(name, True)
                 elif up_down_mode == 'OFF':
                     self._ac.set_etc_mode(name, False)
+            else:
+                return '지원안함'
 
     @property
     def is_sensormon_mode(self):
@@ -1172,6 +1229,15 @@ class LGEHVACDEVICE(LGEDevice, ClimateDevice):
                 self._ac.set_etc_mode(name, False)
 
     @property
+    def is_sleep_timer(self):
+        if 'SLEEPTIMER' in self.support_reservemode:
+            return self._state.sleeptime
+
+    def sleep_timer(self, sleep_time):
+        if 'SLEEPTIMER' in self.support_reservemode:
+            self._ac.set_sleep_time(sleep_time)
+
+    @property
     def filter_state(self):
         data = self._ac.get_filter_state()
         usetime = data['UseTime']
@@ -1195,61 +1261,42 @@ class LGEHVACDEVICE(LGEDevice, ClimateDevice):
             return int(remain * 100)
 
     @property
-    def outdoor_temp(self):
+    def outdoor_weather(self, jisu):
         if self._area is not None:
-            data = self._ac.get_outdoor_weather(self._area)
-            return data['ct']
-        else:
-            return '지역코드 없음'
+            data = self._ac.get_outdoor_weather(self._area)[jisu]
+            return data
 
     @property
-    def outdoor_humidity(self):
-        if self._area is not None:
-            data = self._ac.get_outdoor_weather(self._area)
-            return data['ch']
-        else:
-            return '지역코드 없음'
+    def outtotalinstantpower(self):
+        return self._ac.get_outtotalinstantpower()
 
     @property
-    def outdoor_now_pm25(self):
-        if self._area is not None:
-            data = self._ac.get_outdoor_weather(self._area)
-            return data['pm25']
-        else:
-            return '지역코드 없음'
+    def inoutinstantpower(self):
+        return self._ac.get_inoutinstantpower()
+    """
+    @property
+    def energy_usage_day(self):
+        return self._ac.get_energy_usage_day
+    
+    @property
+    def energy_usage_week(self):
+        return self._ac.get_energy_usage_week
+    
+    @property
+    def energy_usage_month(self):
+        return self._ac.get_energy_usage_month
 
     @property
-    def outdoor_today_morning_pm25(self):
-        if self._area is not None:
-            data = self._ac.get_outdoor_weather(self._area)
-            return data['pm25_1']
-        else:
-            return '지역코드 없음'
-
-    @property
-    def outdoor_today_afternoon_pm25(self):
-        if self._area is not None:
-            data = self._ac.get_outdoor_weather(self._area)
-            return data['pm25_2']
-        else:
-            return '지역코드 없음'
-
-    @property
-    def outdoor_tomorrow_morning_pm25(self):
-        if self._area is not None:
-            data = self._ac.get_outdoor_weather(self._area)
-            return data['pm25_3']
-        else:
-            return '지역코드 없음'
-
-    @property
-    def outdoor_tomorrow_afternoon_pm25(self):
-        if self._area is not None:
-            data = self._ac.get_outdoor_weather(self._area)
-            return data['pm25_4']
-        else:
-            return '지역코드 없음'
-
+    def elec_fare(self):
+        monthly_usage = self.energy_usage_month
+        if monthly_usage <= 200:
+            fare = 910 + monthly_usage * 93.3
+        elif monthly_usage <=400:
+            fare = 1600 + monthly_usage * 187.9
+        elif monthly_usage > 400:
+            fare = 7300 + monthly_usage * 280.6
+        return format(round(fare), ',')
+    """
     @property
     def humidity(self):
         if self._state:
