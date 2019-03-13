@@ -1,0 +1,10 @@
+- alias: set_sleep_timer
+  initial_state: 'on'
+  trigger:
+    platform: state
+    entity_id: input_number.set_sleep_timer
+  action:
+    service: smartthinq.lge_hvac_set_sleep_timer
+    data_template:
+      entity_id: climate.air_conditioner
+      sleep_time: "{{ trigger.to_state.state | int }}"
