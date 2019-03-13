@@ -1,0 +1,7 @@
+set_sleep_timer:
+  name: 열대야 취침
+  initial: 0
+  min: 0
+  max: 420
+  step: 30
+  unit_of_measurement: 'min'
