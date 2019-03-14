@@ -759,13 +759,13 @@ class LGEHVACDEVICE(LGEDevice, ClimateDevice):
         """
         data[ATTR_SLEEP_TIME] = self.is_sleep_timer
         if self._area is not None:
-            data[ATTR_OUTDOOR_TEMPERATURE] = self.outdoor_weather('ct')
-            data[ATTR_OUTDOOR_HUMIDITY] = self.outdoor_weather('ch')
-            data[ATTR_OUTDOOR_NOW_PM25] = self.outdoor_weather('pm25')
-            data[ATTR_OUTDOOR_TODAY_MORNING_PM25] = self.outdoor_weather('pm25_1')
-            data[ATTR_OUTDOOR_TODAY_AFTERNOON_PM25] = self.outdoor_weather('pm25_2')
-            data[ATTR_OUTDOOR_TOMORROW_MORNING_PM25] = self.outdoor_weather('pm25_3')
-            data[ATTR_OUTDOOR_TOMORROW_AFTERNOON_PM25] = self.outdoor_weather('pm25_4')
+            data[ATTR_OUTDOOR_TEMPERATURE] = self.outdoor_weather['ct']
+            data[ATTR_OUTDOOR_HUMIDITY] = self.outdoor_weather['ch']
+            data[ATTR_OUTDOOR_NOW_PM25] = self.outdoor_weather['pm25']
+            data[ATTR_OUTDOOR_TODAY_MORNING_PM25] = self.outdoor_weather['pm25_1']
+            data[ATTR_OUTDOOR_TODAY_AFTERNOON_PM25] = self.outdoor_weather['pm25_2']
+            data[ATTR_OUTDOOR_TOMORROW_MORNING_PM25] = self.outdoor_weather['pm25_3']
+            data[ATTR_OUTDOOR_TOMORROW_AFTERNOON_PM25] = self.outdoor_weather['pm25_4']
 
         supported_features = self.supported_features
         if supported_features & SUPPORT_FAN_MODE:
@@ -1261,9 +1261,9 @@ class LGEHVACDEVICE(LGEDevice, ClimateDevice):
             return int(remain * 100)
 
     @property
-    def outdoor_weather(self, jisu):
+    def outdoor_weather(self):
         if self._area is not None:
-            data = self._ac.get_outdoor_weather(self._area)[jisu]
+            data = self._ac.get_outdoor_weather(self._area)
             return data
 
     @property
