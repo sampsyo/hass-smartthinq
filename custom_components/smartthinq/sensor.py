@@ -16,7 +16,6 @@ from homeassistant.exceptions import PlatformNotReady
 
 import wideq
 
-REQUIREMENTS = ['wideq_kr == 0.0.6']
 DEPENDENCIES = ['smartthinq']
 
 LGE_WASHER_DEVICES = 'lge_washer_devices'
