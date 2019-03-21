@@ -1,6 +1,10 @@
 import logging
 import voluptuous as vol
 from homeassistant.components import climate
+from homeassistant.components.climate.const import (
+    STATE_HEAT, STATE_COOL, STATE_DRY, STATE_FAN_ONLY, STATE_ECO, STATE_AUTO,
+    SUPPORT_TARGET_TEMPERATURE, SUPPORT_OPERATION_MODE, SUPPORT_ON_OFF 
+)
 import homeassistant.helpers.config_validation as cv
 from homeassistant import const
 import time
@@ -14,12 +18,12 @@ PLATFORM_SCHEMA = climate.PLATFORM_SCHEMA.extend({
 })
 
 MODES = {
-    'HEAT': climate.STATE_HEAT,
-    'COOL': climate.STATE_COOL,
-    'DRY': climate.STATE_DRY,
-    'FAN': climate.STATE_FAN_ONLY,
-    'ENERGY_SAVING': climate.STATE_ECO,
-    'ACO': climate.STATE_AUTO
+    'HEAT': STATE_HEAT,
+    'COOL': STATE_COOL,
+    'DRY': STATE_DRY,
+    'FAN': STATE_FAN_ONLY,
+    'ENERGY_SAVING': STATE_ECO,
+    'ACO': STATE_AUTO
 }
 MAX_RETRIES = 5
 TRANSIENT_EXP = 5.0  # Report set temperature for 5 seconds.
@@ -97,9 +101,9 @@ class LGDevice(climate.ClimateDevice):
     @property
     def supported_features(self):
         return (
-            climate.SUPPORT_TARGET_TEMPERATURE |
-            climate.SUPPORT_OPERATION_MODE |
-            climate.SUPPORT_ON_OFF
+            SUPPORT_TARGET_TEMPERATURE |
+            SUPPORT_OPERATION_MODE |
+            SUPPORT_ON_OFF
         )
 
     @property
