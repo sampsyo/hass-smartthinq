@@ -125,6 +125,14 @@ WITHFANMODES = {
     'FAN': wideq.STATE_FAN,
 }
 
+RAC_MODE_ONE = {
+    'COOL': wideq.STATE_COOL,
+    'DRY': wideq.STATE_DRY,
+    'FAN': wideq.STATE_FAN,
+    'AIRCLEAN': wideq.STATE_AIRCLEAN,
+    'AI': wideq.STATE_AI,
+}
+
 RAC_SACMODES = {
     'COOL': wideq.STATE_COOL,
     'DRY': wideq.STATE_DRY,   
@@ -186,6 +194,8 @@ WDIRVSTEP = {
     'FOURTH': wideq.STATE_WDIRVSTEP_FOURTH,
     'FIFTH': wideq.STATE_WDIRVSTEP_FIFTH,
     'SIXTH': wideq.STATE_WDIRVSTEP_SIXTH,
+    'HUNDREDTH': wideq.STATE_WDIRVSTEP_HUNDREDTH,
+
 }
 
 ACETCMODES = {
@@ -738,13 +748,23 @@ class LGEHVACDEVICE(LGEDevice, ClimateDevice):
         data[ATTR_LONGPOWER_MODE] = self.is_longpower_mode
         data[ATTR_UP_DOWN_MODE] = self.is_up_down_mode
         data[ATTR_SENSORMON_MODE] = self.is_sensormon_mode
-        data[ATTR_WDIRVSTEP_MODE] = self.is_wdirvstep_mode
+
+        if self.is_wdirvstep_mode != '지원안함':
+            data[ATTR_WDIRVSTEP_MODE] = self.is_wdirvstep_mode
+
         data[ATTR_HUMIDITY] = self.humidity
-        data[ATTR_SENSORPM1] = self.sensorpm1
-        data[ATTR_SENSORPM2] = self.sensorpm2
-        data[ATTR_SENSORPM10] = self.sensorpm10
-        data[ATTR_TOTALAIRPOLUTION] = self.total_air_polution
-        data[ATTR_AIRPOLUTION] = self.air_polution
+
+        if self.sensorpm1 is not None:
+            data[ATTR_SENSORPM1] = self.sensorpm1
+        if self.sensorpm2 is not None:
+            data[ATTR_SENSORPM2] = self.sensorpm2
+        if self.sensorpm10 is not None:
+            data[ATTR_SENSORPM10] = self.sensorpm10
+        if self.total_air_polution is not None:
+            data[ATTR_TOTALAIRPOLUTION] = self.total_air_polution
+        if self.air_polution is not None:
+            data[ATTR_AIRPOLUTION] = self.air_polution
+
         data[ATTR_STATUS] = self.current_status
         data[ATTR_FILTER_STATE] = self.filter_state
         data[ATTR_MFILTER_STATE] = self.mfilter_state
@@ -824,22 +844,38 @@ class LGEHVACDEVICE(LGEDevice, ClimateDevice):
         return self._state.support_pacmode
 
     @property
+    def support_racmode(self):
+        return self._state.support_racmode
+
+    @property
+    def support_racsubmode(self):
+        return self._state.support_racsubmode
+
+    @property
     def support_swingmode(self):
         return self._state.support_swingmode      
 
     @property
     def support_reservemode(self):
         return self._state.support_reservemode      
+    
+    @property
+    def support_airpolution(self):
+        return self._state.support_airpolution     
 
     @property
     def operation_list(self):
         if self.device_type == 'PAC':
             if 'FAN' in self.support_oplist:
-                return list(WITHFANMODES.values())  
+                return list(WITHFANMODES.values())
             else:
                 return list(MODES.values())
         elif self.device_type == 'RAC':
-            return list(RAC_SACMODES.values())
+            if 'HEAT' not in self.support_oplist:
+                if 'AIRCLEAN' and 'AI' in self.support_oplist:
+                    return list(RAC_MODE_ONE.values())
+            elif 'HEAT' in self.support_oplist: 
+                return list(RAC_SACMODES.values())
         elif self.device_type == 'SAC_CST':
             return list(RAC_SACMODES.values())
 
@@ -853,7 +889,11 @@ class LGEHVACDEVICE(LGEDevice, ClimateDevice):
                 else:
                     return MODES[mode.name]
             if self.device_type == 'RAC':
-                return RAC_SACMODES[mode.name]
+                if 'HEAT' not in self.support_oplist:
+                    if 'AIRCLEAN' and 'AI' in self.support_oplist:
+                        return RAC_MODE_ONE[mode.name]
+                elif 'HEAT' in self.support_oplist: 
+                    return RAC_SACMODES[mode.name]
             elif self.device_type == 'SAC_CST':
                 return RAC_SACMODES[mode.name]
             
@@ -864,14 +904,19 @@ class LGEHVACDEVICE(LGEDevice, ClimateDevice):
         modes_inv = {v: k for k, v in MODES.items()}
         withfan_modes_inv = {v: k for k, v in WITHFANMODES.items()}
         rac_sacmodes_inv = {v: k for k, v in RAC_SACMODES.items()}
-        
+        rac_mode_one_inv = {v: k for k, v in RAC_MODE_ONE.items()}
+       
         if self.device_type == 'PAC':
             if 'FAN' in self.support_oplist:
                 mode = wideq.ACMode[withfan_modes_inv[operation_mode]]
             else:
                 mode = wideq.ACMode[modes_inv[operation_mode]]
         elif self.device_type == 'RAC':
-            mode = wideq.ACMode[rac_sacmodes_inv[operation_mode]]
+            if 'HEAT' not in self.support_oplist:
+                if 'AIRCLEAN' and 'AI' in self.support_oplist:
+                    mode = wideq.ACMode[rac_mode_one_inv[operation_mode]]
+            elif 'HEAT' in self.support_oplist: 
+                mode = wideq.ACMode[rac_sacmodes_inv[operation_mode]]
         elif self.device_type == 'SAC_CST':
             mode = wideq.ACMode[rac_sacmodes_inv[operation_mode]]
         self._ac.set_mode(mode)
@@ -1013,7 +1058,10 @@ class LGEHVACDEVICE(LGEDevice, ClimateDevice):
                 else:
                     return '지원안함'
             elif self.device_type == 'RAC':
-                mode = self._state.airclean_state
+                if 'AIRCLEAN' in self.support_racmode:
+                    mode = self._state.airclean_state
+                else:
+                    return '지원안함'
             elif self.device_type == 'SAC_CST':
                 mode = self._state.sac_airclean_state
             return ACETCMODES[mode.name]
@@ -1024,41 +1072,56 @@ class LGEHVACDEVICE(LGEDevice, ClimateDevice):
             if self.device_type == 'PAC':
                 if 'AIRCLEAN' in self.support_pacmode:
                     self._ac.set_airclean(True)
-                else:
-                    return '지원안함'
             elif self.device_type == 'RAC':
-                self._ac.set_airclean(True)
+                if 'AIRCLEAN' in self.support_racmode:
+                    self._ac.set_airclean(True)
             elif self.device_type == 'SAC_CST':
                 self._ac.set_etc_mode(name, True)
         elif airclean_mode == 'OFF':
             if self.device_type == 'PAC':
                 if 'AIRCLEAN' in self.support_pacmode:
                     self._ac.set_airclean(False)
-                else:
-                    return '지원안함'
             elif self.device_type == 'RAC':
-                self._ac.set_airclean(False)
+                if 'AIRCLEAN' in self.support_racmode:
+                    self._ac.set_airclean(False)
             elif self.device_type == 'SAC_CST':
                 self._ac.set_etc_mode(name, False)
 
     @property
     def is_autodry_mode(self):
         if self._state:
-            if 'AUTODRY'in self.support_pacmode:
-                mode = self._state.autodry_state
-                return ACETCMODES[mode.name]
-            else:
+            if self.device_type == 'PAC':
+                if 'AUTODRY'in self.support_pacmode:
+                    mode = self._state.autodry_state
+                    return ACETCMODES[mode.name]
+                else:
+                    return '지원안함'
+            elif self.device_type == 'RAC':
+                if 'AUTODRY'in self.support_racmode:
+                    mode = self._state.autodry_state
+                    return ACETCMODES[mode.name]
+                else:
+                    return '지원안함'
+            elif self.device_type == 'SAC_CST':
                 return '지원안함'
-
+            return ACETCMODES[mode.name]
 
     def autodry_mode(self, autodry_mode):
         name = 'AutoDry'
-        if 'AUTODRY'in self.support_pacmode:
-            if autodry_mode == 'ON':
-                self._ac.set_etc_mode(name, True)
-            elif autodry_mode == 'OFF':
-                self._ac.set_etc_mode(name, False)
-
+        if autodry_mode == 'ON':
+            if self.device_type == 'PAC':
+                if 'AUTODRY'in self.support_pacmode:
+                    self._ac.set_etc_mode(name, True)
+            elif self.device_type == 'RAC':
+                if 'AUTODRY'in self.support_racmode:
+                    self._ac.set_etc_mode(name, True)
+        elif autodry_mode == 'OFF':
+            if self.device_type == 'PAC':
+                if 'AUTODRY'in self.support_pacmode:
+                    self._ac.set_etc_mode(name, False)
+            elif self.device_type == 'RAC':
+                if 'AUTODRY'in self.support_racmode:
+                    self._ac.set_etc_mode(name, False)
     @property
     def is_smartcare_mode(self):
         if self._state:
@@ -1161,7 +1224,6 @@ class LGEHVACDEVICE(LGEDevice, ClimateDevice):
             else:
                 return '지원안함'
 
-
     @property
     def is_up_down_mode(self):
         if self._state:
@@ -1169,16 +1231,31 @@ class LGEHVACDEVICE(LGEDevice, ClimateDevice):
                 if 'UPDOWN' in self.support_swingmode:
                     mode = self._state.wdirupdown_state
                     return ACETCMODES[mode.name]
-                else:
-                    return '지원안함'
+            elif self.device_type == 'RAC':
+                if 'UPDOWN' in self.support_racsubmode:
+                    mode = self._state.wdirupdown_state
+                    return ACETCMODES[mode.name]
+            else:
+                return '지원안함'
+
 
     def up_down_mode(self, up_down_mode):
         name = 'WDirUpDown'
-        if self.device_type == 'PAC':
-            if 'UPDOWN' in self.support_swingmode:
-                if up_down_mode == 'ON':
+        if up_down_mode == 'ON':
+            if self.device_type == 'PAC':
+                if 'UPDOWN' in self.support_swingmode:
                     self._ac.set_etc_mode(name, True)
-                elif up_down_mode == 'OFF':
+            elif self.device_type == 'RAC':
+                if 'UPDOWN' in self.support_racsubmode:
+                    self._ac.set_etc_mode(name, True)
+            else:
+                return '지원안함'
+        elif up_down_mode == 'OFF':
+            if self.device_type == 'PAC':
+                if 'UPDOWN' in self.support_swingmode:
+                    self._ac.set_etc_mode(name, False)
+            elif self.device_type == 'RAC':
+                if 'UPDOWN' in self.support_racsubmode:
                     self._ac.set_etc_mode(name, False)
             else:
                 return '지원안함'
@@ -1309,54 +1386,44 @@ class LGEHVACDEVICE(LGEDevice, ClimateDevice):
     @property
     def sensorpm1(self):
         if self._state:
-            if self.device_type == 'PAC':
+            if 'PM1_SUPPORT' in self.support_airpolution:
                 return self._state.sensorpm1
-            elif self.device_type == 'RAC':
-                return '지원안함'
-            elif self.device_type == 'SAC_CST':
-                return '지원안함'
+            else:
+                return None
 
     @property
     def sensorpm2(self):
         if self._state:
-            if self.device_type == 'PAC':
+            if 'PM2_SUPPORT' in self.support_airpolution:
                 return self._state.sensorpm2
-            elif self.device_type == 'RAC':
-                return '지원안함'
-            elif self.device_type == 'SAC_CST':
-                return '지원안함'
+            else:
+                return None
 
     @property
     def sensorpm10(self):
         if self._state:
-            if self.device_type == 'PAC':
-                return self._state.sensorpm10
-            elif self.device_type == 'RAC':
-                return '지원안함'
-            elif self.device_type == 'SAC_CST':
-                return '지원안함'
+            if 'PM10_SUPPORT' in self.support_airpolution:
+                return self._state.sensorpm2
+            else:
+                return None
 
     @property
     def air_polution(self):
         if self._state:
-            if self.device_type == 'PAC':
+            if 'TOTALCLEAN_SUPPORT' in self.support_airpolution:
                 mode = self._state.air_polution
                 return APSMELL[mode.name]
-            elif self.device_type == 'RAC':
-                return '지원안함'
-            elif self.device_type == 'SAC_CST':
-                return '지원안함'
+            else:
+                return None
 
     @property
     def total_air_polution(self):
         if self._state:
-            if self.device_type == 'PAC':
+            if 'TOTALCLEAN_SUPPORT' in self.support_airpolution:
                 mode = self._state.total_air_polution
                 return APTOTALAIRPOLUTION[mode.name]
-            elif self.device_type == 'RAC':
-                return '지원안함'
-            elif self.device_type == 'SAC_CST':
-                return '지원안함'
+            else:
+                return None
 
     @property
     def temperature_unit(self):
