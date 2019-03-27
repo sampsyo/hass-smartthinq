@@ -704,21 +704,38 @@ class LGEHVACDEVICE(LGEDevice, ClimateDevice):
 
     @property
     def supported_features(self):
-        if 'LEFTRIGHT' in self.support_swingmode:
-            return (
-                SUPPORT_TARGET_TEMPERATURE |
-                SUPPORT_OPERATION_MODE |
-                SUPPORT_FAN_MODE |
-                SUPPORT_SWING_MODE |
-                SUPPORT_ON_OFF
-            )
-        else:
-            return (
-                SUPPORT_TARGET_TEMPERATURE |
-                SUPPORT_OPERATION_MODE |
-                SUPPORT_FAN_MODE |
-                SUPPORT_ON_OFF
-            )
+        if self.device_type == 'PAC':
+            if 'LEFTRIGHT' in self.support_swingmode:
+                return (
+                    SUPPORT_TARGET_TEMPERATURE |
+                    SUPPORT_OPERATION_MODE |
+                    SUPPORT_FAN_MODE |
+                    SUPPORT_SWING_MODE |
+                    SUPPORT_ON_OFF
+                )
+            else:
+                return (
+                    SUPPORT_TARGET_TEMPERATURE |
+                    SUPPORT_OPERATION_MODE |
+                    SUPPORT_FAN_MODE |
+                    SUPPORT_ON_OFF
+                )
+        elif self.device_type == 'RAC':
+            if 'LEFT_RIGHT' in self.support_racsubmode:
+                return (
+                    SUPPORT_TARGET_TEMPERATURE |
+                    SUPPORT_OPERATION_MODE |
+                    SUPPORT_FAN_MODE |
+                    SUPPORT_SWING_MODE |
+                    SUPPORT_ON_OFF
+                )
+            else:
+                return (
+                    SUPPORT_TARGET_TEMPERATURE |
+                    SUPPORT_OPERATION_MODE |
+                    SUPPORT_FAN_MODE |
+                    SUPPORT_ON_OFF
+                )
 
     @property
     def state_attributes(self):
@@ -1232,7 +1249,7 @@ class LGEHVACDEVICE(LGEDevice, ClimateDevice):
                     mode = self._state.wdirupdown_state
                     return ACETCMODES[mode.name]
             elif self.device_type == 'RAC':
-                if 'UPDOWN' in self.support_racsubmode:
+                if 'UP_DOWN' in self.support_racsubmode:
                     mode = self._state.wdirupdown_state
                     return ACETCMODES[mode.name]
             else:
@@ -1246,7 +1263,7 @@ class LGEHVACDEVICE(LGEDevice, ClimateDevice):
                 if 'UPDOWN' in self.support_swingmode:
                     self._ac.set_etc_mode(name, True)
             elif self.device_type == 'RAC':
-                if 'UPDOWN' in self.support_racsubmode:
+                if 'UP_DOWN' in self.support_racsubmode:
                     self._ac.set_etc_mode(name, True)
             else:
                 return '지원안함'
@@ -1255,7 +1272,7 @@ class LGEHVACDEVICE(LGEDevice, ClimateDevice):
                 if 'UPDOWN' in self.support_swingmode:
                     self._ac.set_etc_mode(name, False)
             elif self.device_type == 'RAC':
-                if 'UPDOWN' in self.support_racsubmode:
+                if 'UP_DOWN' in self.support_racsubmode:
                     self._ac.set_etc_mode(name, False)
             else:
                 return '지원안함'
