@@ -1111,15 +1111,15 @@ class LGEHVACDEVICE(LGEDevice, ClimateDevice):
             return '지원안함'
         elif self.device_type == 'RAC':
             vstep_state = self._state.wdirvstep_state
-            if int(vstep_state.value) < 10:
+            if int(vstep_state.value) < 150:
                 mode = wideq.WDIRVSTEP[wdirvstepmodes_inv[wdirvstep_mode]]
-            elif int(vstep_state.value) > 10:
+            elif int(vstep_state.value) > 150:
                 mode = wideq.FOURVAIN_WDIRVSTEP[wdirvstepmodes_inv[wdirvstep_mode]]
         elif self.device_type == 'SAC_CST':
             vstep_state = self._state.wdirvstep_state
-            if int(vstep_state.value) < 10:
+            if int(vstep_state.value) < 150:
                 mode = wideq.WDIRVSTEP[wdirvstepmodes_inv[wdirvstep_mode]]
-            elif int(vstep_state.value) > 10:
+            elif int(vstep_state.value) > 150:
                 mode = wideq.FOURVAIN_WDIRVSTEP[wdirvstepmodes_inv[wdirvstep_mode]]
         self._ac.set_wdirvstep(mode)
 
