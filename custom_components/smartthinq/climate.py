@@ -51,6 +51,7 @@ CONF_WDIRUPDOWN_MODE = 'up_down_mode'
 CONF_SENSORMON_MODE = 'sensormon_mode'
 CONF_JET_MODE = 'jet_mode'
 CONF_WDIRVSTEP_MODE = 'wdirvstep_mode'
+CONF_WDIRHSTEP_MODE = 'wdirhstep_mode'
 CONF_SLEEP_TIME = 'sleep_time'
 
 ATTR_CURRENT_TEMPERATURE = 'current_temperature'
@@ -82,6 +83,7 @@ ATTR_UP_DOWN_MODE = 'up_down_mode'
 ATTR_SENSORMON_MODE = 'sensormon_mode'
 ATTR_JET_MODE = 'jet_mode'
 ATTR_WDIRVSTEP_MODE = 'wdirvstep_mode'
+ATTR_WDIRHSTEP_MODE = 'wdirhstep_mode'
 ATTR_DEVICE_TYPE = 'device_type'
 ATTR_OUTDOOR_TEMPERATURE = 'outdoor_temperature'
 ATTR_OUTDOOR_HUMIDITY = 'outdoor_humidity'
@@ -112,6 +114,7 @@ SERVICE_SET_WDIRUPDOWN_MODE = 'lge_hvac_set_up_down_mode'
 SERVICE_SET_SENSORMON_MODE = 'lge_hvac_set_sensormon_mode'
 SERVICE_SET_JET_MODE = 'lge_hvac_set_jet_mode'
 SERVICE_SET_WDIRVSTEP_MODE = 'lge_hvac_set_wdirvstep_mode'
+SERVICE_SET_WDIRHSTEP_MODE = 'lge_hvac_set_wdirhstep_mode'
 SERVICE_SET_SLEEP_TIMER = 'lge_hvac_set_sleep_timer'
 
 MODES = {
@@ -145,6 +148,9 @@ FANMODES = {
     'LOW' : wideq.STATE_LOW,
     'MID' : wideq.STATE_MID,
     'HIGH' : wideq.STATE_HIGH,
+    'AUTO' : wideq.STATE_AUTO,
+    'COOLPOWER' : wideq.STATE_COOLPOWER,
+    'LONGPOWER': wideq.STATE_LONGPOWER,
     'RIGHT_ONLY_LOW': wideq.STATE_RIGHT_ONLY_LOW,
     'RIGHT_ONLY_MID': wideq.STATE_RIGHT_ONLY_MID,
     'RIGHT_ONLY_HIGH': wideq.STATE_RIGHT_ONLY_HIGH,
@@ -186,6 +192,16 @@ RAC_SACSWINGMODES = {
     'LEFT_RIGHT_STOP': wideq.STATE_LEFT_RIGHT_STOP,
 }
 
+WDIRHSTEP = {
+    'OFF': wideq.STATE_WDIRHSTEP_OFF,
+    'FIRST': wideq.STATE_WDIRHSTEP_FIRST,
+    'SECOND': wideq.STATE_WDIRHSTEP_SECOND,
+    'THIRD': wideq.STATE_WDIRHSTEP_THIRD,
+    'FOURTH': wideq.STATE_WDIRHSTEP_FOURTH,
+    'FIFTH': wideq.STATE_WDIRHSTEP_FIFTH,
+    'AUTO': wideq.STATE_WDIRHSTEP_AUTO,
+}
+
 WDIRVSTEP = {
     'OFF': wideq.STATE_WDIRVSTEP_OFF,
     'FIRST': wideq.STATE_WDIRVSTEP_FIRST,
@@ -194,8 +210,7 @@ WDIRVSTEP = {
     'FOURTH': wideq.STATE_WDIRVSTEP_FOURTH,
     'FIFTH': wideq.STATE_WDIRVSTEP_FIFTH,
     'SIXTH': wideq.STATE_WDIRVSTEP_SIXTH,
-    'HUNDREDTH': wideq.STATE_WDIRVSTEP_HUNDREDTH,
-
+    'AUTO': wideq.STATE_WDIRVSTEP_AUTO,
 }
 
 ACETCMODES = {
@@ -249,7 +264,10 @@ LGE_HVAC_SET_WDIRVSTEP_MODE_SCHEMA = vol.Schema({
     vol.Required(CONF_ENTITY_ID): cv.entity_id,
     vol.Required(CONF_WDIRVSTEP_MODE): cv.string,
 })
-
+LGE_HVAC_SET_WDIRHSTEP_MODE_SCHEMA = vol.Schema({
+    vol.Required(CONF_ENTITY_ID): cv.entity_id,
+    vol.Required(CONF_WDIRHSTEP_MODE): cv.string,
+})
 LGE_HVAC_SET_SLEEP_TIMER_SCHEMA = vol.Schema({
     vol.Required(CONF_ENTITY_ID): cv.entity_id,
     vol.Required(CONF_SLEEP_TIME): cv.string,
@@ -484,6 +502,7 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
         model = client.model_info(device)
         model_type = model.model_type
         mac = device.macaddress
+
         if device.type == wideq.DeviceType.AC:
             LGE_HVAC_DEVICES = []
             if mac == conf_mac.lower():
@@ -527,6 +546,7 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
         up_down_mode = service.data.get(CONF_WDIRUPDOWN_MODE)
         sensormon_mode = service.data.get(CONF_SENSORMON_MODE)
         jet_mode = service.data.get(CONF_JET_MODE)
+        wdirhstep_mode = service.data.get(CONF_WDIRHSTEP_MODE)
         wdirvstep_mode = service.data.get(CONF_WDIRVSTEP_MODE)
         sleep_timer = service.data.get(CONF_SLEEP_TIME)
 
@@ -548,6 +568,8 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
             hvac_entity.sensormon_mode(sensormon_mode)
         elif service.service == SERVICE_SET_JET_MODE:
             hvac_entity.jet_mode(jet_mode)
+        elif service.service == SERVICE_SET_WDIRHSTEP_MODE:
+            hvac_entity.wdirhstep_mode(wdirhstep_mode)            
         elif service.service == SERVICE_SET_WDIRVSTEP_MODE:
             hvac_entity.wdirvstep_mode(wdirvstep_mode)
         elif service.service == SERVICE_SET_SLEEP_TIMER:
@@ -594,7 +616,7 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
         airremoval_mode = service.data.get(CONF_AIRREMOVAL_MODE)
         
         if service.service == SERVICE_DEHUMIDIFIER_SET_AIRREMOVAL_MODE:
-            hvac_entity.airremoval_mode(airremoval_mode)
+            dehum_entity.airremoval_mode(airremoval_mode)
 
     # Register hvac service(s)
     hass.services.register(
@@ -627,6 +649,9 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
     hass.services.register(
         DOMAIN, SERVICE_SET_WDIRVSTEP_MODE, hvac_service_handle,
         schema=LGE_HVAC_SET_WDIRVSTEP_MODE_SCHEMA)
+    hass.services.register(
+        DOMAIN, SERVICE_SET_WDIRHSTEP_MODE, hvac_service_handle,
+        schema=LGE_HVAC_SET_WDIRHSTEP_MODE_SCHEMA)
     hass.services.register(
         DOMAIN, SERVICE_SET_SLEEP_TIMER, hvac_service_handle,
         schema=LGE_HVAC_SET_SLEEP_TIMER_SCHEMA) 
@@ -768,6 +793,12 @@ class LGEHVACDEVICE(LGEDevice, ClimateDevice):
 
         if self.is_wdirvstep_mode != '지원안함':
             data[ATTR_WDIRVSTEP_MODE] = self.is_wdirvstep_mode
+
+        if self.is_wdirvstep_mode != '지원안함':
+            data[ATTR_WDIRHSTEP_MODE] = self.is_wdirhstep_mode
+
+        if self.is_jet_mode != '지원안함':
+            data[ATTR_JET_MODE] = self.is_jet_mode
 
         data[ATTR_HUMIDITY] = self.humidity
 
@@ -1026,6 +1057,32 @@ class LGEHVACDEVICE(LGEDevice, ClimateDevice):
         self._ac.set_wind_leftright(mode)
 
     @property
+    def is_wdirhstep_mode(self):
+        if self._state:
+            if self.device_type == 'PAC':
+                return '지원안함'
+            elif self.device_type == 'RAC':
+                mode = self._state.wdirhstep_state
+                return WDIRHSTEP[mode.name]
+            elif self.device_type == 'SAC_CST':
+                mode = self._state.wdirhstep_state
+                return WDIRHSTEP[mode.name]
+
+    def wdirhstep_mode(self, wdirhstep_mode):
+
+        import wideq
+        wdirhstepmodes_inv = {v: k for k, v in WDIRHSTEP.items()}
+
+        if self.device_type == 'PAC':
+            return '지원안함'
+        elif self.device_type == 'RAC':
+            mode = wideq.WDIRHSTEP[wdirhstepmodes_inv[wdirhstep_mode]]
+        elif self.device_type == 'SAC_CST':
+            vstep_state = self._state.wdirvstep_state
+            mode = wideq.WDIRHSTEP[wdirhstepmodes_inv[wdirhstep_mode]]
+        self._ac.set_wdirhstep(mode)
+
+    @property
     def is_wdirvstep_mode(self):
         if self._state:
             if self.device_type == 'PAC':
@@ -1214,6 +1271,9 @@ class LGEHVACDEVICE(LGEDevice, ClimateDevice):
                     self._ac.set_etc_mode(name, False)
             else:
                 return '지원안함'
+        else:
+            return '지원안함'
+
 
 
     @property
