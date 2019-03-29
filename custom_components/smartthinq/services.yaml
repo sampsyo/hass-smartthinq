@@ -90,6 +90,16 @@ lge_hvac_set_jet_mode:
       description: jet mode status
       example: 'ON'
 
+lge_hvac_set_wdirhstep_mode:
+  description: Set the hvac in wdirhstep mode.
+  fields:
+    entity_id:
+      description: Name(s) of the entities to enable/disable wdirhstep mode
+      example: 'climate.air_conditioner'
+    wdirhstep_mode:
+      description: wdirhstep mode status
+      example: '1단계'
+
 lge_hvac_set_wdirvstep_mode:
   description: Set the hvac in wdirvstep mode.
   fields:
