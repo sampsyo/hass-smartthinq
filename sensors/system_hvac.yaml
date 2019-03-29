@@ -25,3 +25,5 @@
       value_template: '{{states.climate.system_hvac.attributes.jet_mode}}'
     system_hvac_wdirvstep_mode:
       value_template: '{{states.climate.system_hvac.attributes.wdirvstep_mode}}'
+    system_hvac_wdirhstep_mode:
+      value_template: '{{states.climate.system_hvac.attributes.wdirhstep_mode}}'
