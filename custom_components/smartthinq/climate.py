@@ -763,7 +763,7 @@ class LGEHVACDEVICE(LGEDevice, ClimateDevice):
                     SUPPORT_FAN_MODE |
                     SUPPORT_ON_OFF
                 )
-       elif self.device_type == 'SAC_CST':
+        elif self.device_type == 'SAC_CST':
             if 'LEFT_RIGHT' in self.support_racsubmode:
                 return (
                     SUPPORT_TARGET_TEMPERATURE |
@@ -836,9 +836,9 @@ class LGEHVACDEVICE(LGEDevice, ClimateDevice):
         data[ATTR_MFILTER_STATE] = self.mfilter_state
         data[ATTR_OUTDOOR_TOTAL_INSTANTPOWER] = self.outtotalinstantpower
         data[ATTR_INOUTDOOR_INSTANTPOWER] = self.inoutinstantpower
-        data[ATTR_POWER_USAGE_DAY] = self.get_energy_usage_day
-        data[ATTR_POWER_USAGE_WEEK] = self.get_energy_usage_week
-        data[ATTR_POWER_USAGE_MONTH] = self.get_energy_usage_month
+        data[ATTR_POWER_USAGE_DAY] = self.energy_usage_day
+        data[ATTR_POWER_USAGE_WEEK] = self.energy_usage_week
+        data[ATTR_POWER_USAGE_MONTH] = self.energy_usage_month
         data[ATTR_ELEC_FARE] = self.elec_fare
         data[ATTR_SLEEP_TIME] = self.is_sleep_timer
         if self._area is not None:
@@ -1445,19 +1445,19 @@ class LGEHVACDEVICE(LGEDevice, ClimateDevice):
 
     @property
     def energy_usage_day(self):
-        return self._ac.get_energy_usage_day
+        return self._ac.get_energy_usage_day()
     
     @property
     def energy_usage_week(self):
-        return self._ac.get_energy_usage_week
+        return self._ac.get_energy_usage_week()
     
     @property
     def energy_usage_month(self):
-        return self._ac.get_energy_usage_month
+        return self._ac.get_energy_usage_month()
 
     @property
     def elec_fare(self):
-        monthly_usage = self.energy_usage_month
+        monthly_usage = int(self.energy_usage_month)
         if monthly_usage <= 200:
             fare = 910 + monthly_usage * 93.3
         elif monthly_usage <=400:
