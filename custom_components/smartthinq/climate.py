@@ -199,6 +199,8 @@ WDIRHSTEP = {
     'THIRD': wideq.STATE_WDIRHSTEP_THIRD,
     'FOURTH': wideq.STATE_WDIRHSTEP_FOURTH,
     'FIFTH': wideq.STATE_WDIRHSTEP_FIFTH,
+    'THIRTEENTH': wideq.STATE_WDIRHSTEP_THIRTEENTH,
+    'THIRTYFIFTH': wideq.STATE_WDIRHSTEP_THIRTYFIFTH,
     'AUTO': wideq.STATE_WDIRHSTEP_AUTO,
 }
 
@@ -761,6 +763,22 @@ class LGEHVACDEVICE(LGEDevice, ClimateDevice):
                     SUPPORT_FAN_MODE |
                     SUPPORT_ON_OFF
                 )
+       elif self.device_type == 'SAC_CST':
+            if 'LEFT_RIGHT' in self.support_racsubmode:
+                return (
+                    SUPPORT_TARGET_TEMPERATURE |
+                    SUPPORT_OPERATION_MODE |
+                    SUPPORT_FAN_MODE |
+                    SUPPORT_SWING_MODE |
+                    SUPPORT_ON_OFF
+                )
+            else:
+                return (
+                    SUPPORT_TARGET_TEMPERATURE |
+                    SUPPORT_OPERATION_MODE |
+                    SUPPORT_FAN_MODE |
+                    SUPPORT_ON_OFF
+                )
 
     @property
     def state_attributes(self):
@@ -818,12 +836,10 @@ class LGEHVACDEVICE(LGEDevice, ClimateDevice):
         data[ATTR_MFILTER_STATE] = self.mfilter_state
         data[ATTR_OUTDOOR_TOTAL_INSTANTPOWER] = self.outtotalinstantpower
         data[ATTR_INOUTDOOR_INSTANTPOWER] = self.inoutinstantpower
-        """
         data[ATTR_POWER_USAGE_DAY] = self.get_energy_usage_day
         data[ATTR_POWER_USAGE_WEEK] = self.get_energy_usage_week
         data[ATTR_POWER_USAGE_MONTH] = self.get_energy_usage_month
         data[ATTR_ELEC_FARE] = self.elec_fare
-        """
         data[ATTR_SLEEP_TIME] = self.is_sleep_timer
         if self._area is not None:
             data[ATTR_OUTDOOR_TEMPERATURE] = self.outdoor_weather['ct']
@@ -1426,7 +1442,7 @@ class LGEHVACDEVICE(LGEDevice, ClimateDevice):
     @property
     def inoutinstantpower(self):
         return self._ac.get_inoutinstantpower()
-    """
+
     @property
     def energy_usage_day(self):
         return self._ac.get_energy_usage_day
@@ -1449,16 +1465,14 @@ class LGEHVACDEVICE(LGEDevice, ClimateDevice):
         elif monthly_usage > 400:
             fare = 7300 + monthly_usage * 280.6
         return format(round(fare), ',')
-    """
+
     @property
     def humidity(self):
         if self._state:
-            if self.device_type == 'PAC':
+            if 'SENSOR_HUMID_SUPPORT' in self.support_airpolution:
                 return self._state.humidity
-            elif self.device_type == 'RAC':
-                return '지원안함'
-            elif self.device_type == 'SAC_CST':
-                return '지원안함'
+            else:
+                return None
     
     @property
     def sensorpm1(self):
