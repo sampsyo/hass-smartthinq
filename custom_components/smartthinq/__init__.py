@@ -13,9 +13,6 @@ from homeassistant.const import (
 import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.entity import Entity
 
-
-REQUIREMENTS = ['wideq_kr == 0.0.10']
-
 DOMAIN = 'smartthinq'
 
 CONFIG_SCHEMA = vol.Schema({
