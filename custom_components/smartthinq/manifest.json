@@ -4,8 +4,7 @@
   "documentation": "https://github.com/wkd8176/hass-smartthinq",
   "requirements": [
   	"wideq_kr == 0.0.10" ],
-  "dependencies": [
-  	"smartthinq"],
+  "dependencies": [],
   "codeowners": [
     "@wkd8176"
   ]
