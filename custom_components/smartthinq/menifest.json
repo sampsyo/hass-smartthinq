@@ -1,0 +1,12 @@
+{
+  "domain": "smarttniq",
+  "name": "Smartthinq",
+  "documentation": "https://github.com/wkd8176/hass-smartthinq",
+  "requirements": [
+  	"wideq_kr == 0.0.10" ],
+  "dependencies": [
+  	"smartthinq"],
+  "codeowners": [
+    "@wkd8176"
+  ]
+}
