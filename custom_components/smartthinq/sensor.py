@@ -13,10 +13,7 @@ from homeassistant.const import (
     ATTR_ENTITY_ID, CONF_NAME, CONF_TOKEN, CONF_ENTITY_ID)
 from homeassistant.exceptions import PlatformNotReady
 
-
 import wideq
-
-DEPENDENCIES = ['smartthinq']
 
 LGE_WASHER_DEVICES = 'lge_washer_devices'
 LGE_DRYER_DEVICES = 'lge_dryer_devices'
