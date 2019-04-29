@@ -17,8 +17,6 @@ from homeassistant.const import (
 import time
 import wideq
 
-DEPENDENCIES = ['smartthinq']
-
 LGE_HVAC_DEVICES = 'lge_HVAC_devices'
 LGE_REF_DEVICES = 'lge_REF_devices'
 LGE_AIRPURIFIER_DEVICES = 'lge_AirPurifier_devices'
