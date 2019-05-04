@@ -13,6 +13,7 @@ from homeassistant.const import (
     ATTR_ENTITY_ID, CONF_NAME, CONF_TOKEN, CONF_ENTITY_ID)
 from homeassistant.exceptions import PlatformNotReady
 
+
 import wideq
 
 LGE_WASHER_DEVICES = 'lge_washer_devices'
@@ -44,6 +45,10 @@ ATTR_DRYLEVEL_STATE = 'drylevel_state'
 ATTR_FRESHCARE_MODE = 'freshcare_mode'
 ATTR_CHILDLOCK_MODE = 'childlock_mode'
 ATTR_STEAM_MODE = 'steam_mode'
+ATTR_DOORLOCK_MODE = 'doorlock_mode'
+ATTR_BUZZER_MODE = 'buzzer_mode'
+ATTR_STERILIZE_MODE = 'sterilize_mode'
+ATTR_HEATER_MODE = 'heater_mode'
 ATTR_TURBOSHOT_MODE = 'turboshot_mode'
 ATTR_TUBCLEAN_COUNT = 'tubclean_count'
 ATTR_LOAD_LEVEL = 'load_level'
@@ -92,7 +97,13 @@ WATERTEMPSTATES = {
     'SIXTY': wideq.STATE_WASHER_WATERTEMP_60,
     'NINTYFIVE': wideq.STATE_WASHER_WATERTEMP_95,
     'OFF': wideq.STATE_WASHER_POWER_OFF,
-
+    'TL_COLD' : wideq.STATE_WASHER_TERM_NO_SELECT,
+    'TL_30' : wideq.STATE_WASHER_WATERTEMP_30,
+    'TL_40' : wideq.STATE_WASHER_WATERTEMP_40,
+    'TL_60' : wideq.STATE_WASHER_WATERTEMP_60,
+    'TL_90' : wideq.STATE_WASHER_WATERTEMP_90,
+    'TL_35' : wideq.STATE_WASHER_WATERTEMP_35,
+    'TL_38' : wideq.STATE_WASHER_WATERTEMP_38,
 }
 
 SPINSPEEDSTATES = {
@@ -102,7 +113,8 @@ SPINSPEEDSTATES = {
     'MEDIUM' : wideq.STATE_WASHER_SPINSPEED_MEDIUM,
     'HIGH': wideq.STATE_WASHER_SPINSPEED_HIGH,
     'EXTRA_HIGH': wideq.STATE_WASHER_SPINSPEED_EXTRA_HIGH,
-    'OFF': wideq.STATE_WASHER_POWER_OFF,
+    'OFF': wideq.STATE_WASHER_SPINSPEED_OFF,
+    'ON' : wideq.STATE_WASHER_SPINSPEED_ON,
 }
 
 RINSECOUNTSTATES = {
@@ -112,7 +124,14 @@ RINSECOUNTSTATES = {
     'THREE' : wideq.STATE_WASHER_RINSECOUNT_3,
     'FOUR': wideq.STATE_WASHER_RINSECOUNT_4,
     'FIVE': wideq.STATE_WASHER_RINSECOUNT_5,
-    'OFF': wideq.STATE_WASHER_POWER_OFF,
+    'OFF': wideq.STATE_WASHER_RINSECOUNT_OFF,
+    'TL_0' : wideq.STATE_WASHER_TERM_NO_SELECT,
+    'TL_1' : wideq.STATE_WASHER_RINSECOUNT_1,
+    'TL_2' : wideq.STATE_WASHER_RINSECOUNT_2,
+    'TL_3' : wideq.STATE_WASHER_RINSECOUNT_3,
+    'TL_4': wideq.STATE_WASHER_RINSECOUNT_4,
+    'TL_5': wideq.STATE_WASHER_RINSECOUNT_5,
+    'TL_6': wideq.STATE_WASHER_RINSECOUNT_6,
 }
 
 DRYLEVELSTATES = {
@@ -146,6 +165,19 @@ WASHERERRORS = {
     'ERROR_LOE' : wideq.STATE_WASHER_ERROR_LOE,        
     'NO_ERROR' : wideq.STATE_NO_ERROR,
     'OFF': wideq.STATE_DRYER_POWER_OFF,
+    'TL_ERROR_IE' : wideq.STATE_WASHER_ERROR_IE,
+    'TL_ERROR_OE' : wideq.STATE_WASHER_ERROR_OE,
+    'TL_ERROR_UE' : wideq.STATE_WASHER_ERROR_UE,
+    'TL_ERROR_DE1' : wideq.STATE_WASHER_ERROR_dE1,
+    'TL_ERROR_PE' : wideq.STATE_WASHER_ERROR_PE,
+    'TL_ERROR_DO_W' : wideq.STATE_WASHER_ERROR_TL_DO_W,
+    'TL_ERROR_LE' : wideq.STATE_WASHER_ERROR_TL_LE,
+    'TL_ERROR_AE' : wideq.STATE_WASHER_ERROR_TL_AE,
+    'TL_ERROR_TE' : wideq.STATE_WASHER_ERROR_tE,
+    'TL_ERROR_FE' : wideq.STATE_WASHER_ERROR_FE,
+    'TL_ERROR_DE2' : wideq.STATE_WASHER_ERROR_dE2,
+    'TL_ERROR_FF' : wideq.STATE_WASHER_ERROR_FF,
+    'TL_ERROR_E7' : wideq.STATE_WASHER_ERROR_E7,
 }
 
 OPTIONITEMMODES = {
@@ -321,10 +353,7 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
             LGE_DRYER_DEVICES = []
             if mac == conf_mac.lower():
                 LOGGER.debug("Creating new LGE Dryer")
-                try:
-                    dryer_entity = LGEDRYERDEVICE(client, device, name, model_type)
-                except wideq.NotConnectError:
-                    raise PlatformNotReady
+                dryer_entity = LGEDRYERDEVICE(client, device, name, model_type)
                 LGE_DRYER_DEVICES.append(dryer_entity)
                 add_entities(LGE_DRYER_DEVICES)
                 LOGGER.debug("LGE Dryer is added")
@@ -386,13 +415,23 @@ class LGEWASHERDEVICE(LGEDevice):
         data[ATTR_SPIN_OPTION_STATE] = self.spin_option_state
         data[ATTR_WATERTEMP_OPTION_STATE] = self.watertemp_option_state
         data[ATTR_RINSECOUNT_OPTION_STATE] = self.rinsecount_option_state
-        data[ATTR_DRYLEVEL_STATE] = self.drylevel_state
-        data[ATTR_FRESHCARE_MODE] = self.freshcare_mode
+
+        if self.device_type == 'FL':
+            data[ATTR_DRYLEVEL_STATE] = self.drylevel_state
+            data[ATTR_LOAD_LEVEL] = self.load_level
+            data[ATTR_FRESHCARE_MODE] = self.freshcare_mode
+
         data[ATTR_CHILDLOCK_MODE] = self.childlock_mode
         data[ATTR_STEAM_MODE] = self.steam_mode
         data[ATTR_TURBOSHOT_MODE] = self.turboshot_mode
         data[ATTR_TUBCLEAN_COUNT] = self.tubclean_count
-        data[ATTR_LOAD_LEVEL] = self.load_level
+
+        if self.device_type == 'TL':
+            data[ATTR_DOORLOCK_MODE] = self.doorlock_mode
+            data[ATTR_BUZZER_MODE] = self.buzzer_mode
+            data[ATTR_STERILIZE_MODE] = self.sterilize_mode
+            data[ATTR_HEATER_MODE] = self.heater_mode
+
         return data
 
     @property
@@ -449,7 +488,7 @@ class LGEWASHERDEVICE(LGEDevice):
     @property
     def current_course(self):
         if self._state:
-            course = self._state.current_course
+            course = self._state.current_course(self.device_type)
             smartcourse = self._state.current_smartcourse
             if course == '다운로드코스':
                 return smartcourse
@@ -486,7 +525,8 @@ class LGEWASHERDEVICE(LGEDevice):
     @property
     def watertemp_option_state(self):
         if self._state:
-            watertemp_option = self._state.water_temp_option_state
+            state = self._state
+            watertemp_option = self._state.water_temp_option_state(self.device_type)
             if watertemp_option == 'OFF':
                 return WATERTEMPSTATES['OFF']
             else:
@@ -519,19 +559,45 @@ class LGEWASHERDEVICE(LGEDevice):
     @property
     def childlock_mode(self):
         if self._state:
-            mode = self._state.childlock_state
+            mode = self._state.childlock_state(self.device_type)
             return OPTIONITEMMODES[mode]
 
     @property
     def steam_mode(self):
         if self._state:
-            mode = self._state.steam_state
+            state = self._state
+            mode = self._state.steam_state(self.device_type)
             return OPTIONITEMMODES[mode]
 
     @property
     def turboshot_mode(self):
         if self._state:
-            mode = self._state.turboshot_state
+            state = self._state
+            mode = self._state.turboshot_state(self.device_type)
+            return OPTIONITEMMODES[mode]
+
+    @property
+    def doorlock_mode(self):
+        if self._state:
+            mode = self._state.doorlock_state
+            return OPTIONITEMMODES[mode]
+
+    @property
+    def buzzer_mode(self):
+        if self._state:
+            mode = self._state.buzzer_state
+            return OPTIONITEMMODES[mode]
+
+    @property
+    def sterilize_mode(self):
+        if self._state:
+            mode = self._state.sterilize_state
+            return OPTIONITEMMODES[mode]
+
+    @property
+    def heater_mode(self):
+        if self._state:
+            mode = self._state.heater_state
             return OPTIONITEMMODES[mode]
 
     @property
