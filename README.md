@@ -8,20 +8,19 @@ A [Home Assistant][hass] component for controlling LG HVAC devices via their Sma
 
 Here's how to use this:
 
-1. Install [WideQ][] by typing something like:
-
-       $ git clone https://github.com/sampsyo/wideq.git
-       $ cd wideq
-       $ pip3 install -e .
-
-2. Clone this repository into your `~/.homeassistant` directory under `custom_components` and name it `climate`. For example, you might do something like this:
+1. Clone this repository into your `~/.homeassistant` directory under `custom_components` and name it `smartthinq`. For example, you might do something like this:
 
        $ cd ~/.homeassistant
        $ mkdir custom_components
        $ cd custom_components
-       $ git clone https://github.com/sampsyo/hass-smartthinq.git climate
+       $ git clone https://github.com/sampsyo/hass-smartthinq.git smartthinq
 
-3. Authenticate with the SmartThinQ service to get a refresh token by running the WideQ example script. (Eventually, I would like to add a feature to the Home Assistant component that can let you log in through a UI, but I haven't gotten there yet.) Run this in the `wideq` directory:
+2. Navigate to the [WideQ][] directory. You can either use the copy installed by Home Assistant, or clone it separately by typing something like:
+
+       $ git clone https://github.com/sampsyo/wideq.git
+       $ cd wideq
+
+   Authenticate with the SmartThinQ service to get a refresh token by running the WideQ example script. (Eventually, I would like to add a feature to the Home Assistant component that can let you log in through a UI, but I haven't gotten there yet.) Run this in the `wideq` directory:
 
        $ python3 example.py
 
@@ -29,7 +28,7 @@ Here's how to use this:
 
    Look inside this file for a key called `"refresh_token"` and copy the value.
 
-4. Add a stanza to your Home Assistant `configuration.yaml` like this:
+3. Add a stanza to your Home Assistant `configuration.yaml` like this:
 
        climate:
            - platform: smartthinq
