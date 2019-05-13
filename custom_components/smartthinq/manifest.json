@@ -3,7 +3,7 @@
   "name": "Smartthinq",
   "documentation": "https://github.com/wkd8176/hass-smartthinq",
   "requirements": [
-  	"wideq_kr == 0.0.10" ],
+  	"wideq_kr == 0.0.12" ],
   "dependencies": [],
   "codeowners": [
     "@wkd8176"
