@@ -118,6 +118,7 @@ SERVICE_SET_SLEEP_TIMER = 'lge_hvac_set_sleep_timer'
 MODES = {
     'COOL': wideq.STATE_COOL,
     'DRY': wideq.STATE_DRY,
+    'AIRCLEAN': wideq.STATE_AIRCLEAN,
 }
 
 WITHFANMODES = {
@@ -1288,8 +1289,6 @@ class LGEHVACDEVICE(LGEDevice, ClimateDevice):
         else:
             return '지원안함'
 
-
-
     @property
     def is_longpower_mode(self):
         if self._state:
@@ -1443,19 +1442,43 @@ class LGEHVACDEVICE(LGEDevice, ClimateDevice):
 
     @property
     def energy_usage_day(self):
-        return self._ac.get_energy_usage_day()
+        data = int(self._ac.get_energy_usage_day())
+        energy = format(data/1000,'.2f')
+        return energy
     
+    @property
+    def usage_time_day(self):
+        data = int(self._ac.get_usage_time_day())
+        time = format(data/60, '.2f')
+        return time
+
     @property
     def energy_usage_week(self):
-        return self._ac.get_energy_usage_week()
-    
+        data = int(self._ac.get_energy_usage_week())
+        energy = format(data/1000,'.2f')
+        return energy
+
+    @property
+    def usage_time_day(self):
+        data = int(self._ac.get_usage_time_week())
+        time = format(data/60, '.2f')
+        return time  
+
     @property
     def energy_usage_month(self):
-        return self._ac.get_energy_usage_month()
+        data = int(self._ac.get_energy_usage_month())
+        energy = format(data/1000,'.2f')
+        return energy
+
+    @property
+    def usage_time_day(self):
+        data = int(self._ac.get_usage_time_month())
+        time = format(data/60, '.2f')
+        return time
 
     @property
     def elec_fare(self):
-        monthly_usage = int(self.energy_usage_month)
+        monthly_usage = int(self._ac.get_energy_usage_month())/1000
         if monthly_usage <= 200:
             fare = 910 + monthly_usage * 93.3
         elif monthly_usage <=400:
@@ -1670,15 +1693,19 @@ class LGEREFDEVICE(LGEDevice):
         data[ATTR_FREEZER_TEMPERATURE] = self.current_freezertemp
         data[ATTR_ICEPLUS_STATE] = self.ice_plus_state
         data[ATTR_ICEPLUS_LIST] = self.ice_plus_list
-        data[ATTR_FRESHAIRFILTER_STATE] = self.fresh_air_filter_state
-        data[ATTR_FRESHAIRFILTER_LIST] = self.fresh_air_filter_list
-        data[ATTR_SMARTSAVING_MODE] = self.smart_saving_mode
-        data[ATTR_SMARTSAVING_STATE] = self.smart_saving_state
-        data[ATTR_WATERFILTER_STATE] = self.water_filter_state
+        if self.fresh_air_filter_list != '지원안함':
+            data[ATTR_FRESHAIRFILTER_STATE] = self.fresh_air_filter_state
+            data[ATTR_FRESHAIRFILTER_LIST] = self.fresh_air_filter_list
+        if self.smart_saving_mode != '지원안함':
+            data[ATTR_SMARTSAVING_MODE] = self.smart_saving_mode
+        if self.smart_saving_state != '지원안함':
+            data[ATTR_SMARTSAVING_STATE] = self.smart_saving_state
+        if self.water_filter_state != '지원안함':
+            data[ATTR_WATERFILTER_STATE] = self.water_filter_state
         data[ATTR_DOOR_STATE] = self.door_state
-        data[ATTR_SMARTSAVING_STATE] = self.smart_saving_state
         data[ATTR_LOCKING_STATE] = self.locking_state
-        data[ATTR_ACTIVESAVING_STATE] = self.active_saving_state
+        if self.active_saving_state != '지원안함':
+            data[ATTR_ACTIVESAVING_STATE] = self.active_saving_state
         return data
 
     @property
@@ -1727,10 +1754,13 @@ class LGEREFDEVICE(LGEDevice):
     def fresh_air_filter_list(self):
         if self._state:
             mode = self._state.freshairfilter_state
-            if mode.name in FRESHAIRFILTERMODES:
-                return list(FRESHAIRFILTERMODES.values())
-            elif mode.name in SMARTCAREMODES:
-                return list(SMARTCAREMODES.values())
+            if mode == '255':
+                return '지원안함'
+            else:     
+                if mode.name in FRESHAIRFILTERMODES:
+                    return list(FRESHAIRFILTERMODES.values())
+                elif mode.name in SMARTCAREMODES:
+                    return list(SMARTCAREMODES.values())
 
     @property
     def fresh_air_filter_state(self):
