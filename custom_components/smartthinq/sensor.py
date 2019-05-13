@@ -519,10 +519,13 @@ class LGEWASHERDEVICE(LGEDevice):
             initial_hour = self._state.initialtime_hour
             initial_min = self._state.initialtime_min
             initialtime = [initial_hour, initial_min]
-            if int(initial_min) < 10:
-                return ":0".join(initialtime)
+            if self.state == '꺼짐':
+                return "0:00"
             else:
-                return ":".join(initialtime)
+                if int(initial_min) < 10:
+                    return ":0".join(initialtime)
+                else:
+                    return ":".join(initialtime)
 
     @property
     def reserve_time(self):
@@ -530,10 +533,13 @@ class LGEWASHERDEVICE(LGEDevice):
             reserve_hour = self._state.reservetime_hour
             reserve_min = self._state.reservetime_min
             reservetime = [reserve_hour, reserve_min]
-            if int(reserve_min) < 10:
-                return ":0".join(reservetime)
+            if self.state == '꺼짐':
+                return "0:00"
             else:
-                return ":".join(reservetime)
+                if int(reserve_min) < 10:
+                    return ":0".join(reservetime)
+                else:
+                    return ":".join(reservetime)
 
     @property
     def current_course(self):
