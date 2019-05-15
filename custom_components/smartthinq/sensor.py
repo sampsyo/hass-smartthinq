@@ -571,8 +571,6 @@ class LGEWASHERDEVICE(LGEDevice):
                 data[ATTR_WATERFLOW_STATE] = self.waterflow_state
             if self.soak_state != 'NOT_SUPPORTED'
                 data[ATTR_SOAK_STATE] = self.soak_state
-        물 레벨, 물살, 불림 추가 할 것
-        
 
         if self.device_type == 'FL':
             data[ATTR_DRYLEVEL_STATE] = self.drylevel_state
