@@ -53,6 +53,9 @@ ATTR_TURBOSHOT_MODE = 'turboshot_mode'
 ATTR_TUBCLEAN_COUNT = 'tubclean_count'
 ATTR_LOAD_LEVEL = 'load_level'
 ATTR_DEVICE_TYPE = 'device_type'
+ATTR_WATERLEVEL_STATE = 'waterlevel_state'
+ATTR_WATERFLOW_STATE = 'waterflow_state'
+ATTR_SOAK_STATE = 'soak_state'
 
 WASHERCOURSES = {
     'COTTON': wideq.STATE_WASHER_APCOURSE_COTTON,
@@ -266,7 +269,7 @@ WASHERERRORS = {
     'ERROR_EE' : wideq.STATE_WASHER_ERROR_EE,
     'ERROR_PS' : wideq.STATE_WASHER_ERROR_PS,
     'ERROR_dE1' : wideq.STATE_WASHER_ERROR_dE1,
-    'ERROR_LOE' : wideq.STATE_WASHER_ERROR_LOE,
+    'ERROR_LOE' : wideq.STATE_WASHER_ERROR_LOE,        
     'NO_ERROR' : wideq.STATE_NO_ERROR,
     'OFF': wideq.STATE_DRYER_POWER_OFF,
     'TL_ERROR_IE' : wideq.STATE_WASHER_ERROR_IE,
@@ -560,6 +563,16 @@ class LGEWASHERDEVICE(LGEDevice):
         data[ATTR_SPIN_OPTION_STATE] = self.spin_option_state
         data[ATTR_WATERTEMP_OPTION_STATE] = self.watertemp_option_state
         data[ATTR_RINSECOUNT_OPTION_STATE] = self.rinsecount_option_state
+        
+        if self.device_type == 'TL':
+            if self.waterlevel_state != 'NOT_SUPPORTED':
+                data[ATTR_WATERLEVEL_STATE] = self.waterlevel_state
+            if self.waterflow_state != 'NOT_SUPPORTED':
+                data[ATTR_WATERFLOW_STATE] = self.waterflow_state
+            if self.soak_state != 'NOT_SUPPORTED'
+                data[ATTR_SOAK_STATE] = self.soak_state
+        물 레벨, 물살, 불림 추가 할 것
+        
 
         if self.device_type == 'FL':
             data[ATTR_DRYLEVEL_STATE] = self.drylevel_state
@@ -701,6 +714,24 @@ class LGEWASHERDEVICE(LGEDevice):
                 return DRYLEVELSTATES['OFF']
             else:
                 return DRYLEVELSTATES[drylevel.name]
+    
+    @property
+    def waterlevel_state(self):
+        if self._state:
+            waterlevel = self._state.waterlevel_option_state
+            return WATERLEVEL[waterlevel.name]
+
+    @property
+    def waterflow_state(self):
+        if self._state:
+            waterflow = self._state.waterflow_option_state
+            return WATERFLOW[waterflow.name]
+
+    @property
+    def soak_state(self):
+        if self._state:
+            soak = self._state.soak_option_state
+            return SOAK[soak.name]
 
     @property
     def freshcare_mode(self):
@@ -1274,4 +1305,3 @@ class LGEWATERPURIFIERDEVICE(LGEDevice):
         self._wp.monitor_start()
         self._wp.delete_permission()
         self._wp.delete_permission()
-
