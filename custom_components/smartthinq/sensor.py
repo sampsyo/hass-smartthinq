@@ -569,7 +569,7 @@ class LGEWASHERDEVICE(LGEDevice):
                 data[ATTR_WATERLEVEL_STATE] = self.waterlevel_state
             if self.waterflow_state != 'NOT_SUPPORTED':
                 data[ATTR_WATERFLOW_STATE] = self.waterflow_state
-            if self.soak_state != 'NOT_SUPPORTED'
+            if self.soak_state != 'NOT_SUPPORTED':
                 data[ATTR_SOAK_STATE] = self.soak_state
 
         if self.device_type == 'FL':
@@ -1303,4 +1303,3 @@ class LGEWATERPURIFIERDEVICE(LGEDevice):
         self._wp.monitor_start()
         self._wp.delete_permission()
         self._wp.delete_permission()
-
