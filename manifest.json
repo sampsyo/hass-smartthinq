@@ -4,5 +4,5 @@
     "documentation": "https://github.com/sampsyo/hass-smartthinq",
     "dependencies": [],
     "codeowners": ["@sampsyo"],
-    "requirements": ["wideq"]
+    "requirements": ["wideq>=1.0.1"]
 }

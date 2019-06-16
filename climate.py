@@ -38,7 +38,10 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
     import wideq
 
     refresh_token = config.get('refresh_token')
-    client = wideq.Client.from_token(refresh_token)
+    country = config.get('country')
+    language = config.get('language')
+
+    client = wideq.Client.from_token(refresh_token, country, language)
     add_devices(_ac_devices(hass, client), True)
 
 
