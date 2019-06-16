@@ -1,5 +1,5 @@
 {
-    "domain": "smartthingq",
+    "domain": "smartthinq",
     "name": "hass-smartthinq",
     "documentation": "https://github.com/sampsyo/hass-smartthinq",
     "dependencies": [],
