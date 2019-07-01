@@ -18,6 +18,8 @@ LOGGER = logging.getLogger(__name__)
 
 PLATFORM_SCHEMA = climate.PLATFORM_SCHEMA.extend({
     vol.Required('refresh_token'): cv.string,
+    'country': cv.string,
+    'language': cv.string,
 })
 
 MODES = {
