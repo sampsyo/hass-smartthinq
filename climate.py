@@ -4,13 +4,7 @@ from homeassistant.components import climate
 import homeassistant.helpers.config_validation as cv
 from homeassistant import const
 import time
-
-# Depending on the version of homeassistant, get the climate constants
-# from the right module.
-if hasattr(climate, 'STATE_HEAT'):
-    from homeassistant.components import climate as c_const
-else:
-    from homeassistant.components.climate import const as c_const
+from homeassistant.components.climate import const as c_const
 
 REQUIREMENTS = ['wideq']
 
@@ -23,12 +17,9 @@ PLATFORM_SCHEMA = climate.PLATFORM_SCHEMA.extend({
 })
 
 MODES = {
-    'HEAT': c_const.STATE_HEAT,
-    'COOL': c_const.STATE_COOL,
-    'DRY': c_const.STATE_DRY,
-    'FAN': c_const.STATE_FAN_ONLY,
-    'ENERGY_SAVING': c_const.STATE_ECO,
-    'ACO': c_const.STATE_AUTO,
+    'HEAT': c_const.HVAC_MODE_HEAT,
+    'COOL': c_const.HVAC_MODE_COOL,
+    'ACO': c_const.HVAC_MODE_HEAT_COOL,
 }
 MAX_RETRIES = 5
 TRANSIENT_EXP = 5.0  # Report set temperature for 5 seconds.
@@ -109,9 +100,7 @@ class LGDevice(climate.ClimateDevice):
     @property
     def supported_features(self):
         return (
-            c_const.SUPPORT_TARGET_TEMPERATURE |
-            c_const.SUPPORT_OPERATION_MODE |
-            c_const.SUPPORT_ON_OFF
+            c_const.SUPPORT_TARGET_TEMPERATURE
         )
 
     @property
@@ -153,25 +142,20 @@ class LGDevice(climate.ClimateDevice):
                 return self._state.temp_cfg_c
 
     @property
-    def operation_list(self):
-        return list(MODES.values()) + [const.STATE_OFF]
+    def hvac_modes(self):
+        return list(MODES.values()) + [c_const.HVAC_MODE_OFF]
 
     @property
-    def current_operation(self):
+    def hvac_mode(self):
         if self._state:
-            if not self.is_on:
-                return const.STATE_OFF
+            if not self._state.is_on:
+                return c_const.HVAC_MODE_OFF
             mode = self._state.mode
             return MODES[mode.name]
 
-    @property
-    def is_on(self):
-        if self._state:
-            return self._state.is_on
-
-    def set_operation_mode(self, operation_mode):
-        if operation_mode == const.STATE_OFF:
-            self.turn_off()
+    def set_hvac_mode(self, hvac_mode):
+        if hvac_mode == c_const.HVAC_MODE_OFF:
+            self._ac.set_on(False)
             return
 
         import wideq
@@ -179,7 +163,7 @@ class LGDevice(climate.ClimateDevice):
         # Invert the modes mapping.
         modes_inv = {v: k for k, v in MODES.items()}
 
-        mode = wideq.ACMode[modes_inv[operation_mode]]
+        mode = wideq.ACMode[modes_inv[hvac_mode]]
         LOGGER.info('Setting mode to %s...', mode)
         self._ac.set_mode(mode)
         LOGGER.info('Mode set.')
@@ -195,16 +179,6 @@ class LGDevice(climate.ClimateDevice):
         else:
             self._ac.set_celsius(temperature)
         LOGGER.info('Temperature set.')
-
-    def turn_on(self):
-        LOGGER.info('Turning on...')
-        self._ac.set_on(True)
-        LOGGER.info('...done.')
-
-    def turn_off(self):
-        LOGGER.info('Turning off...')
-        self._ac.set_on(False)
-        LOGGER.info('...done.')
 
     def update(self):
         """Poll for updated device status.
