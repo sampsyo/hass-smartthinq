@@ -25,7 +25,7 @@ MODES = {
 }
 FAN_MODES = {
     'LOW': c_const.FAN_LOW,
-    'MID': c_const.FAN_MEDIUM,  # Custom modes are supported but these 
+    'MID': c_const.FAN_MEDIUM,  # Custom modes are supported but these
     'HIGH': c_const.FAN_HIGH,   # are fine for now.
 }
 
@@ -35,6 +35,7 @@ TEMP_MIN_F = 60  # Guessed from actual behavior: API reports are unreliable.
 TEMP_MAX_F = 89
 TEMP_MIN_C = 18  # Intervals read from the AC's remote control.
 TEMP_MAX_C = 30
+
 
 def setup_platform(hass, config, add_devices, discovery_info=None):
     import wideq
@@ -110,7 +111,7 @@ class LGDevice(climate.ClimateDevice):
     @property
     def supported_features(self):
         return (
-            c_const.SUPPORT_TARGET_TEMPERATURE | 
+            c_const.SUPPORT_TARGET_TEMPERATURE |
             c_const.SUPPORT_FAN_MODE
         )
 
@@ -183,7 +184,7 @@ class LGDevice(climate.ClimateDevice):
         # Some AC units must be powered on before setting the mode
         if not self._state.is_on:
             self._ac.set_on(True)
-        
+
         import wideq
 
         # Invert the modes mapping.
