@@ -37,8 +37,9 @@ Here's how to use this:
              refresh_token: YOUR_TOKEN_HERE
              country: US
              language: en-US
+             temp_unit: F
 
-   Use your refresh token and country & language codes.
+   Use your refresh token, country & language codes, and temperature unit (either C for Celsius or F for Fahrenheit).
    Start up Home Assistant and hope for the best.
 
 Credits
