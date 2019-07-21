@@ -14,7 +14,6 @@ PLATFORM_SCHEMA = climate.PLATFORM_SCHEMA.extend({
     vol.Required('refresh_token'): cv.string,
     'country': cv.string,
     'language': cv.string,
-    'temp_unit': cv.string
 })
 
 MODES = {
@@ -40,14 +39,10 @@ TEMP_MAX_C = 30
 def setup_platform(hass, config, add_devices, discovery_info=None):
     import wideq
 
-    fahrenheit = True
-
     refresh_token = config.get('refresh_token')
     country = config.get('country')
     language = config.get('language')
-    temp_unit = config.get('temp_unit') # either C or F
-
-    if temp_unit == 'C': fahrenheit = False
+    fahrenheit = hass.config.units.temperature_unit != '°C'
 
     client = wideq.Client.from_token(refresh_token, country, language)
     add_devices(_ac_devices(hass, client, fahrenheit), True)
@@ -80,7 +75,7 @@ def _ac_devices(hass, client, fahrenheit):
 
 
 class LGDevice(climate.ClimateDevice):
-    def __init__(self, client, device, fahrenheit=False):
+    def __init__(self, client, device, fahrenheit=True):
         self._client = client
         self._device = device
         self._fahrenheit = fahrenheit
