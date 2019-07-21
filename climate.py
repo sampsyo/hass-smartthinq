@@ -19,13 +19,22 @@ PLATFORM_SCHEMA = climate.PLATFORM_SCHEMA.extend({
 MODES = {
     'HEAT': c_const.HVAC_MODE_HEAT,
     'COOL': c_const.HVAC_MODE_COOL,
+    'FAN': c_const.HVAC_MODE_FAN_ONLY,
+    'DRY': c_const.HVAC_MODE_DRY,
     'ACO': c_const.HVAC_MODE_HEAT_COOL,
 }
+FAN_MODES = {
+    'LOW': c_const.FAN_LOW,
+    'MID': c_const.FAN_MEDIUM,  # Custom modes are supported but these 
+    'HIGH': c_const.FAN_HIGH,   # are fine for now.
+}
+
 MAX_RETRIES = 5
 TRANSIENT_EXP = 5.0  # Report set temperature for 5 seconds.
 TEMP_MIN_F = 60  # Guessed from actual behavior: API reports are unreliable.
 TEMP_MAX_F = 89
-
+TEMP_MIN_C = 18  # Intervals read from the AC's remote control.
+TEMP_MAX_C = 30
 
 def setup_platform(hass, config, add_devices, discovery_info=None):
     import wideq
@@ -33,12 +42,13 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
     refresh_token = config.get('refresh_token')
     country = config.get('country')
     language = config.get('language')
+    fahrenheit = hass.config.units.temperature_unit != '°C'
 
     client = wideq.Client.from_token(refresh_token, country, language)
-    add_devices(_ac_devices(hass, client), True)
+    add_devices(_ac_devices(hass, client, fahrenheit), True)
 
 
-def _ac_devices(hass, client):
+def _ac_devices(hass, client, fahrenheit):
     """Generate all the AC (climate) devices associated with the user's
     LG account.
 
@@ -51,7 +61,7 @@ def _ac_devices(hass, client):
     for device in client.devices:
         if device.type == wideq.DeviceType.AC:
             try:
-                d = LGDevice(client, device)
+                d = LGDevice(client, device, fahrenheit)
             except wideq.NotConnectedError:
                 LOGGER.error(
                     'SmartThinQ device not available: %s', device.name
@@ -100,20 +110,23 @@ class LGDevice(climate.ClimateDevice):
     @property
     def supported_features(self):
         return (
-            c_const.SUPPORT_TARGET_TEMPERATURE
+            c_const.SUPPORT_TARGET_TEMPERATURE | 
+            c_const.SUPPORT_FAN_MODE
         )
 
     @property
     def min_temp(self):
         if self._fahrenheit:
             return TEMP_MIN_F
-        return climate.ClimateDevice.min_temp.fget(self)
+        else:
+            return TEMP_MIN_C
 
     @property
     def max_temp(self):
         if self._fahrenheit:
             return TEMP_MAX_F
-        return climate.ClimateDevice.max_temp.fget(self)
+        else:
+            return TEMP_MAX_C
 
     @property
     def current_temperature(self):
@@ -146,12 +159,21 @@ class LGDevice(climate.ClimateDevice):
         return list(MODES.values()) + [c_const.HVAC_MODE_OFF]
 
     @property
+    def fan_modes(self):
+        return list(FAN_MODES.values())
+
+    @property
     def hvac_mode(self):
         if self._state:
             if not self._state.is_on:
                 return c_const.HVAC_MODE_OFF
             mode = self._state.mode
             return MODES[mode.name]
+
+    @property
+    def fan_mode(self):
+        mode = self._state.fan_speed
+        return FAN_MODES[mode.name]
 
     def set_hvac_mode(self, hvac_mode):
         if hvac_mode == c_const.HVAC_MODE_OFF:
@@ -167,6 +189,17 @@ class LGDevice(climate.ClimateDevice):
         LOGGER.info('Setting mode to %s...', mode)
         self._ac.set_mode(mode)
         LOGGER.info('Mode set.')
+
+    def set_fan_mode(self, fan_mode):
+        import wideq
+
+        # Invert the fan modes mapping.
+        fan_modes_inv = {v: k for k, v in FAN_MODES.items()}
+
+        mode = wideq.ACFanSpeed[fan_modes_inv[fan_mode]]
+        LOGGER.info('Setting fan mode to %s', fan_mode)
+        self._ac.set_fan_speed(mode)
+        LOGGER.info('Fan mode set.')
 
     def set_temperature(self, **kwargs):
         temperature = kwargs['temperature']
