@@ -181,7 +181,7 @@ class LGDevice(climate.ClimateDevice):
             self._ac.set_on(False)
             return
 
-        # Some AC units must be powered on before setting the mode
+        # Some AC units must be powered on before setting the mode.
         if not self._state.is_on:
             self._ac.set_on(True)
 
