@@ -3,9 +3,10 @@ import logging
 import time
 import voluptuous as vol
 
-from custom_components.smartthinq import (KEY_SMARTTHINQ_DEVICES, LGDevice)
+from custom_components.smartthinq import (
+    CONF_LANGUAGE, KEY_SMARTTHINQ_DEVICES, LGDevice)
 import homeassistant.helpers.config_validation as cv
-from homeassistant.const import CONF_TOKEN
+from homeassistant.const import CONF_REGION, CONF_TOKEN
 from homeassistant.exceptions import PlatformNotReady
 
 import wideq
@@ -34,7 +35,10 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
     """Set up the LG dishwasher entities"""
 
     refresh_token = hass.data[CONF_TOKEN]
-    client = wideq.Client.from_token(refresh_token)
+    region = hass.data[CONF_REGION]
+    language = hass.data[CONF_LANGUAGE]
+
+    client = wideq.Client.from_token(refresh_token, region, language)
     dishwashers = []
 
     for device_id in hass.data[KEY_SMARTTHINQ_DEVICES]:
