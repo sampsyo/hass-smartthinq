@@ -26,11 +26,19 @@ CONFIG_SCHEMA = vol.Schema({
 LOGGER = logging.getLogger(__name__)
 
 SMARTTHINQ_COMPONENTS = [
-    'sensor'
+    'sensor',
+    'climate',
 ]
 KEY_SMARTTHINQ_DEVICES = 'smartthinq_devices'
+README_URL = 'https://github.com/sampsyo/hass-smartthinq/blob/master/README.md'
 
 def setup(hass, config):
+    if DOMAIN not in config:
+        LOGGER.warning(
+            'Configuration is missing \"%s\" top-level platform. Operation '
+            'in this mode is deprecated. See %s .' % (DOMAIN, README_URL))
+        return True
+
     if KEY_SMARTTHINQ_DEVICES not in hass.data:
         hass.data[KEY_SMARTTHINQ_DEVICES] = []
 

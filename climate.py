@@ -1,19 +1,25 @@
 import logging
 import voluptuous as vol
 from homeassistant.components import climate
+from homeassistant.const import CONF_REGION, CONF_TOKEN
 import homeassistant.helpers.config_validation as cv
 from homeassistant import const
 import time
 from homeassistant.components.climate import const as c_const
+from custom_components.smartthinq import CONF_LANGUAGE, DOMAIN, README_URL
 
 REQUIREMENTS = ['wideq']
 
 LOGGER = logging.getLogger(__name__)
 
+KEY_DEPRECATED_REFRESH_TOKEN = 'refresh_token'
+KEY_DEPRECATED_COUNTRY = 'country'
+KEY_DEPRECATED_LANGUAGE = 'language'
+
 PLATFORM_SCHEMA = climate.PLATFORM_SCHEMA.extend({
-    vol.Required('refresh_token'): cv.string,
-    'country': cv.string,
-    'language': cv.string,
+    vol.Required(KEY_DEPRECATED_REFRESH_TOKEN): cv.string,
+    KEY_DEPRECATED_COUNTRY: cv.string,
+    KEY_DEPRECATED_LANGUAGE: cv.string,
 })
 
 MODES = {
@@ -40,9 +46,29 @@ TEMP_MAX_C = 30
 def setup_platform(hass, config, add_devices, discovery_info=None):
     import wideq
 
-    refresh_token = config.get('refresh_token')
-    country = config.get('country')
-    language = config.get('language')
+    if any(key in config for key in (
+        (KEY_DEPRECATED_REFRESH_TOKEN,
+         KEY_DEPRECATED_COUNTRY,
+         KEY_DEPRECATED_LANGUAGE))):
+        LOGGER.warning(
+            'Direct use of the smartthinq components without a toplevel '
+            'smartthinq platform configuration is deprecated. Please use '
+            'a top-level smartthinq platform instead. Please see %s . '
+            'Configuration mapping:\n '
+            '\tclimate.%s -> %s.%s\n'
+            '\tclimate.%s -> %s.%s\n'
+            '\tclimate.%s -> %s.%s' % (README_URL,
+                KEY_DEPRECATED_REFRESH_TOKEN, DOMAIN, CONF_TOKEN,
+                KEY_DEPRECATED_COUNTRY, DOMAIN, CONF_REGION,
+                KEY_DEPRECATED_LANGUAGE, DOMAIN, CONF_LANGUAGE))
+
+    refresh_token = config.get(KEY_DEPRECATED_REFRESH_TOKEN) or hass.data[
+        CONF_TOKEN]
+    country = config.get(KEY_DEPRECATED_COUNTRY) or hass.data[
+        CONF_REGION]
+    language = config.get(KEY_DEPRECATED_LANGUAGE) or hass.data[
+        CONF_LANGUAGE]
+
     fahrenheit = hass.config.units.temperature_unit != '°C'
 
     client = wideq.Client.from_token(refresh_token, country, language)

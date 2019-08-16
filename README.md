@@ -1,8 +1,10 @@
 Home Assistant: LG SmartThinQ Component
 =======================================
 
-A [Home Assistant][hass] component for controlling LG HVAC devices via their SmartThinQ platform, based on [WideQ][].
-The current version of the component requires Home Assistant 0.96 or later.
+A [Home Assistant][hass] component for controlling/monitoring LG devices
+(currently HVAC & Dishwasher) via their SmartThinQ platform, based on
+[WideQ][].  The current version of the component requires Home Assistant 0.96
+or later.
 
 [hass]: https://home-assistant.io
 [wideq]: https://github.com/sampsyo/wideq
@@ -32,14 +34,27 @@ Here's how to use this:
 
 3. Add a stanza to your Home Assistant `configuration.yaml` like this:
 
-       climate:
-           - platform: smartthinq
-             refresh_token: YOUR_TOKEN_HERE
-             country: US
-             language: en-US
+       smartthinq:
+           token: [YOUR_TOKEN_HERE]
+           region: US [OPTIONAL]
+           language: en-US [OPTIONAL]
 
    Use your refresh token and country & language codes.
    Start up Home Assistant and hope for the best.
+
+   **NOTE**: Direct use of configuration as part of the climate platform is deprecated.
+
+Dishwasher Visualization Example
+--------------------------------
+
+Dishwashers will be automatically added as a new `sensor.lg_dishwasher.[id]`
+entity with various useful attributes. See the below example for how this can
+be used in the Lovelace UI, which uses the built-in picture-elements card, the
+[circle custom card](https://github.com/custom-cards/circle-sensor-card)
+and [entity attributes
+card](https://github.com/custom-cards/entity-attributes-card).
+
+![Dishwasher Lovelace card](dishwasher_lovelace.png)
 
 Credits
 -------
