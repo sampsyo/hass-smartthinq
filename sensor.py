@@ -7,7 +7,6 @@ from custom_components.smartthinq import (
     CONF_LANGUAGE, KEY_SMARTTHINQ_DEVICES, LGDevice)
 import homeassistant.helpers.config_validation as cv
 from homeassistant.const import CONF_REGION, CONF_TOKEN
-from homeassistant.exceptions import PlatformNotReady
 
 import wideq
 from wideq import dishwasher
@@ -46,14 +45,14 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
         model = client.model_info(device)
 
         if device.type == wideq.DeviceType.DISHWASHER:
-          base_name = "lg_dishwasher_" + device.id
-          LOGGER.debug("Creating new LG DishWasher: %s" % base_name)
-          try:
-            dishwashers.append(LGDishWasherDevice(client, device, base_name))
-          except wideq.NotConnectedError:
-            # Dishwashers are only connected when in use. Ignore
-            # NotConnectedError on platform setup.
-            pass
+            base_name = "lg_dishwasher_" + device.id
+            LOGGER.debug("Creating new LG DishWasher: %s" % base_name)
+            try:
+                dishwashers.append(LGDishWasherDevice(client, device, base_name))
+            except wideq.NotConnectedError:
+                # Dishwashers are only connected when in use. Ignore
+                # NotConnectedError on platform setup.
+                pass
 
     if dishwashers:
         add_entities(dishwashers, True)
@@ -103,7 +102,7 @@ class LGDishWasherDevice(LGDevice):
         if self._status:
           # Process is a more refined string to use for state, if it's present,
           # use it instead.
-          return self._status.readable_process or self._status.readable_state
+            return self._status.readable_process or self._status.readable_state
         return dishwasher.DISHWASHER_STATE_READABLE[
             dishwasher.DishWasherState.OFF.name]
 
@@ -114,6 +113,15 @@ class LGDishWasherDevice(LGDevice):
 
     @property
     def remaining_time_in_minutes(self):
+        # The API (indefinitely) returns 1 minute remaining when a cycle is
+        # either in state off or complete, or process night-drying. Return 0
+        # minutes remaining in these instances, which is more reflective of
+        # reality.
+        if (self._status and
+            (self._status.process == dishwasher.DishWasherProcess.NIGHT_DRYING or
+             self._status.state == dishwasher.DishWasherState.OFF or
+             self._status.state == dishwasher.DishWasherState.COMPLETE)):
+            return 0
         return self._status.remaining_time if self._status else 0
 
     @property
@@ -123,6 +131,12 @@ class LGDishWasherDevice(LGDevice):
 
     @property
     def initial_time_in_minutes(self):
+        # When in state OFF, the dishwasher still returns the initial program
+        # length of the previously ran cycle. Instead, return 0 which is more
+        # reflective of the dishwasher being off.
+        if (self._status and
+            self._status.state == dishwasher.DishWasherState.OFF):
+            return 0
         return self._status.initial_time if self._status else 0
 
     @property
@@ -137,10 +151,10 @@ class LGDishWasherDevice(LGDevice):
     @property
     def course(self):
         if self._status:
-          if self._status.smart_course != KEY_DW_OFF:
-            return self._status.smart_course
-          else:
-            return self._status.course
+            if self._status.smart_course != KEY_DW_OFF:
+                return self._status.smart_course
+            else:
+                return self._status.course
         return KEY_DW_OFF
 
     @property
@@ -169,7 +183,7 @@ class LGDishWasherDevice(LGDevice):
         # On initial construction, the dishwasher monitor task
         # will not have been created. If so, start monitoring here.
         if getattr(self._dishwasher, 'mon', None) is None:
-          self._restart_monitor()
+            self._restart_monitor()
 
         try:
             status = self._dishwasher.poll()
