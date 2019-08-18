@@ -6,15 +6,13 @@ import homeassistant.helpers.config_validation as cv
 from homeassistant import const
 import time
 from homeassistant.components.climate import const as c_const
-from custom_components.smartthinq import CONF_LANGUAGE, DOMAIN, README_URL
+from custom_components.smartthinq import (
+    CONF_LANGUAGE, DEPRECATION_WARNING, DOMAIN, KEY_DEPRECATED_COUNTRY,
+    KEY_DEPRECATED_LANGUAGE, KEY_DEPRECATED_REFRESH_TOKEN, README_URL)
 
 REQUIREMENTS = ['wideq']
 
 LOGGER = logging.getLogger(__name__)
-
-KEY_DEPRECATED_REFRESH_TOKEN = 'refresh_token'
-KEY_DEPRECATED_COUNTRY = 'country'
-KEY_DEPRECATED_LANGUAGE = 'language'
 
 PLATFORM_SCHEMA = climate.PLATFORM_SCHEMA.extend({
     vol.Required(KEY_DEPRECATED_REFRESH_TOKEN): cv.string,
@@ -50,24 +48,14 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
         (KEY_DEPRECATED_REFRESH_TOKEN,
          KEY_DEPRECATED_COUNTRY,
          KEY_DEPRECATED_LANGUAGE))):
-        LOGGER.warning(
-            'Direct use of the smartthinq components without a toplevel '
-            'smartthinq platform configuration is deprecated. Please use '
-            'a top-level smartthinq platform instead. Please see %s . '
-            'Configuration mapping:\n '
-            '\tclimate.%s -> %s.%s\n'
-            '\tclimate.%s -> %s.%s\n'
-            '\tclimate.%s -> %s.%s' % (README_URL,
-                KEY_DEPRECATED_REFRESH_TOKEN, DOMAIN, CONF_TOKEN,
-                KEY_DEPRECATED_COUNTRY, DOMAIN, CONF_REGION,
-                KEY_DEPRECATED_LANGUAGE, DOMAIN, CONF_LANGUAGE))
+        LOGGER.warning(DEPRECATION_WARNING)
 
-    refresh_token = config.get(KEY_DEPRECATED_REFRESH_TOKEN) or hass.data[
-        CONF_TOKEN]
-    country = config.get(KEY_DEPRECATED_COUNTRY) or hass.data[
-        CONF_REGION]
-    language = config.get(KEY_DEPRECATED_LANGUAGE) or hass.data[
-        CONF_LANGUAGE]
+    refresh_token = config.get(KEY_DEPRECATED_REFRESH_TOKEN) or \
+        hass.data[CONF_TOKEN]
+    country = config.get(KEY_DEPRECATED_COUNTRY) or \
+        hass.data[CONF_REGION]
+    language = config.get(KEY_DEPRECATED_LANGUAGE) or \
+        hass.data[CONF_LANGUAGE]
 
     fahrenheit = hass.config.units.temperature_unit != '°C'
 
