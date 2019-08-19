@@ -51,11 +51,11 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
         LOGGER.warning(DEPRECATION_WARNING)
 
     refresh_token = config.get(KEY_DEPRECATED_REFRESH_TOKEN) or \
-        hass.data[CONF_TOKEN]
+        hass.data.get(CONF_TOKEN)
     country = config.get(KEY_DEPRECATED_COUNTRY) or \
-        hass.data[CONF_REGION]
+        hass.data.get(CONF_REGION)
     language = config.get(KEY_DEPRECATED_LANGUAGE) or \
-        hass.data[CONF_LANGUAGE]
+        hass.data.get(CONF_LANGUAGE)
 
     fahrenheit = hass.config.units.temperature_unit != '°C'
 
