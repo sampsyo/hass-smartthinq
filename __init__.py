@@ -26,11 +26,38 @@ CONFIG_SCHEMA = vol.Schema({
 LOGGER = logging.getLogger(__name__)
 
 SMARTTHINQ_COMPONENTS = [
-    'sensor'
+    'sensor',
+    'climate',
 ]
 KEY_SMARTTHINQ_DEVICES = 'smartthinq_devices'
+README_URL = 'https://github.com/sampsyo/hass-smartthinq/blob/master/README.md'
+
+KEY_DEPRECATED_REFRESH_TOKEN = 'refresh_token'
+KEY_DEPRECATED_COUNTRY = 'country'
+KEY_DEPRECATED_LANGUAGE = 'language'
+
+DEPRECATION_WARNING = (
+    'Direct use of the smartthinq components without a toplevel '
+    'smartthinq platform configuration is deprecated. Please use '
+    'a top-level smartthinq platform instead. Please see {readme_url} . '
+    'Configuration mapping:\n '
+    '\tclimate.{key_deprecated_token} -> {domain}.{key_token}\n'
+    '\tclimate.{key_deprecated_country} -> {domain}.{key_region}\n'
+    '\tclimate.{key_deprecated_language} -> {domain}.{key_language}').format(
+        readme_url=README_URL,
+        key_deprecated_token=KEY_DEPRECATED_REFRESH_TOKEN,
+        key_token=CONF_TOKEN,
+        key_deprecated_country=KEY_DEPRECATED_COUNTRY,
+        key_region=CONF_REGION,
+        key_deprecated_language=KEY_DEPRECATED_LANGUAGE,
+        key_language=CONF_LANGUAGE,
+        domain=DOMAIN)
 
 def setup(hass, config):
+    if DOMAIN not in config:
+        LOGGER.warning(DEPRECATION_WARNING)
+        return True
+
     if KEY_SMARTTHINQ_DEVICES not in hass.data:
         hass.data[KEY_SMARTTHINQ_DEVICES] = []
 
