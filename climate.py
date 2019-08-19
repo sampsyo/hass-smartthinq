@@ -29,8 +29,10 @@ MODES = {
 }
 FAN_MODES = {
     'LOW': c_const.FAN_LOW,
-    'MID': c_const.FAN_MEDIUM,  # Custom modes are supported but these
-    'HIGH': c_const.FAN_HIGH,   # are fine for now.
+    'LOW_MID': 'low-mid',
+    'MID': c_const.FAN_MEDIUM,
+    'MID_HIGH': 'mid-high',
+    'HIGH': c_const.FAN_HIGH,
 }
 
 MAX_RETRIES = 5
