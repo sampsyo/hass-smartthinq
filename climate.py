@@ -7,8 +7,8 @@ from homeassistant import const
 import time
 from homeassistant.components.climate import const as c_const
 from custom_components.smartthinq import (
-    CONF_LANGUAGE, DEPRECATION_WARNING, DOMAIN, KEY_DEPRECATED_COUNTRY,
-    KEY_DEPRECATED_LANGUAGE, KEY_DEPRECATED_REFRESH_TOKEN, README_URL)
+    CONF_LANGUAGE, DEPRECATION_WARNING, KEY_DEPRECATED_COUNTRY,
+    KEY_DEPRECATED_LANGUAGE, KEY_DEPRECATED_REFRESH_TOKEN)
 
 REQUIREMENTS = ['wideq']
 
