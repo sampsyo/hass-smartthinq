@@ -47,25 +47,27 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
         hass.data.get(CONF_LANGUAGE)
 
     client = wideq.Client.from_token(refresh_token, region, language)
-    dishwashers = []
+    add_devices(_dishwashers(hass, client), True)
 
-    for device_id in hass.data[KEY_SMARTTHINQ_DEVICES]:
-        device = client.get_device(device_id)
-        model = client.model_info(device)
+def _dishwashers(hass, client):
+    """Generate all the dishwasher devices associated with the user's
+    LG account.
 
+    Log errors for devices that can't be used for whatever reason.
+    """
+    import wideq
+
+    for device in client.devices:
         if device.type == wideq.DeviceType.DISHWASHER:
-            base_name = "lg_dishwasher_" + device.id
-            LOGGER.debug("Creating new LG DishWasher: %s" % base_name)
             try:
-                dishwashers.append(LGDishWasherDevice(client, device, base_name))
+                base_name = "lg_dishwasher_" + device.id
+                d = LGDevice(client, device, fahrenheit)
             except wideq.NotConnectedError:
                 # Dishwashers are only connected when in use. Ignore
                 # NotConnectedError on platform setup.
                 pass
-
-    if dishwashers:
-        add_devices(dishwashers, True)
-    return True
+            else:
+                yield d
 
 
 class LGDishWasherDevice(LGDevice):
