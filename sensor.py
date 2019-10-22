@@ -30,8 +30,8 @@ KEY_DW_DISCONNECTED = 'Disconnected'
 LOGGER = logging.getLogger(__name__)
 
 
-def setup_platform(hass, config, add_entities, discovery_info=None):
-    """Set up the LG dishwasher entities"""
+def setup_platform(hass, config, add_devices, discovery_info=None):
+    """Set up the LG dishwasher devices"""
 
     if any(key in config for key in (
         (KEY_DEPRECATED_REFRESH_TOKEN,
@@ -64,7 +64,7 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
                 pass
 
     if dishwashers:
-        add_entities(dishwashers, True)
+        add_devices(dishwashers, True)
     return True
 
 
