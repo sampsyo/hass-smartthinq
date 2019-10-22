@@ -45,7 +45,7 @@ Here's how to use this:
 Dishwasher Visualization Example
 --------------------------------
 
-Dishwashers will be automatically added as a new `sensor.lg_dishwasher.[ID]`
+Dishwashers will be automatically added as a new `sensor.lg_dishwasher_[ID]`
 entity with various useful attributes. See the below example for how this can
 be used in the Lovelace UI, which uses the built-in picture-elements card, the
 [circle custom card](https://github.com/custom-cards/circle-sensor-card), the
