@@ -33,9 +33,18 @@ LOGGER = logging.getLogger(__name__)
 def setup_platform(hass, config, add_entities, discovery_info=None):
     """Set up the LG dishwasher entities"""
 
-    refresh_token = hass.data[CONF_TOKEN]
-    region = hass.data[CONF_REGION]
-    language = hass.data[CONF_LANGUAGE]
+    if any(key in config for key in (
+        (KEY_DEPRECATED_REFRESH_TOKEN,
+         KEY_DEPRECATED_COUNTRY,
+         KEY_DEPRECATED_LANGUAGE))):
+        LOGGER.warning(DEPRECATION_WARNING)
+
+    refresh_token = config.get(KEY_DEPRECATED_REFRESH_TOKEN) or \
+        hass.data.get(CONF_TOKEN)
+    country = config.get(KEY_DEPRECATED_COUNTRY) or \
+        hass.data.get(CONF_REGION)
+    language = config.get(KEY_DEPRECATED_LANGUAGE) or \
+        hass.data.get(CONF_LANGUAGE)
 
     client = wideq.Client.from_token(refresh_token, region, language)
     dishwashers = []
