@@ -26,8 +26,8 @@ CONFIG_SCHEMA = vol.Schema({
 LOGGER = logging.getLogger(__name__)
 
 SMARTTHINQ_COMPONENTS = [
-    'sensor',
     'climate',
+    'dishwasher',
 ]
 KEY_SMARTTHINQ_DEVICES = 'smartthinq_devices'
 README_URL = 'https://github.com/sampsyo/hass-smartthinq/blob/master/README.md'
@@ -91,3 +91,4 @@ class LGDevice(Entity):
     @property
     def available(self):
         return True
+

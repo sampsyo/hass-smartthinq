@@ -61,7 +61,7 @@ def _dishwashers(hass, client):
         if device.type == wideq.DeviceType.DISHWASHER:
             try:
                 base_name = "lg_dishwasher_" + device.id
-                d = LGDevice(client, device, fahrenheit)
+                d = LGDishWasherDevice(client, device, base_name)
             except wideq.NotConnectedError:
                 # Dishwashers are only connected when in use. Ignore
                 # NotConnectedError on platform setup.
