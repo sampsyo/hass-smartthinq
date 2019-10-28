@@ -4,8 +4,8 @@ import time
 import voluptuous as vol
 
 from custom_components.smartthinq import (
-    CONF_LANGUAGE, KEY_SMARTTHINQ_DEVICES, LGDevice)
-import homeassistant.helpers.config_validation as cv
+    CONF_LANGUAGE, DEPRECATION_WARNING, KEY_DEPRECATED_COUNTRY,
+    KEY_DEPRECATED_LANGUAGE, KEY_DEPRECATED_REFRESH_TOKEN)
 from homeassistant.const import CONF_REGION, CONF_TOKEN
 
 import wideq
