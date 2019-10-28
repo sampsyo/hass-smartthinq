@@ -3,12 +3,14 @@ import logging
 import voluptuous as vol
 import wideq
 
-from homeassistant.components import climate
-from homeassistant.const import CONF_REGION, CONF_TOKEN
+"""HA specific imports"""
 import homeassistant.helpers.config_validation as cv
-from homeassistant import const
+from homeassistant.components import climate
 from homeassistant.components.climate import const as c_const
+from homeassistant import const
 
+"""Configuration values needed"""
+from homeassistant.const import CONF_REGION, CONF_TOKEN
 from custom_components.smartthinq import (
     CONF_LANGUAGE, DEPRECATION_WARNING, KEY_DEPRECATED_COUNTRY,
     KEY_DEPRECATED_LANGUAGE, KEY_DEPRECATED_REFRESH_TOKEN)
@@ -46,6 +48,7 @@ TEMP_MIN_C = 18  # Intervals read from the AC's remote control.
 TEMP_MAX_C = 30
 
 def setup_platform(hass, config, add_devices, discovery_info=None):
+     """Set up the LG climate devices"""
     if any(key in config for key in (
         (KEY_DEPRECATED_REFRESH_TOKEN,
          KEY_DEPRECATED_COUNTRY,
@@ -58,10 +61,9 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
         hass.data.get(CONF_REGION)
     language = config.get(KEY_DEPRECATED_LANGUAGE) or \
         hass.data.get(CONF_LANGUAGE)
+    client = wideq.Client.from_token(refresh_token, country, language)
 
     fahrenheit = hass.config.units.temperature_unit != '°C'
-
-    client = wideq.Client.from_token(refresh_token, country, language)
     add_devices(_ac_devices(hass, client, fahrenheit), True)
 
 

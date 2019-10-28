@@ -4,8 +4,11 @@ import logging
 import voluptuous as vol
 import wideq
 
-from homeassistant.const import CONF_REGION, CONF_TOKEN
+"""HA specific imports"""
+import homeassistant.helpers.config_validation as cv
 
+"""Configuration values needed"""
+from homeassistant.const import CONF_REGION, CONF_TOKEN
 from custom_components.smartthinq import (
     CONF_LANGUAGE, DEPRECATION_WARNING, KEY_DEPRECATED_COUNTRY,
     KEY_DEPRECATED_LANGUAGE, KEY_DEPRECATED_REFRESH_TOKEN)
@@ -36,7 +39,6 @@ KEY_DW_DISCONNECTED = 'Disconnected'
 
 def setup_platform(hass, config, add_devices, discovery_info=None):
     """Set up the LG dishwasher devices"""
-
     if any(key in config for key in (
         (KEY_DEPRECATED_REFRESH_TOKEN,
          KEY_DEPRECATED_COUNTRY,
