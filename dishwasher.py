@@ -1,11 +1,6 @@
 import time
-import datetime
 import logging
-import voluptuous as vol
 import wideq
-
-"""HA specific imports"""
-import homeassistant.helpers.config_validation as cv
 
 """Configuration values needed"""
 from homeassistant.const import CONF_REGION, CONF_TOKEN
@@ -16,14 +11,15 @@ from custom_components.smartthinq import (
 """General variables"""
 REQUIREMENTS = ['wideq']
 LOGGER = logging.getLogger(__name__)
-PLATFORM_SCHEMA = climate.PLATFORM_SCHEMA.extend({
-    vol.Required(KEY_DEPRECATED_REFRESH_TOKEN): cv.string,
-    KEY_DEPRECATED_COUNTRY: cv.string,
-    KEY_DEPRECATED_LANGUAGE: cv.string,
-})
 MAX_RETRIES = 5
 
-"""Implementation specific variables"""
+"""Device specific imports"""
+import datetime
+from homeassistant.components import climate
+from homeassistant.components.climate import const as c_const
+from homeassistant import const
+
+"""Device specific variables"""
 ATTR_DW_STATE = 'state'
 ATTR_DW_REMAINING_TIME = 'remaining_time'
 ATTR_DW_REMAINING_TIME_IN_MINUTES = 'remaining_time_in_minutes'
