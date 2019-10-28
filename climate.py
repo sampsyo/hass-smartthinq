@@ -1,25 +1,29 @@
+import time
 import logging
 import voluptuous as vol
+import wideq
+
 from homeassistant.components import climate
 from homeassistant.const import CONF_REGION, CONF_TOKEN
 import homeassistant.helpers.config_validation as cv
 from homeassistant import const
-import time
 from homeassistant.components.climate import const as c_const
+
 from custom_components.smartthinq import (
     CONF_LANGUAGE, DEPRECATION_WARNING, KEY_DEPRECATED_COUNTRY,
     KEY_DEPRECATED_LANGUAGE, KEY_DEPRECATED_REFRESH_TOKEN)
 
+"""General variables"""
 REQUIREMENTS = ['wideq']
-
 LOGGER = logging.getLogger(__name__)
-
 PLATFORM_SCHEMA = climate.PLATFORM_SCHEMA.extend({
     vol.Required(KEY_DEPRECATED_REFRESH_TOKEN): cv.string,
     KEY_DEPRECATED_COUNTRY: cv.string,
     KEY_DEPRECATED_LANGUAGE: cv.string,
 })
+MAX_RETRIES = 5
 
+"""Implementation specific variables"""
 MODES = {
     'HEAT': c_const.HVAC_MODE_HEAT,
     'COOL': c_const.HVAC_MODE_COOL,
@@ -35,17 +39,13 @@ FAN_MODES = {
     'HIGH': c_const.FAN_HIGH,
 }
 
-MAX_RETRIES = 5
 TRANSIENT_EXP = 5.0  # Report set temperature for 5 seconds.
 TEMP_MIN_F = 60  # Guessed from actual behavior: API reports are unreliable.
 TEMP_MAX_F = 89
 TEMP_MIN_C = 18  # Intervals read from the AC's remote control.
 TEMP_MAX_C = 30
 
-
 def setup_platform(hass, config, add_devices, discovery_info=None):
-    import wideq
-
     if any(key in config for key in (
         (KEY_DEPRECATED_REFRESH_TOKEN,
          KEY_DEPRECATED_COUNTRY,
@@ -71,8 +71,6 @@ def _ac_devices(hass, client, fahrenheit):
 
     Log errors for devices that can't be used for whatever reason.
     """
-    import wideq
-
     persistent_notification = hass.components.persistent_notification
 
     for device in client.devices:
@@ -96,8 +94,6 @@ class LGDevice(climate.ClimateDevice):
         self._client = client
         self._device = device
         self._fahrenheit = fahrenheit
-
-        import wideq
         self._ac = wideq.ACDevice(client, device)
         self._ac.monitor_start()
 
@@ -201,8 +197,6 @@ class LGDevice(climate.ClimateDevice):
         if not self._state.is_on:
             self._ac.set_on(True)
 
-        import wideq
-
         # Invert the modes mapping.
         modes_inv = {v: k for k, v in MODES.items()}
 
@@ -212,8 +206,6 @@ class LGDevice(climate.ClimateDevice):
         LOGGER.info('Mode set.')
 
     def set_fan_mode(self, fan_mode):
-        import wideq
-
         # Invert the fan modes mapping.
         fan_modes_inv = {v: k for k, v in FAN_MODES.items()}
 
@@ -239,9 +231,6 @@ class LGDevice(climate.ClimateDevice):
 
         Set the `_state` field to a new data mapping.
         """
-
-        import wideq
-
         LOGGER.info('Updating %s.', self.name)
         for iteration in range(MAX_RETRIES):
             LOGGER.info('Polling...')

@@ -1,16 +1,26 @@
+import time
 import datetime
 import logging
-import time
 import voluptuous as vol
+import wideq
+
+from homeassistant.const import CONF_REGION, CONF_TOKEN
 
 from custom_components.smartthinq import (
     CONF_LANGUAGE, DEPRECATION_WARNING, KEY_DEPRECATED_COUNTRY,
     KEY_DEPRECATED_LANGUAGE, KEY_DEPRECATED_REFRESH_TOKEN)
-from homeassistant.const import CONF_REGION, CONF_TOKEN
 
-import wideq
-from wideq import dishwasher
+"""General variables"""
+REQUIREMENTS = ['wideq']
+LOGGER = logging.getLogger(__name__)
+PLATFORM_SCHEMA = climate.PLATFORM_SCHEMA.extend({
+    vol.Required(KEY_DEPRECATED_REFRESH_TOKEN): cv.string,
+    KEY_DEPRECATED_COUNTRY: cv.string,
+    KEY_DEPRECATED_LANGUAGE: cv.string,
+})
+MAX_RETRIES = 5
 
+"""Implementation specific variables"""
 ATTR_DW_STATE = 'state'
 ATTR_DW_REMAINING_TIME = 'remaining_time'
 ATTR_DW_REMAINING_TIME_IN_MINUTES = 'remaining_time_in_minutes'
@@ -21,14 +31,8 @@ ATTR_DW_RESERVE_TIME_IN_MINUTES = 'reserve_time_in_minutes'
 ATTR_DW_COURSE = 'course'
 ATTR_DW_ERROR = 'error'
 ATTR_DW_DEVICE_TYPE = 'device_type'
-
-MAX_RETRIES = 5
-
 KEY_DW_OFF = 'Off'
 KEY_DW_DISCONNECTED = 'Disconnected'
-
-LOGGER = logging.getLogger(__name__)
-
 
 def setup_platform(hass, config, add_devices, discovery_info=None):
     """Set up the LG dishwasher devices"""
@@ -55,7 +59,6 @@ def _dishwashers(hass, client):
 
     Log errors for devices that can't be used for whatever reason.
     """
-    import wideq
 
     for device in client.devices:
         if device.type == wideq.DeviceType.DISHWASHER:
@@ -82,7 +85,7 @@ class LGDishWasherDevice(LGDevice):
         # will not get created. Specifically, calls that depend on dishwasher
         # interaction should only happen in update(...), including the start of
         # the monitor task.
-        self._dishwasher = dishwasher.DishWasherDevice(client, device)
+        self._dishwasher = wideq.DishWasherDevice(client, device)
         self._name = name
         self._status = None
         self._failed_request_count = 0
