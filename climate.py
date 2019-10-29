@@ -84,11 +84,13 @@ def _ac_devices(hass, client, fahrenheit):
 
 class LGDevice(climate.ClimateDevice):
     def __init__(self, client, device, fahrenheit=True):
-        import wideq
+        """Initialize an LG Climate Device."""
 
         self._client = client
         self._device = device
         self._fahrenheit = fahrenheit
+
+        import wideq
         self._ac = wideq.ACDevice(client, device)
         self._ac.monitor_start()
 
