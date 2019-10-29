@@ -186,8 +186,6 @@ class LGDevice(climate.ClimateDevice):
         return FAN_MODES[mode.name]
 
     def set_hvac_mode(self, hvac_mode):
-        import wideq
-
         if hvac_mode == c_const.HVAC_MODE_OFF:
             self._ac.set_on(False)
             return
@@ -195,6 +193,8 @@ class LGDevice(climate.ClimateDevice):
         # Some AC units must be powered on before setting the mode.
         if not self._state.is_on:
             self._ac.set_on(True)
+
+        import wideq
 
         # Invert the modes mapping.
         modes_inv = {v: k for k, v in MODES.items()}
