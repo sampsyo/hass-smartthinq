@@ -2,8 +2,6 @@
 Support for LG Smartthinq devices.
 """
 import logging
-import wideq
-
 import voluptuous as vol
 
 from homeassistant.const import CONF_REGION, CONF_TOKEN
@@ -11,8 +9,9 @@ import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers import discovery
 from homeassistant.helpers.entity import Entity
 
+"""General variables"""
+REQUIREMENTS = ['wideq']
 DOMAIN = 'smartthinq'
-
 CONF_LANGUAGE = 'language'
 CONFIG_SCHEMA = vol.Schema({
     DOMAIN: vol.Schema({
@@ -21,8 +20,6 @@ CONFIG_SCHEMA = vol.Schema({
         CONF_LANGUAGE: cv.string,
         })
 }, extra=vol.ALLOW_EXTRA)
-
-
 LOGGER = logging.getLogger(__name__)
 
 SMARTTHINQ_COMPONENTS = [
@@ -65,6 +62,7 @@ def setup(hass, config):
     region = config[DOMAIN].get(CONF_REGION)
     language = config[DOMAIN].get(CONF_LANGUAGE)
 
+    import wideq
     client = wideq.Client.from_token(refresh_token, region, language)
 
     hass.data[CONF_TOKEN] = refresh_token
