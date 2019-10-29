@@ -35,8 +35,6 @@ TEMP_MIN_C = 18  # Intervals read from the AC's remote control.
 TEMP_MAX_C = 30
 
 def setup_platform(hass, config, add_devices, discovery_info=None):
-    import wideq
-
      """Set up the LG climate devices"""
     if any(key in config for key in (
         (KEY_DEPRECATED_REFRESH_TOKEN,
@@ -50,6 +48,8 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
         hass.data.get(CONF_REGION)
     language = config.get(KEY_DEPRECATED_LANGUAGE) or \
         hass.data.get(CONF_LANGUAGE)
+
+    import wideq
     client = wideq.Client.from_token(refresh_token, country, language)
 
     fahrenheit = hass.config.units.temperature_unit != '°C'
@@ -57,13 +57,13 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
 
 
 def _ac_devices(hass, client, fahrenheit):
-    import wideq
-
     """Generate all the AC (climate) devices associated with the user's
     LG account.
 
     Log errors for devices that can't be used for whatever reason.
     """
+    import wideq
+
     persistent_notification = hass.components.persistent_notification
 
     for device in client.devices:
@@ -226,12 +226,12 @@ class LGDevice(climate.ClimateDevice):
         LOGGER.info('Temperature set.')
 
     def update(self):
-        import wideq
-
         """Poll for updated device status.
 
         Set the `_state` field to a new data mapping.
         """
+        import wideq
+
         LOGGER.info('Updating %s.', self.name)
         for iteration in range(MAX_RETRIES):
             LOGGER.info('Polling...')

@@ -53,13 +53,13 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
     add_devices(_dishwashers(hass, client), True)
 
 def _dishwashers(hass, client):
-    import wideq
-
     """Generate all the dishwasher devices associated with the user's
     LG account.
 
     Log errors for devices that can't be used for whatever reason.
     """
+
+    import wideq
 
     for device in client.devices:
         if device.type == wideq.DeviceType.DISHWASHER:
@@ -76,8 +76,6 @@ def _dishwashers(hass, client):
 
 class LGDishWasherDevice(LGDevice):
     def __init__(self, client, device, name):
-        import wideq
-
         """Initialize an LG DishWasher Device."""
 
         super().__init__(client, device)
@@ -88,6 +86,7 @@ class LGDishWasherDevice(LGDevice):
         # will not get created. Specifically, calls that depend on dishwasher
         # interaction should only happen in update(...), including the start of
         # the monitor task.
+        import wideq
         self._dishwasher = wideq.DishWasherDevice(client, device)
         self._name = name
         self._status = None
@@ -192,13 +191,10 @@ class LGDishWasherDevice(LGDevice):
             self._client.refresh()
 
     def update(self):
-        import wideq
-
         """Poll for dishwasher state updates."""
 
         # This method is polled, so try to avoid sleeping in here. If an error
         # occurs, it will naturally be retried on the next poll.
-
         LOGGER.debug('Updating %s.', self.name)
 
         # On initial construction, the dishwasher monitor task
@@ -206,6 +202,7 @@ class LGDishWasherDevice(LGDevice):
         if getattr(self._dishwasher, 'mon', None) is None:
             self._restart_monitor()
 
+        import wideq
         try:
             status = self._dishwasher.poll()
         except wideq.NotConnectedError:
