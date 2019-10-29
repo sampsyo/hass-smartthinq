@@ -69,7 +69,7 @@ def _ac_devices(hass, client, fahrenheit):
     for device in client.devices:
         if device.type == wideq.DeviceType.AC:
             try:
-                d = LGDevice(client, device, fahrenheit)
+                d = LGClimateDevice(client, device, fahrenheit)
             except wideq.NotConnectedError:
                 LOGGER.error(
                     'SmartThinQ device not available: %s', device.name
@@ -82,7 +82,7 @@ def _ac_devices(hass, client, fahrenheit):
                 yield d
 
 
-class LGDevice(climate.ClimateDevice):
+class LGClimateDevice(climate.ClimateDevice):
     def __init__(self, client, device, fahrenheit=True):
         """Initialize an LG Climate Device."""
 
