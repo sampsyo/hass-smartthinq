@@ -111,7 +111,7 @@ class LGClimateDevice(climate.ClimateDevice):
 
     @property
     def name(self):
-        return self._device.name
+        return "lg_climate_" + self._device.id
 
     @property
     def available(self):

@@ -64,8 +64,7 @@ def _dishwashers(hass, client):
     for device in client.devices:
         if device.type == wideq.DeviceType.DISHWASHER:
             try:
-                base_name = "lg_dishwasher_" + device.id
-                d = LGDishWasherDevice(client, device, base_name)
+                d = LGDishWasherDevice(client, device)
             except wideq.NotConnectedError:
                 # Dishwashers are only connected when in use. Ignore
                 # NotConnectedError on platform setup.
@@ -75,7 +74,7 @@ def _dishwashers(hass, client):
 
 
 class LGDishWasherDevice(LGDevice):
-    def __init__(self, client, device, name):
+    def __init__(self, client, device):
         """Initialize an LG DishWasher Device."""
 
         super().__init__(client, device)
@@ -88,7 +87,6 @@ class LGDishWasherDevice(LGDevice):
         # the monitor task.
         import wideq
         self._dishwasher = wideq.DishWasherDevice(client, device)
-        self._name = name
         self._status = None
         self._failed_request_count = 0
 
@@ -111,7 +109,7 @@ class LGDishWasherDevice(LGDevice):
 
     @property
     def name(self):
-        return self._name
+        return "lg_dishwasher_" + self._dishwasher.device.id
 
     @property
     def state(self):
