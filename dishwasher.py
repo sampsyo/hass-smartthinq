@@ -1,6 +1,5 @@
 import time
 import logging
-import wideq
 
 """Configuration values needed"""
 from homeassistant.const import CONF_REGION, CONF_TOKEN
@@ -34,6 +33,8 @@ KEY_DW_OFF = 'Off'
 KEY_DW_DISCONNECTED = 'Disconnected'
 
 def setup_platform(hass, config, add_devices, discovery_info=None):
+    import wideq
+
     """Set up the LG dishwasher devices"""
     if any(key in config for key in (
         (KEY_DEPRECATED_REFRESH_TOKEN,
@@ -52,6 +53,8 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
     add_devices(_dishwashers(hass, client), True)
 
 def _dishwashers(hass, client):
+    import wideq
+
     """Generate all the dishwasher devices associated with the user's
     LG account.
 
@@ -73,6 +76,8 @@ def _dishwashers(hass, client):
 
 class LGDishWasherDevice(LGDevice):
     def __init__(self, client, device, name):
+        import wideq
+
         """Initialize an LG DishWasher Device."""
 
         super().__init__(client, device)
@@ -176,6 +181,8 @@ class LGDishWasherDevice(LGDevice):
         return KEY_DW_DISCONNECTED
 
     def _restart_monitor(self):
+        import wideq
+
         try:
             self._dishwasher.monitor_start()
         except wideq.NotConnectedError:
@@ -185,6 +192,8 @@ class LGDishWasherDevice(LGDevice):
             self._client.refresh()
 
     def update(self):
+        import wideq
+
         """Poll for dishwasher state updates."""
 
         # This method is polled, so try to avoid sleeping in here. If an error

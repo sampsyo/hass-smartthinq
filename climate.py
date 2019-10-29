@@ -1,6 +1,5 @@
 import time
 import logging
-import wideq
 
 """Configuration values needed"""
 from homeassistant.const import CONF_REGION, CONF_TOKEN
@@ -36,6 +35,8 @@ TEMP_MIN_C = 18  # Intervals read from the AC's remote control.
 TEMP_MAX_C = 30
 
 def setup_platform(hass, config, add_devices, discovery_info=None):
+    import wideq
+
      """Set up the LG climate devices"""
     if any(key in config for key in (
         (KEY_DEPRECATED_REFRESH_TOKEN,
@@ -56,6 +57,8 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
 
 
 def _ac_devices(hass, client, fahrenheit):
+    import wideq
+
     """Generate all the AC (climate) devices associated with the user's
     LG account.
 
@@ -81,6 +84,8 @@ def _ac_devices(hass, client, fahrenheit):
 
 class LGDevice(climate.ClimateDevice):
     def __init__(self, client, device, fahrenheit=True):
+        import wideq
+
         self._client = client
         self._device = device
         self._fahrenheit = fahrenheit
@@ -179,6 +184,8 @@ class LGDevice(climate.ClimateDevice):
         return FAN_MODES[mode.name]
 
     def set_hvac_mode(self, hvac_mode):
+        import wideq
+
         if hvac_mode == c_const.HVAC_MODE_OFF:
             self._ac.set_on(False)
             return
@@ -196,6 +203,8 @@ class LGDevice(climate.ClimateDevice):
         LOGGER.info('Mode set.')
 
     def set_fan_mode(self, fan_mode):
+        import wideq
+
         # Invert the fan modes mapping.
         fan_modes_inv = {v: k for k, v in FAN_MODES.items()}
 
@@ -217,6 +226,8 @@ class LGDevice(climate.ClimateDevice):
         LOGGER.info('Temperature set.')
 
     def update(self):
+        import wideq
+
         """Poll for updated device status.
 
         Set the `_state` field to a new data mapping.
