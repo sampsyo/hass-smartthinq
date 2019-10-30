@@ -25,7 +25,7 @@ Here's how to use this:
 
    Authenticate with the SmartThinQ service to get a refresh token by running the WideQ example script. (Eventually, I would like to add a feature to the Home Assistant component that can let you log in through a UI, but I haven't gotten there yet.) Run this in the `wideq` directory:
 
-       $ python3 example.py -c US -l en-US
+       $ python3 example.py -c US -l en-us
 
    For the `-c` and `-l` parameters, use your country and language code: SmartThinQ accounts are associated with a specific locale, so be sure to use the country you originally created your account with.
    The script will ask you to open a browser, log in, and then paste the URL you're redirected to. It will then write a JSON file called `wideq_state.json`.
@@ -37,9 +37,9 @@ Here's how to use this:
        smartthinq:
            token: [YOUR_TOKEN_HERE]
            region: US
-           language: en-US
+           language: en-us
 
-   Use your refresh token and country & language codes. If region and language are not provided, then 'US' and 'en-US' are default.
+   Use your refresh token and country & language codes. If region and language are not provided, then 'US' and 'en-us' are default.
    Start up Home Assistant and hope for the best.
 
 Dishwasher Visualization Example
