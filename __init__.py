@@ -24,7 +24,7 @@ LOGGER = logging.getLogger(__name__)
 
 SMARTTHINQ_COMPONENTS = [
     'climate',
-    'dishwasher',
+    'sensor',
 ]
 KEY_SMARTTHINQ_DEVICES = 'smartthinq_devices'
 README_URL = 'https://github.com/sampsyo/hass-smartthinq/blob/master/README.md'
