@@ -59,8 +59,8 @@ def setup(hass, config):
         hass.data[KEY_SMARTTHINQ_DEVICES] = []
 
     refresh_token = config[DOMAIN].get(CONF_TOKEN)
-    region = config[DOMAIN].get(CONF_REGION)
-    language = config[DOMAIN].get(CONF_LANGUAGE)
+    region = config[DOMAIN].get(CONF_REGION).upper()
+    language = config[DOMAIN].get(CONF_LANGUAGE).lower()
 
     import wideq
     client = wideq.Client.from_token(refresh_token, region, language)
