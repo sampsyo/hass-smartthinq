@@ -1,4 +1,3 @@
-
 from homeassistant.helpers.entity import Entity
 
 class LGDevice(Entity):
