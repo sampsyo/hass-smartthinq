@@ -5,7 +5,7 @@ import logging
 from homeassistant.const import CONF_REGION, CONF_TOKEN
 from custom_components.smartthinq import (
     CONF_LANGUAGE, DEPRECATION_WARNING, KEY_DEPRECATED_COUNTRY,
-    KEY_DEPRECATED_LANGUAGE, KEY_DEPRECATED_REFRESH_TOKEN)
+    KEY_DEPRECATED_LANGUAGE, KEY_DEPRECATED_REFRESH_TOKEN, LGDevice)
 
 """General variables"""
 REQUIREMENTS = ['wideq']
@@ -64,7 +64,7 @@ def _dishwashers(hass, client):
     for device in client.devices:
         if device.type == wideq.DeviceType.DISHWASHER:
             try:
-                d = LGDishWasherDevice(client, device)
+                d = LGDishwasherDevice(client, device)
             except wideq.NotConnectedError:
                 # Dishwashers are only connected when in use. Ignore
                 # NotConnectedError on platform setup.
@@ -73,7 +73,7 @@ def _dishwashers(hass, client):
                 yield d
 
 
-class LGDishWasherDevice(LGDevice):
+class LGDishwasherDevice(LGDevice):
     def __init__(self, client, device):
         """Initialize an LG DishWasher Device."""
 
