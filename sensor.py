@@ -5,7 +5,8 @@ import logging
 from homeassistant.const import CONF_REGION, CONF_TOKEN
 from custom_components.smartthinq import (
     CONF_LANGUAGE, DEPRECATION_WARNING, KEY_DEPRECATED_COUNTRY,
-    KEY_DEPRECATED_LANGUAGE, KEY_DEPRECATED_REFRESH_TOKEN, LGDevice)
+    KEY_DEPRECATED_LANGUAGE, KEY_DEPRECATED_REFRESH_TOKEN)
+from LG.LGDevice import LGDevice
 
 """General variables"""
 REQUIREMENTS = ['wideq']
