@@ -36,10 +36,7 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
     import wideq
 
     """Set up the LG dishwasher devices"""
-    if any(key in config for key in (
-        (KEY_DEPRECATED_REFRESH_TOKEN,
-         KEY_DEPRECATED_COUNTRY,
-         KEY_DEPRECATED_LANGUAGE))):
+    if any(key in config for key in ((KEY_DEPRECATED_REFRESH_TOKEN, KEY_DEPRECATED_COUNTRY, KEY_DEPRECATED_LANGUAGE))):
         LOGGER.warning(DEPRECATION_WARNING)
 
     refresh_token = config.get(KEY_DEPRECATED_REFRESH_TOKEN) or \

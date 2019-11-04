@@ -7,6 +7,9 @@ from custom_components.smartthinq import (
     CONF_LANGUAGE, DEPRECATION_WARNING, KEY_DEPRECATED_COUNTRY,
     KEY_DEPRECATED_LANGUAGE, KEY_DEPRECATED_REFRESH_TOKEN)
 
+from homeassistant.components import climate
+from homeassistant.components.climate import const as c_const
+
 """General variables"""
 REQUIREMENTS = ['wideq']
 LOGGER = logging.getLogger(__name__)
@@ -36,10 +39,7 @@ TEMP_MAX_C = 30
 
 def setup_platform(hass, config, add_devices, discovery_info=None):
     """Set up the LG climate devices"""
-    if any(key in config for key in (
-        (KEY_DEPRECATED_REFRESH_TOKEN,
-         KEY_DEPRECATED_COUNTRY,
-         KEY_DEPRECATED_LANGUAGE))):
+    if any(key in config for key in ((KEY_DEPRECATED_REFRESH_TOKEN, KEY_DEPRECATED_COUNTRY, KEY_DEPRECATED_LANGUAGE))):
         LOGGER.warning(DEPRECATION_WARNING)
 
     refresh_token = config.get(KEY_DEPRECATED_REFRESH_TOKEN) or \
