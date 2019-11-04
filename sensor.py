@@ -47,7 +47,7 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
     language = config.get(KEY_DEPRECATED_LANGUAGE) or \
         hass.data.get(CONF_LANGUAGE)
 
-    client = wideq.Client.from_token(refresh_token, region, language)
+    client = wideq.Client.from_token(refresh_token, country, language)
     add_devices(_dishwashers(hass, client), True)
 
 def _dishwashers(hass, client):
