@@ -7,13 +7,14 @@ from custom_components.smartthinq import (
     CONF_LANGUAGE, DEPRECATION_WARNING, KEY_DEPRECATED_COUNTRY,
     KEY_DEPRECATED_LANGUAGE, KEY_DEPRECATED_REFRESH_TOKEN)
 
-from homeassistant.components import climate
-from homeassistant.components.climate import const as c_const
-
 """General variables"""
 REQUIREMENTS = ['wideq']
 LOGGER = logging.getLogger(__name__)
 MAX_RETRIES = 5
+
+"""Device specific imports"""
+from homeassistant.components import climate
+from homeassistant.components.climate import const as c_const
 
 """Implementation specific variables"""
 MODES = {
