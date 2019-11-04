@@ -7,7 +7,6 @@ import voluptuous as vol
 from homeassistant.const import CONF_REGION, CONF_TOKEN
 import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers import discovery
-from homeassistant.helpers.entity import Entity
 
 """General variables"""
 REQUIREMENTS = ['wideq']
@@ -75,18 +74,3 @@ def setup(hass, config):
     for component in SMARTTHINQ_COMPONENTS:
         discovery.load_platform(hass, component, DOMAIN, {}, config)
     return True
-
-
-class LGDevice(Entity):
-    def __init__(self, client, device):
-        self._client = client
-        self._device = device
-
-    @property
-    def name(self):
-        return self._device.name
-
-    @property
-    def available(self):
-        return True
-
