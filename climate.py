@@ -35,7 +35,7 @@ TEMP_MIN_C = 18  # Intervals read from the AC's remote control.
 TEMP_MAX_C = 30
 
 def setup_platform(hass, config, add_devices, discovery_info=None):
-     """Set up the LG climate devices"""
+    """Set up the LG climate devices"""
     if any(key in config for key in (
         (KEY_DEPRECATED_REFRESH_TOKEN,
          KEY_DEPRECATED_COUNTRY,
