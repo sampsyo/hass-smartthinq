@@ -6,7 +6,6 @@ from homeassistant.const import CONF_REGION, CONF_TOKEN
 from custom_components.smartthinq import (
     CONF_LANGUAGE, DEPRECATION_WARNING, KEY_DEPRECATED_COUNTRY,
     KEY_DEPRECATED_LANGUAGE, KEY_DEPRECATED_REFRESH_TOKEN)
-from LGDevices import LGDevice
 
 """General variables"""
 REQUIREMENTS = ['wideq']
@@ -71,7 +70,7 @@ def _dishwashers(hass, client):
                 yield d
 
 
-class LGDishwasherDevice(LGDevices.LGDevice):
+class LGDishwasherDevice(.LGDevices.LGDevice):
     def __init__(self, client, device):
         """Initialize an LG DishWasher Device."""
 
