@@ -1,12 +1,12 @@
 import logging
-import datetime
-
-"""Device specific imports"""
-from .LGDevice import LGDevice
 
 """General variables"""
 REQUIREMENTS = ['wideq']
 LOGGER = logging.getLogger(__name__)
+
+"""Device specific imports"""
+import datetime
+from .LGDevice import LGDevice
 
 """Device specific variables"""
 ATTR_DW_STATE = 'state'

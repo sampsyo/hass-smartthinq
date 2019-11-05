@@ -1,12 +1,12 @@
 import logging
 
-"""Configuration values needed"""
-from custom_components.smartthinq import CONF_LANGUAGE, CONF_MAX_RETRIES
-from homeassistant.const import CONF_REGION, CONF_TOKEN
-
 """General variables"""
 REQUIREMENTS = ['wideq']
 LOGGER = logging.getLogger(__name__)
+
+"""Configuration values needed"""
+from custom_components.smartthinq import CONF_LANGUAGE, CONF_MAX_RETRIES
+from homeassistant.const import CONF_REGION, CONF_TOKEN
 
 """Device specific imports"""
 from .LGDevices.LGDishwasherDevice import LGDishwasherDevice
