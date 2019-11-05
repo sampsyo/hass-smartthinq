@@ -2,7 +2,7 @@ import logging
 import datetime
 
 """Device specific imports"""
-from . import LGDevice
+from .LGDevice import LGDevice
 
 """General variables"""
 REQUIREMENTS = ['wideq']
