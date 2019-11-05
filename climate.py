@@ -9,6 +9,9 @@ LOGGER = logging.getLogger(__name__)
 from custom_components.smartthinq import CONF_LANGUAGE, CONF_MAX_RETRIES
 from homeassistant.const import CONF_REGION, CONF_TOKEN
 
+"""Device specific imports"""
+from .DeviceTypes.LGClimateDevice import LGClimateDevice
+
 def setup_platform(hass, config, add_devices, discovery_info=None):
     refresh_token = hass.data.get(CONF_TOKEN)
     country = hass.data.get(CONF_REGION)
