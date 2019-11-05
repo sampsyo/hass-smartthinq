@@ -23,6 +23,10 @@ CONFIG_SCHEMA = vol.Schema({
 }, extra=vol.ALLOW_EXTRA)
 LOGGER = logging.getLogger(__name__)
 
+SMARTTHINQ_COMPONENTS = [
+    'climate',
+    'sensor',
+]
 KEY_SMARTTHINQ_DEVICES = 'smartthinq_devices'
 README_URL = 'https://github.com/sampsyo/hass-smartthinq/blob/master/README.md'
 
@@ -47,73 +51,32 @@ DEPRECATION_WARNING = (
         key_language=CONF_LANGUAGE,
         domain=DOMAIN)
 
-"""Device specific imports"""
-from .LGDevices.LGDishwasherDevice import LGDishwasherDevice
-
 def setup(hass, config):
     if DOMAIN not in config:
         LOGGER.warning(DEPRECATION_WARNING)
         return True
 
-    import wideq
+    if KEY_SMARTTHINQ_DEVICES not in hass.data:
+        hass.data[KEY_SMARTTHINQ_DEVICES] = []
 
     refresh_token = config[DOMAIN].get(CONF_TOKEN)
     region = config[DOMAIN].get(CONF_REGION)
     language = config[DOMAIN].get(CONF_LANGUAGE)
-    client = wideq.Client.from_token(refresh_token, region, language)
-
-    if KEY_SMARTTHINQ_DEVICES not in hass.data:
-        hass.data[KEY_SMARTTHINQ_DEVICES] = []
-
-    for device in client.devices:
-        hass.data[KEY_SMARTTHINQ_DEVICES].append(device.id)
-
-    """Add the devices"""
     max_retries = config[DOMAIN].get(CONF_MAX_RETRIES)
     if max_retries is None:
         max_retries = 5
+
+    import wideq
+    client = wideq.Client.from_token(refresh_token, region, language)
 
     hass.data[CONF_TOKEN] = refresh_token
     hass.data[CONF_REGION] = region
     hass.data[CONF_LANGUAGE] = language
     hass.data[CONF_MAX_RETRIES] = max_retries
-    add_devices(_wideq_devices(hass, client), True)
 
-    return True
-
-def _wideq_devices(hass, client):
-    """Generate all the LG devices associated with the user's account.
-
-    Log errors for devices that can't be used for whatever reason.
-    """
-
-    import wideq
-
-    # Get specific variables needed for device discovery below
-    max_retries = hass.data.get(CONF_MAX_RETRIES)
-    fahrenheit = hass.config.units.temperature_unit != '°C'
-    persistent_notification = hass.components.persistent_notification
-    
     for device in client.devices:
-        if device.type == wideq.DeviceType.AC:
-            try:
-                d = LGClimateDevice(client, device, max_retries, fahrenheit)
-            except wideq.NotConnectedError:
-                LOGGER.error(
-                    'SmartThinQ device not available: %s', device.name
-                )
-                persistent_notification.async_create(
-                    'SmartThinQ device not available: %s' % device.name,
-                    title='SmartThinQ Error',
-                )
-            else:
-                yield d
-        if device.type == wideq.DeviceType.DISHWASHER:
-            try:
-                d = LGDishwasherDevice(client, device, max_retries)
-            except wideq.NotConnectedError:
-                # Dishwashers are only connected when in use. Ignore
-                # NotConnectedError on platform setup.
-                pass
-            else:
-                yield d
+        hass.data[KEY_SMARTTHINQ_DEVICES].append(device.id)
+
+    for component in SMARTTHINQ_COMPONENTS:
+        discovery.load_platform(hass, component, DOMAIN, {}, config)
+    return True
