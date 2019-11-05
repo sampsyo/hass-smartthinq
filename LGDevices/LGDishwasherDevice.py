@@ -7,7 +7,6 @@ from .LGDevice import LGDevice
 """General variables"""
 REQUIREMENTS = ['wideq']
 LOGGER = logging.getLogger(__name__)
-MAX_RETRIES = 5
 
 """Device specific variables"""
 ATTR_DW_STATE = 'state'
@@ -24,9 +23,8 @@ KEY_DW_OFF = 'Off'
 KEY_DW_DISCONNECTED = 'Disconnected'
 
 class LGDishwasherDevice(LGDevice):
-    def __init__(self, client, device):
+    def __init__(self, client, device, max_retries):
         """Initialize an LG DishWasher Device."""
-
         super().__init__(client, device)
 
         # This constructor is called during platform creation. It must not
@@ -39,6 +37,7 @@ class LGDishwasherDevice(LGDevice):
         self._dishwasher = wideq.DishWasherDevice(client, device)
         self._status = None
         self._failed_request_count = 0
+        self._max_retries = max_retries
 
     @property
     def state_attributes(self):
@@ -171,7 +170,7 @@ class LGDishwasherDevice(LGDevice):
         LOGGER.debug('No status available yet.')
         self._failed_request_count += 1
 
-        if self._failed_request_count >= MAX_RETRIES:
+        if self._failed_request_count >= self._max_retries:
             # We tried several times but got no result. This might happen
             # when the monitoring request gets into a bad state, so we
             # restart the task.

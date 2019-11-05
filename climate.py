@@ -2,15 +2,12 @@ import time
 import logging
 
 """Configuration values needed"""
+from custom_components.smartthinq import CONF_LANGUAGE, CONF_MAX_RETRIES
 from homeassistant.const import CONF_REGION, CONF_TOKEN
-from custom_components.smartthinq import (
-    CONF_LANGUAGE, DEPRECATION_WARNING, KEY_DEPRECATED_COUNTRY,
-    KEY_DEPRECATED_LANGUAGE, KEY_DEPRECATED_REFRESH_TOKEN)
 
 """General variables"""
 REQUIREMENTS = ['wideq']
 LOGGER = logging.getLogger(__name__)
-MAX_RETRIES = 5
 
 """Device specific imports"""
 from homeassistant.components import climate
@@ -39,25 +36,19 @@ TEMP_MIN_C = 18  # Intervals read from the AC's remote control.
 TEMP_MAX_C = 30
 
 def setup_platform(hass, config, add_devices, discovery_info=None):
-    """Set up the LG climate devices"""
-    if any(key in config for key in ((KEY_DEPRECATED_REFRESH_TOKEN, KEY_DEPRECATED_COUNTRY, KEY_DEPRECATED_LANGUAGE))):
-        LOGGER.warning(DEPRECATION_WARNING)
+    refresh_token = hass.data.get(CONF_TOKEN)
+    country = hass.data.get(CONF_REGION)
+    language = hass.data.get(CONF_LANGUAGE)
 
-    refresh_token = config.get(KEY_DEPRECATED_REFRESH_TOKEN) or \
-        hass.data.get(CONF_TOKEN)
-    country = config.get(KEY_DEPRECATED_COUNTRY) or \
-        hass.data.get(CONF_REGION)
-    language = config.get(KEY_DEPRECATED_LANGUAGE) or \
-        hass.data.get(CONF_LANGUAGE)
-
+    """Set up the wideq client"""
     import wideq
     client = wideq.Client.from_token(refresh_token, country, language)
 
+    """Add the devices"""
     fahrenheit = hass.config.units.temperature_unit != '°C'
-    add_devices(_ac_devices(hass, client, fahrenheit), True)
+    add_devices(_wideq_ac_devices(hass, client, fahrenheit), True)
 
-
-def _ac_devices(hass, client, fahrenheit):
+def _wideq_ac_devices(hass, client, fahrenheit):
     """Generate all the AC (climate) devices associated with the user's
     LG account.
 
@@ -65,12 +56,13 @@ def _ac_devices(hass, client, fahrenheit):
     """
     import wideq
 
+    max_retries = hass.data.get(CONF_MAX_RETRIES)
     persistent_notification = hass.components.persistent_notification
-
+    
     for device in client.devices:
         if device.type == wideq.DeviceType.AC:
             try:
-                d = LGClimateDevice(client, device, fahrenheit)
+                d = LGClimateDevice(client, device, max_retries, fahrenheit)
             except wideq.NotConnectedError:
                 LOGGER.error(
                     'SmartThinQ device not available: %s', device.name
@@ -84,12 +76,13 @@ def _ac_devices(hass, client, fahrenheit):
 
 
 class LGClimateDevice(climate.ClimateDevice):
-    def __init__(self, client, device, fahrenheit=True):
+    def __init__(self, client, device, max_retries, fahrenheit=True):
         """Initialize an LG Climate Device."""
 
         self._client = client
         self._device = device
         self._fahrenheit = fahrenheit
+        self._max_retries = max_retries
 
         import wideq
         self._ac = wideq.ACDevice(client, device)
@@ -236,7 +229,7 @@ class LGClimateDevice(climate.ClimateDevice):
         import wideq
 
         LOGGER.info('Updating %s.', self.name)
-        for iteration in range(MAX_RETRIES):
+        for iteration in range(self._max_retries):
             LOGGER.info('Polling...')
 
             try:

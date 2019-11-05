@@ -1,7 +1,7 @@
 import logging
 
 """Configuration values needed"""
-from custom_components.smartthinq import CONF_LANGUAGE
+from custom_components.smartthinq import CONF_LANGUAGE, CONF_MAX_RETRIES
 from homeassistant.const import CONF_REGION, CONF_TOKEN
 
 """General variables"""
@@ -32,10 +32,11 @@ def _wideq_sensors(hass, client):
 
     import wideq
 
+    max_retries = hass.data.get(CONF_MAX_RETRIES)
     for device in client.devices:
         if device.type == wideq.DeviceType.DISHWASHER:
             try:
-                d = LGDishwasherDevice(client, device)
+                d = LGDishwasherDevice(client, device, max_retries)
             except wideq.NotConnectedError:
                 # Dishwashers are only connected when in use. Ignore
                 # NotConnectedError on platform setup.

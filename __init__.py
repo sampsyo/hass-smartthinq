@@ -12,11 +12,13 @@ from homeassistant.helpers import discovery
 REQUIREMENTS = ['wideq']
 DOMAIN = 'smartthinq'
 CONF_LANGUAGE = 'language'
+CONF_MAX_RETRIES = 'max_retries'
 CONFIG_SCHEMA = vol.Schema({
     DOMAIN: vol.Schema({
         vol.Required(CONF_TOKEN): cv.string,
         CONF_REGION: cv.string,
         CONF_LANGUAGE: cv.string,
+        CONF_MAX_RETRIES: cv.positive_int,
         })
 }, extra=vol.ALLOW_EXTRA)
 LOGGER = logging.getLogger(__name__)
@@ -60,6 +62,9 @@ def setup(hass, config):
     refresh_token = config[DOMAIN].get(CONF_TOKEN)
     region = config[DOMAIN].get(CONF_REGION)
     language = config[DOMAIN].get(CONF_LANGUAGE)
+    max_retries = config[DOMAIN].get(CONF_MAX_RETRIES)
+    if max_retries is None:
+        max_retries = 5
 
     import wideq
     client = wideq.Client.from_token(refresh_token, region, language)
@@ -67,6 +72,7 @@ def setup(hass, config):
     hass.data[CONF_TOKEN] = refresh_token
     hass.data[CONF_REGION] = region
     hass.data[CONF_LANGUAGE] = language
+    hass.data[CONF_MAX_RETRIES] = max_retries
 
     for device in client.devices:
         hass.data[KEY_SMARTTHINQ_DEVICES].append(device.id)
