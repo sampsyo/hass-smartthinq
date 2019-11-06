@@ -28,6 +28,9 @@ def _wideq_sensors(hass, client):
     LG account.
 
     Log errors for devices that can't be used for whatever reason.
+
+    Note: Some devices are only connected when in use, if that is
+    the case, the 'wideq.NotConnectedError' is swallowed.
     """
 
     import wideq
@@ -38,8 +41,13 @@ def _wideq_sensors(hass, client):
             try:
                 d = LGDishwasherDevice(client, device, max_retries)
             except wideq.NotConnectedError:
-                # Dishwashers are only connected when in use. Ignore
-                # NotConnectedError on platform setup.
+                pass
+            else:
+                yield d
+        if device.type == wideq.DeviceType.DRYER:
+            try:
+                d = LGDryerDevice(client, device, max_retries)
+            except wideq.NotConnectedError:
                 pass
             else:
                 yield d
