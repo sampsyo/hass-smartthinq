@@ -1,3 +1,4 @@
+import wideq
 import logging
 
 """General variables"""
@@ -8,6 +9,7 @@ LOGGER = logging.getLogger(__name__)
 import time
 from homeassistant.components import climate
 from homeassistant.components.climate import const as c_const
+from wideq import ac as wideq_ac
 
 """Implementation specific variables"""
 MODES = {
@@ -40,8 +42,7 @@ class LGClimateDevice(climate.ClimateDevice):
         self._fahrenheit = fahrenheit
         self._max_retries = max_retries
 
-        import wideq
-        self._ac = wideq.ACDevice(client, device)
+        self._ac = wideq_ac.ACDevice(client, device)
         self._ac.monitor_start()
 
         # The response from the monitoring query.
@@ -144,23 +145,19 @@ class LGClimateDevice(climate.ClimateDevice):
         if not self._state.is_on:
             self._ac.set_on(True)
 
-        import wideq
-
         # Invert the modes mapping.
         modes_inv = {v: k for k, v in MODES.items()}
 
-        mode = wideq.ACMode[modes_inv[hvac_mode]]
+        mode = wideq_ac.ACMode[modes_inv[hvac_mode]]
         LOGGER.info('Setting mode to %s...', mode)
         self._ac.set_mode(mode)
         LOGGER.info('Mode set.')
 
     def set_fan_mode(self, fan_mode):
-        import wideq
-
         # Invert the fan modes mapping.
         fan_modes_inv = {v: k for k, v in FAN_MODES.items()}
 
-        mode = wideq.ACFanSpeed[fan_modes_inv[fan_mode]]
+        mode = wideq_ac.ACFanSpeed[fan_modes_inv[fan_mode]]
         LOGGER.info('Setting fan mode to %s', fan_mode)
         self._ac.set_fan_speed(mode)
         LOGGER.info('Fan mode set.')
@@ -182,7 +179,6 @@ class LGClimateDevice(climate.ClimateDevice):
 
         Set the `_state` field to a new data mapping.
         """
-        import wideq
 
         LOGGER.info('Updating %s.', self.name)
         for iteration in range(self._max_retries):
