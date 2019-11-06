@@ -11,7 +11,13 @@ from .LGDevice import LGDevice
 from wideq import dryer as wideq_dryer
 
 """Device specific variables"""
+ATTR_DRYER_REMAINING_TIME = 'remaining_time'
+ATTR_DRYER_REMAINING_TIME_IN_MINUTES = 'remaining_time_in_minutes'
+ATTR_DRYER_INITIAL_TIME = 'initial_time'
+ATTR_DRYER_INITIAL_TIME_IN_MINUTES = 'initial_time_in_minutes'
+ATTR_DRYER_ERROR = 'error'
 ATTR_DRYER_STATE = 'state'
+
 DRYER_STATE_READABLE = {
     'COOLING': 'Cooling',
     'END': 'Complete',
@@ -25,6 +31,7 @@ DRYER_STATE_READABLE = {
     'WRINKLE_CARE': 'Wrinkle care',
     'UNKNOWN': 'Unknown'
 }
+
 KEY_DRYER_DISCONNECTED = 'Disconnected'
 
 class LGDryerDevice(LGDevice):
@@ -47,6 +54,13 @@ class LGDryerDevice(LGDevice):
     def state_attributes(self):
         """Return the optional state attributes for the dishwasher."""
         data = {}
+        data[ATTR_DRYER_REMAINING_TIME] = self.remaining_time
+        data[ATTR_DRYER_REMAINING_TIME_IN_MINUTES] = self.remaining_time_in_minutes
+        data[ATTR_DRYER_INITIAL_TIME] = self.initial_time
+        data[ATTR_DRYER_INITIAL_TIME_IN_MINUTES] = self.initial_time_in_minutes
+        data[ATTR_DRYER_ERROR] = self.error
+
+        # For convenience, include the state as an attribute.
         data[ATTR_DRYER_STATE] = self.state
         return data
 
