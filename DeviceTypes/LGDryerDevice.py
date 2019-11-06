@@ -8,6 +8,7 @@ LOGGER = logging.getLogger(__name__)
 """Device specific imports"""
 import datetime
 from .LGDevice import LGDevice
+from wideq import dryer as dryer
 
 """Device specific variables"""
 ATTR_DRYER_STATE = 'state'
@@ -37,7 +38,7 @@ class LGDryerDevice(LGDevice):
         # will not get created. Specifically, calls that depend on dishwasher
         # interaction should only happen in update(...), including the start of
         # the monitor task.
-        self._dryer =  wideq.dryer.DryerDevice(client, device)
+        self._dryer =  dryer.DryerDevice(client, device)
         self._status = None
         self._failed_request_count = 0
         self._max_retries = max_retries
@@ -59,7 +60,7 @@ class LGDryerDevice(LGDevice):
           # Process is a more refined string to use for state, if it's present,
           # use it instead.
             return self._status.readable_process or self._status.readable_state
-        return DRYER_STATE_READABLE[wideq.dryer.DryerState.OFF.name]
+        return DRYER_STATE_READABLE[dryer.DryerState.OFF.name]
 
     @property
     def remaining_time(self):
@@ -73,8 +74,8 @@ class LGDryerDevice(LGDevice):
         # minutes remaining in these instances, which is more reflective of
         # reality.
         if (self._status and
-            (self._status.state == wideq.dryer.DryerState.END or
-             self._status.state == wideq.dryer.DryerState.COMPLETE)):
+            (self._status.state == dryer.DryerState.END or
+             self._status.state == dryer.DryerState.COMPLETE)):
             return 0
         return self._status.remaining_time if self._status else 0
 
@@ -89,7 +90,7 @@ class LGDryerDevice(LGDevice):
         # length of the previously ran cycle. Instead, return 0 which is more
         # reflective of the dishwasher being off.
         if (self._status and
-            self._status.state == wideq.dryer.DryerState.OFF):
+            self._status.state == dryer.DryerState.OFF):
             return 0
         return self._status.initial_time if self._status else 0
 
