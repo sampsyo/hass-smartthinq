@@ -1,3 +1,4 @@
+import wideq
 import logging
 
 """General variables"""
@@ -7,6 +8,7 @@ LOGGER = logging.getLogger(__name__)
 """Device specific imports"""
 import datetime
 from .LGDevice import LGDevice
+from wideq import wideq_dishwasher
 
 """Device specific variables"""
 ATTR_DW_STATE = 'state'
@@ -33,8 +35,7 @@ class LGDishwasherDevice(LGDevice):
         # will not get created. Specifically, calls that depend on dishwasher
         # interaction should only happen in update(...), including the start of
         # the monitor task.
-        import wideq
-        self._dishwasher = wideq.DishWasherDevice(client, device)
+        self._dishwasher = wideq_dishwasher.DishWasherDevice(client, device)
         self._status = None
         self._failed_request_count = 0
         self._max_retries = max_retries
@@ -80,9 +81,9 @@ class LGDishwasherDevice(LGDevice):
         # minutes remaining in these instances, which is more reflective of
         # reality.
         if (self._status and
-            (self._status.process == dishwasher.DishWasherProcess.NIGHT_DRYING or
-             self._status.state == dishwasher.DishWasherState.OFF or
-             self._status.state == dishwasher.DishWasherState.COMPLETE)):
+            (self._status.process == wideq_dishwasher.DishWasherProcess.NIGHT_DRYING or
+             self._status.state == wideq_dishwasher.DishWasherState.OFF or
+             self._status.state == wideq_dishwasher.DishWasherState.COMPLETE)):
             return 0
         return self._status.remaining_time if self._status else 0
 
@@ -97,7 +98,7 @@ class LGDishwasherDevice(LGDevice):
         # length of the previously ran cycle. Instead, return 0 which is more
         # reflective of the dishwasher being off.
         if (self._status and
-            self._status.state == dishwasher.DishWasherState.OFF):
+            self._status.state == wideq_dishwasher.DishWasherState.OFF):
             return 0
         return self._status.initial_time if self._status else 0
 
@@ -126,8 +127,6 @@ class LGDishwasherDevice(LGDevice):
         return KEY_DW_DISCONNECTED
 
     def _restart_monitor(self):
-        import wideq
-
         try:
             self._dishwasher.monitor_start()
         except wideq.NotConnectedError:
@@ -148,7 +147,6 @@ class LGDishwasherDevice(LGDevice):
         if getattr(self._dishwasher, 'mon', None) is None:
             self._restart_monitor()
 
-        import wideq
         try:
             status = self._dishwasher.poll()
         except wideq.NotConnectedError:
