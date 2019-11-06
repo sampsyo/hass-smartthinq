@@ -10,6 +10,7 @@ from homeassistant.const import CONF_REGION, CONF_TOKEN
 
 """Device specific imports"""
 from .DeviceTypes.LGDishwasherDevice import LGDishwasherDevice
+from .DeviceTypes.LGDryerDevice import LGDryerDevice
 
 def setup_platform(hass, config, add_devices, discovery_info=None):
     refresh_token = hass.data.get(CONF_TOKEN)
