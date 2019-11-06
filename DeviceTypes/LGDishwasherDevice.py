@@ -8,7 +8,7 @@ LOGGER = logging.getLogger(__name__)
 """Device specific imports"""
 import datetime
 from .LGDevice import LGDevice
-from wideq import wideq_dishwasher
+from wideq import dishwasher as wideq_dishwasher
 
 """Device specific variables"""
 ATTR_DW_STATE = 'state'
