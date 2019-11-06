@@ -17,7 +17,7 @@ DRYER_STATE_READABLE = {
     'ERROR': 'Error',
     'DRYING': 'Drying',
     'INITIAL': 'Standby',
-    'OFF': 'Off'
+    'OFF': 'Off',
     'PAUSE': 'Paused',
     'RUNNING': 'Running',
     'SMART_DIAGNOSIS': 'Smart diagnosis',
