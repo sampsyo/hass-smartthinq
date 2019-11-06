@@ -57,10 +57,8 @@ class LGDryerDevice(LGDevice):
     @property
     def state(self):
         if self._status:
-          # Process is a more refined string to use for state, if it's present,
-          # use it instead.
             return DRYER_STATE_READABLE[self._status.state.name]
-        return DRYER_STATE_READABLE[dryer.DryerState.OFF.name]
+        return DRYER_STATE_READABLE[wideq_dryer.DryerState.OFF.name]
 
     @property
     def remaining_time(self):
