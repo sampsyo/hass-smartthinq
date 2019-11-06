@@ -66,8 +66,7 @@ class LGDishwasherDevice(LGDevice):
           # Process is a more refined string to use for state, if it's present,
           # use it instead.
             return self._status.readable_process or self._status.readable_state
-        return dishwasher.DISHWASHER_STATE_READABLE[
-            dishwasher.DishWasherState.OFF.name]
+        return dishwasher.DISHWASHER_STATE_READABLE[dishwasher.DishWasherState.OFF.name]
 
     @property
     def remaining_time(self):
