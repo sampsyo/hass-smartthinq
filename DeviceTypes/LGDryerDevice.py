@@ -59,7 +59,7 @@ class LGDryerDevice(LGDevice):
         if self._status:
           # Process is a more refined string to use for state, if it's present,
           # use it instead.
-            return self._status.readable_process or self._status.readable_state
+            return DRYER_STATE_READABLE[self._status.state.name]
         return DRYER_STATE_READABLE[dryer.DryerState.OFF.name]
 
     @property
