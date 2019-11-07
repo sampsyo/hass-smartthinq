@@ -330,7 +330,7 @@ class LGDryerDevice(LGDevice):
             key = 'OFF'
 
         try:
-            return DRYER_TIMEDRY[key]
+            return DRYER_TIME_DRY[key]
         except KeyError:
             return key
 
