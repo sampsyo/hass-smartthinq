@@ -335,7 +335,7 @@ class LGDryerDevice(LGDevice):
 
     @property
     def course(self):
-    	key = 'N/A'
+        key = 'N/A'
 
         # If we have a status
         if self._status:
