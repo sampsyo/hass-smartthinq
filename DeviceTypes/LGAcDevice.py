@@ -7,7 +7,9 @@ LOGGER = logging.getLogger(__name__)
 
 """Device specific imports"""
 import time
+from .LGDevice import LGDevice
 from homeassistant.components import climate
+from homeassistant.components.climate import ClimateDevice
 from homeassistant.components.climate import const as c_const
 from wideq import ac as wideq_ac
 
@@ -33,15 +35,14 @@ TEMP_MAX_F = 89
 TEMP_MIN_C = 18  # Intervals read from the AC's remote control.
 TEMP_MAX_C = 30
 
-class LGClimateDevice(climate.ClimateDevice):
-    def __init__(self, client, device, max_retries, fahrenheit=True):
+class LGAcDevice(LGDevice, ClimateDevice):
+    def __init__(self, client, max_retries, device):
         """Initialize an LG Climate Device."""
 
-        self._client = client
-        self._device = device
-        self._fahrenheit = fahrenheit
-        self._max_retries = max_retries
+        super().__init__(client, max_retries, device)
+        self._name = "lg_climate_" + device.id
 
+        self._fahrenheit = fahrenheit
         self._ac = wideq_ac.ACDevice(client, device)
         self._ac.monitor_start()
 
@@ -59,14 +60,6 @@ class LGClimateDevice(climate.ClimateDevice):
             return const.TEMP_FAHRENHEIT
         else:
             return const.TEMP_CELSIUS
-
-    @property
-    def name(self):
-        return "lg_climate_" + self._device.id
-
-    @property
-    def available(self):
-        return True
 
     @property
     def supported_features(self):

@@ -1,3 +1,4 @@
+import wideq
 import logging
 
 """General variables"""
@@ -5,7 +6,7 @@ REQUIREMENTS = ['wideq']
 LOGGER = logging.getLogger(__name__)
 
 """Configuration values needed"""
-from custom_components.smartthinq import CONF_LANGUAGE, CONF_MAX_RETRIES
+from custom_components.smartthinq import CONF_LANGUAGE, CONF_MAX_RETRIES, KEY_SMARTTHINQ_DEVICES
 from homeassistant.const import CONF_REGION, CONF_TOKEN
 
 """Device specific imports"""
@@ -17,38 +18,36 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
     country = hass.data.get(CONF_REGION)
     language = hass.data.get(CONF_LANGUAGE)
 
-    """Set up the wideq client"""
-    import wideq
+    # Set up the wideq client
+    max_retries = hass.data.get(CONF_MAX_RETRIES)
+    persistent_notification = hass.components.persistent_notification
     client = wideq.Client.from_token(refresh_token, country, language)
 
-    """Add the devices"""
-    add_devices(_wideq_sensors(hass, client), True)
+    dishwashers = []
+    dryers = []
 
-def _wideq_sensors(hass, client):
-    """Generate all the sensor devices associated with the user's
-    LG account.
-
-    Log errors for devices that can't be used for whatever reason.
-
-    Note: Some devices are only connected when in use, if that is
-    the case, the 'wideq.NotConnectedError' is swallowed.
-    """
-
-    import wideq
-
-    max_retries = hass.data.get(CONF_MAX_RETRIES)
-    for device in client.devices:
+    # Note: These devices are only connected when in use, otherwise
+    # the 'wideq.NotConnectedError' is thrown. We ignore that here.
+    for device_id in hass.data[KEY_SMARTTHINQ_DEVICES]:
+        device = client.get_device(device_id)
         if device.type == wideq.DeviceType.DISHWASHER:
             try:
-                d = LGDishwasherDevice(client, device, max_retries)
+                dishwashers.append(LGDishwasherDevice(client, max_retries, device))
             except wideq.NotConnectedError:
                 pass
-            else:
-                yield d
         if device.type == wideq.DeviceType.DRYER:
             try:
-                d = LGDryerDevice(client, device, max_retries)
+                dryers.append(LGDryerDevice(client, max_retries, device))
             except wideq.NotConnectedError:
                 pass
-            else:
-                yield d
+
+    # Add the devices
+    if dishwashers:
+        for device in dishwashers:
+            LOGGER.debug("Found LG Dishwasher: %s" % device.name)
+        add_devices(dishwashers, True)
+
+    if dryers:
+        for device in dishwashers:
+            LOGGER.debug("Found LG Dryer: %s" % device.name)
+        add_devices(dryers, True)

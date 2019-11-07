@@ -25,9 +25,11 @@ KEY_DW_OFF = 'Off'
 KEY_DW_DISCONNECTED = 'Disconnected'
 
 class LGDishwasherDevice(LGDevice):
-    def __init__(self, client, device, max_retries):
+    def __init__(self, client, max_retries, device):
         """Initialize an LG DishWasher Device."""
-        super().__init__(client, device)
+
+        super().__init__(client, max_retries, device)
+        self._name = "lg_dishwasher_" + device.id
 
         # This constructor is called during platform creation. It must not
         # involve any API calls that actually need the dishwasher to be
@@ -36,9 +38,6 @@ class LGDishwasherDevice(LGDevice):
         # interaction should only happen in update(...), including the start of
         # the monitor task.
         self._dishwasher = wideq_dishwasher.DishWasherDevice(client, device)
-        self._status = None
-        self._failed_request_count = 0
-        self._max_retries = max_retries
 
     @property
     def state_attributes(self):
@@ -56,10 +55,6 @@ class LGDishwasherDevice(LGDevice):
         # For convenience, include the state as an attribute.
         data[ATTR_DW_STATE] = self.state
         return data
-
-    @property
-    def name(self):
-        return "lg_dishwasher_" + self._dishwasher.device.id
 
     @property
     def state(self):

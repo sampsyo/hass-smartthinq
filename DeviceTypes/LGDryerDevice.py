@@ -35,9 +35,11 @@ DRYER_STATE_READABLE = {
 KEY_DRYER_DISCONNECTED = 'Disconnected'
 
 class LGDryerDevice(LGDevice):
-    def __init__(self, client, device, max_retries):
+    def __init__(self, client, max_retries, device):
         """Initialize an LG Dryer Device."""
-        super().__init__(client, device)
+
+        super().__init__(client, max_retries, device)
+        self._name = "lg_dryer_" + device.id
 
         # This constructor is called during platform creation. It must not
         # involve any API calls that actually need the dishwasher to be
@@ -46,9 +48,6 @@ class LGDryerDevice(LGDevice):
         # interaction should only happen in update(...), including the start of
         # the monitor task.
         self._dryer = wideq_dryer.DryerDevice(client, device)
-        self._status = None
-        self._failed_request_count = 0
-        self._max_retries = max_retries
 
     @property
     def state_attributes(self):
@@ -63,10 +62,6 @@ class LGDryerDevice(LGDevice):
         # For convenience, include the state as an attribute.
         data[ATTR_DRYER_STATE] = self.state
         return data
-
-    @property
-    def name(self):
-        return "lg_dryer_" + self._dryer.device.id
 
     @property
     def state(self):
