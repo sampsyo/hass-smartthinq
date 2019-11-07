@@ -39,15 +39,12 @@ class LGAcDevice(LGDevice, ClimateDevice):
     def __init__(self, client, max_retries, device, fahrenheit):
         """Initialize an LG Climate Device."""
 
-        super().__init__(client, max_retries, device)
-        self._name = "lg_climate_" + device.id
+        # Call LGDevice constructor
+        super().__init__(client, max_retries, device, wideq_ac.ACDevice)
 
+        # Overwrite variables
+        self._name = "lg_ac_" + device.id
         self._fahrenheit = fahrenheit
-        self._ac = wideq_ac.ACDevice(client, device)
-        self._ac.monitor_start()
-
-        # The response from the monitoring query.
-        self._state = None
 
         # Store a transient temperature when we've just set it. We also
         # store the timestamp for when we set this value.
@@ -131,19 +128,19 @@ class LGAcDevice(LGDevice, ClimateDevice):
 
     def set_hvac_mode(self, hvac_mode):
         if hvac_mode == c_const.HVAC_MODE_OFF:
-            self._ac.set_on(False)
+            self._wideq_device.set_on(False)
             return
 
         # Some AC units must be powered on before setting the mode.
         if not self._state.is_on:
-            self._ac.set_on(True)
+            self._wideq_device.set_on(True)
 
         # Invert the modes mapping.
         modes_inv = {v: k for k, v in MODES.items()}
 
         mode = wideq_ac.ACMode[modes_inv[hvac_mode]]
         LOGGER.info('Setting mode to %s...', mode)
-        self._ac.set_mode(mode)
+        self._wideq_device.set_mode(mode)
         LOGGER.info('Mode set.')
 
     def set_fan_mode(self, fan_mode):
@@ -152,7 +149,7 @@ class LGAcDevice(LGDevice, ClimateDevice):
 
         mode = wideq_ac.ACFanSpeed[fan_modes_inv[fan_mode]]
         LOGGER.info('Setting fan mode to %s', fan_mode)
-        self._ac.set_fan_speed(mode)
+        self._wideq_device.set_fan_speed(mode)
         LOGGER.info('Fan mode set.')
 
     def set_temperature(self, **kwargs):
@@ -162,39 +159,8 @@ class LGAcDevice(LGDevice, ClimateDevice):
 
         LOGGER.info('Setting temperature to %s...', temperature)
         if self._fahrenheit:
-            self._ac.set_fahrenheit(temperature)
+            self._wideq_device.set_fahrenheit(temperature)
         else:
-            self._ac.set_celsius(temperature)
+            self._wideq_device.set_celsius(temperature)
         LOGGER.info('Temperature set.')
 
-    def update(self):
-        """Poll for updated device status.
-
-        Set the `_state` field to a new data mapping.
-        """
-
-        LOGGER.info('Updating %s.', self.name)
-        for iteration in range(self._max_retries):
-            LOGGER.info('Polling...')
-
-            try:
-                state = self._ac.poll()
-            except wideq.NotLoggedInError:
-                LOGGER.info('Session expired. Refreshing.')
-                self._client.refresh()
-                self._ac.monitor_start()
-                continue
-
-            if state:
-                LOGGER.info('Status updated.')
-                self._state = state
-                return
-
-            LOGGER.info('No status available yet.')
-            time.sleep(2 ** iteration)  # Exponential backoff.
-
-        # We tried several times but got no result. This might happen
-        # when the monitoring request gets into a bad state, so we
-        # restart the task.
-        LOGGER.warn('Status update failed.')
-        self._ac.monitor_start()

@@ -38,16 +38,11 @@ class LGDryerDevice(LGDevice):
     def __init__(self, client, max_retries, device):
         """Initialize an LG Dryer Device."""
 
-        super().__init__(client, max_retries, device)
-        self._name = "lg_dryer_" + device.id
+        # Call LGDevice constructor
+        super().__init__(client, max_retries, device, wideq_dryer.DryerDevice)
 
-        # This constructor is called during platform creation. It must not
-        # involve any API calls that actually need the dishwasher to be
-        # connected, otherwise the device construction will fail and the entity
-        # will not get created. Specifically, calls that depend on dishwasher
-        # interaction should only happen in update(...), including the start of
-        # the monitor task.
-        self._dryer = wideq_dryer.DryerDevice(client, device)
+        # Overwrite variables
+        self._name = "lg_dryer_" + device.id
 
     @property
     def state_attributes(self):
@@ -106,51 +101,3 @@ class LGDryerDevice(LGDevice):
         if self._status:
             return self._status.error
         return KEY_DRYER_DISCONNECTED
-
-    def _restart_monitor(self):
-        try:
-            self._dryer.monitor_start()
-        except wideq.NotConnectedError:
-            self._status = None
-        except wideq.NotLoggedInError:
-            LOGGER.info('Session expired. Refreshing.')
-            self._client.refresh()
-
-    def update(self):
-        """Poll for dryer state updates."""
-
-        # This method is polled, so try to avoid sleeping in here. If an error
-        # occurs, it will naturally be retried on the next poll.
-        LOGGER.debug('Updating %s.', self.name)
-
-        # On initial construction, the dryer monitor task
-        # will not have been created. If so, start monitoring here.
-        if getattr(self._dryer, 'mon', None) is None:
-            self._restart_monitor()
-
-        try:
-            status = self._dryer.poll()
-        except wideq.NotConnectedError:
-            self._status = None
-            return
-        except wideq.NotLoggedInError:
-            LOGGER.info('Session expired. Refreshing.')
-            self._client.refresh()
-            self._restart_monitor()
-            return
-
-        if status:
-            LOGGER.debug('Status updated.')
-            self._status = status
-            self._failed_request_count = 0
-            return
-
-        LOGGER.debug('No status available yet.')
-        self._failed_request_count += 1
-
-        if self._failed_request_count >= self._max_retries:
-            # We tried several times but got no result. This might happen
-            # when the monitoring request gets into a bad state, so we
-            # restart the task.
-            self._restart_monitor()
-            self._failed_request_count = 0
