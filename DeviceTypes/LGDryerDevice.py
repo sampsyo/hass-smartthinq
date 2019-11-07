@@ -13,12 +13,10 @@ from wideq import dryer as wideq_dryer
 # Device specific dictionaries
 DRYER_BIT_STATE = {
     'ON': 'On',
-    'OFF': 'Off',
-    'UNKNOWN': 'Unknown'
+    'OFF': 'Off'
 }
 
 DRYER_STATE = {
-    'UNKNOWN': 'Unknown',
     'POWER_OFF': 'Power Off',
     'INITIAL': 'Initial',
     'RUNNING': 'Running',
@@ -73,8 +71,7 @@ DRYER_TEMPERATURE_CONTROL = {
     'LOW': 'Low',
     'MEDIUM': 'Medium',
     'MID_HIGH': 'Mid high',
-    'HIGH': 'High',
-    'UNKNOWN': 'Unknown'
+    'HIGH': 'High'
 }
 
 DRYER_TIME_DRY = {
@@ -83,8 +80,7 @@ DRYER_TIME_DRY = {
     'THIRTY': '30',
     'FOURTY': '40',
     'FIFTY': '50',
-    'SIXTY': '60',
-    'UNKNOWN': 'Unknown'
+    'SIXTY': '60'
 }
 
 DRYER_ECO_HYBRID = {
@@ -164,7 +160,7 @@ class LGDryerDevice(LGDevice):
         self._name = "lg_dryer_" + device.id
 
     def bit_state(self, key, index):
-        key = 'UNKNOWN'
+        key = 'N/A'
 
         # If we have a status
         if self._status:
@@ -186,9 +182,9 @@ class LGDryerDevice(LGDevice):
     def state_attributes(self):
         """Return the optional state attributes for the dishwasher."""
         data = {}
+        data['is_on'] = self.is_on
         data['state'] = self.state
         data['error'] = self.error
-        data['is_on'] = self.is_on
         data['remaining_time'] = self.remaining_time
         data['remaining_time_in_minutes'] = self.remaining_time_in_minutes
         data['initial_time'] = self.initial_time
@@ -211,8 +207,15 @@ class LGDryerDevice(LGDevice):
         return data
 
     @property
+    def is_on(self):
+        key = 'NO'
+        if (self._status and self._status.is_on):
+            key = 'YES'
+        return DRYER_IS_ON[key]
+
+    @property
     def state(self):
-        key = 'UNKNOWN'
+        key = 'N/A'
 
         # If we have a status
         if self._status:
@@ -232,7 +235,7 @@ class LGDryerDevice(LGDevice):
 
     @property
     def error(self):
-        key = 'UNKNOWN'
+        key = 'N/A'
 
         # If we have a status
         if self._status:
@@ -241,7 +244,7 @@ class LGDryerDevice(LGDevice):
                 key = key[19:-2]
 
         # If we have a '-' state, it is off
-        if key == '-' or key == 'No Error':
+        if key == 'No Error':
             key = 'NO_ERROR'
 
         # Lookup the readable state representation, but if it fails, return the dryer returned value instead.
@@ -249,13 +252,6 @@ class LGDryerDevice(LGDevice):
             return DRYER_ERROR[key]
         except KeyError:
             return key
-
-    @property
-    def is_on(self):
-        key = 'NO'
-        if (self._status and self._status.is_on):
-            key = 'YES'
-        return DRYER_IS_ON[key]
 
     @property
     def remaining_time(self):
@@ -291,15 +287,11 @@ class LGDryerDevice(LGDevice):
 
     @property
     def dry_level(self):
-        key = 'UNKNOWN'
+        key = 'N/A'
         if self._status:
             key = self._status.DryLevel.name
             if key.startswith('@WM_DRY24_DRY_LEVEL_') or key.startswith('@WM_DRY27_DRY_LEVEL_'):
                 key = key[20:-2]
-
-        # If we have a '-' dry level, it is off
-        if key == '-':
-            key = 'OFF'
 
         try:
             return DRYER_DRY_LEVEL[key]
@@ -308,12 +300,9 @@ class LGDryerDevice(LGDevice):
 
     @property
     def temperature_control(self):
-        key = 'UNKNOWN'
+        key = 'N/A'
         if self._status:
             key = self._status.TempControl.name
-
-        if key == '-':
-            key = 'OFF'
 
         try:
             return DRYER_TEMPERATURE_CONTROL[key]
@@ -322,12 +311,9 @@ class LGDryerDevice(LGDevice):
 
     @property
     def time_dry(self):
-        key = 'UNKNOWN'
+        key = 'N/A'
         if self._status:
             key = self._status.TimeDry.name
-
-        if key == '-':
-            key = 'OFF'
 
         try:
             return DRYER_TIME_DRY[key]
@@ -336,7 +322,7 @@ class LGDryerDevice(LGDevice):
 
     @property
     def eco_hybrid(self):
-        key = 'UNKNOWN'
+        key = 'N/A'
         if self._status:
             key = self._status.EcoHybrid.name
             if key.startswith('@WM_DRY'):
@@ -349,8 +335,6 @@ class LGDryerDevice(LGDevice):
 
     @property
     def course(self):
-        key = 'UNKNOWN'
-
         # If we have a status
         if self._status:
             key = self._status.Course.name
@@ -365,7 +349,7 @@ class LGDryerDevice(LGDevice):
 
     @property
     def smart_course(self):
-        key = 'UNKNOWN'
+        key = 'N/A'
 
         # If we have a status
         if self._status:
@@ -381,17 +365,13 @@ class LGDryerDevice(LGDevice):
 
     @property
     def process_state(self):
-        key = 'UNKNOWN'
+        key = 'N/A'
 
         # If we have a status
         if self._status:
             key = self._status.State.name
             if key.startswith('@WM_STATE_'):
                 key = key[10:-2]
-
-        # If we have a '-' state, it is off
-        if key == '-':
-            key = 'OFF'
 
         # Lookup the readable state representation, but if it fails, return the dryer returned value instead.
         try:
