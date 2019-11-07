@@ -147,7 +147,7 @@ DRYER_PROCESS_STATE = {
     'STEAM': 'Steam',
     'DRY': 'Dry',
     'COOLING': 'Cooling',
-    'ANTI_CREASE': 'Anti-crease'
+    'ANTI_CREASE': 'Anti-crease',
     'END': 'End',
     'OFF': 'Off'
 }
