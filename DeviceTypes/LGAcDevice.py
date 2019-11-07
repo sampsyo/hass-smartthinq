@@ -36,7 +36,7 @@ TEMP_MIN_C = 18  # Intervals read from the AC's remote control.
 TEMP_MAX_C = 30
 
 class LGAcDevice(LGDevice, ClimateDevice):
-    def __init__(self, client, max_retries, device):
+    def __init__(self, client, max_retries, device, fahrenheit):
         """Initialize an LG Climate Device."""
 
         super().__init__(client, max_retries, device)
