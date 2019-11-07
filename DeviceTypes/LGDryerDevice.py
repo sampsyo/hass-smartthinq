@@ -255,35 +255,59 @@ class LGDryerDevice(LGDevice):
 
     @property
     def remaining_time(self):
-        minutes = self.remaining_time_in_minutes if self._status else 0
-        return str(datetime.timedelta(minutes=minutes))[:-3]
+        minutes = 'N/A'
+
+        # If we have a status
+        if self._status:
+            minutes = self.remaining_time_in_minutes
+            minutes = str(datetime.timedelta(minutes=minutes))[:-3]
+
+        return minutes
 
     @property
     def remaining_time_in_minutes(self):
-        # The API (indefinitely) returns 1 minute remaining when a cycle is
-        # either in state off or complete, or process night-drying. Return 0
-        # minutes remaining in these instances, which is more reflective of
-        # reality.
-        if (self._status and
-            (self._status.state == wideq_dryer.DryerState.END or
-             self._status.state == wideq_dryer.DryerState.COMPLETE)):
-            return 0
-        return self._status.remaining_time if self._status else 0
+        minutes = 'N/A'
+
+        # If we have a status
+        if self._status:
+            minutes = self._status.remaining_time
+
+            # The API (indefinitely) returns 1 minute remaining when a cycle is
+            # either in state off or complete, or process night-drying. Return 0
+            # minutes remaining in these instances, which is more reflective of
+            # reality.
+            if (self._status.state == wideq_dryer.DryerState.END or
+                self._status.state == wideq_dryer.DryerState.COMPLETE):
+                minutes = 0
+
+        return minutes
 
     @property
     def initial_time(self):
-        minutes = self.initial_time_in_minutes if self._status else 0
-        return str(datetime.timedelta(minutes=minutes))[:-3]
+        minutes = 'N/A'
+
+        # If we have a status
+        if self._status:
+            minutes = self.initial_time_in_minutes
+            minutes = str(datetime.timedelta(minutes=minutes))[:-3]
+
+        return minutes
 
     @property
     def initial_time_in_minutes(self):
-        # When in state OFF, the dishwasher still returns the initial program
-        # length of the previously ran cycle. Instead, return 0 which is more
-        # reflective of the dishwasher being off.
-        if (self._status and
-            self._status.state == wideq_dryer.DryerState.OFF):
-            return 0
-        return self._status.initial_time if self._status else 0
+        minutes = 'N/A'
+
+        # If we have a status
+        if self._status:
+            minutes = self._status.initial_time
+
+            # When in state OFF, the dishwasher still returns the initial program
+            # length of the previously ran cycle. Instead, return 0 which is more
+            # reflective of the dishwasher being off.
+            if (self._status.state == wideq_dryer.DryerState.OFF):
+                minutes = 0
+
+        return minutes
 
     @property
     def dry_level(self):
