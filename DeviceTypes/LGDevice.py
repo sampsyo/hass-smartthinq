@@ -1,4 +1,8 @@
+import logging
+
 from homeassistant.helpers.entity import Entity
+
+LOGGER = logging.getLogger(__name__)
 
 class LGDevice(Entity):
     def __init__(self, client, max_retries, device, wideq_constructor):
