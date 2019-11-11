@@ -27,12 +27,44 @@ MODES = {
     'DRY': c_const.HVAC_MODE_DRY,
     'ACO': c_const.HVAC_MODE_HEAT_COOL,
 }
-FAN_MODES = {
+
+# add for diffrent lg ac device in same ha
+FAN_MODES_BY_DEVICE_NAME = {}
+FAN_MODES_BY_DEVICE_NAME['DEFAULT'] = {
     'LOW': c_const.FAN_LOW,
     'LOW_MID': 'low-mid',
     'MID': c_const.FAN_MEDIUM,
     'MID_HIGH': 'mid-high',
     'HIGH': c_const.FAN_HIGH,
+	'AUTO': 'AUTO',
+	'NATURE': 'NATURE',	
+}
+FAN_MODES_BY_DEVICE_NAME['PAC_910604_WW'] = {
+    'R_LOW' : 'R[L]',
+    'R_MID' : 'R[M]',
+    'R_HIGH' : 'R[H]',
+    'L_LOW' : 'L[L]',
+    'L_MID' : 'L[M]',
+    'L_HIGH' : 'L[H]',
+    'L_LOWR_LOW' : 'L[L]-R[L]',
+    'L_LOWR_MID' : 'L[L]-R[M]',
+    'L_LOWR_HIGH' : 'L[L]-R[H]',
+    'L_MIDR_LOW' : 'L[M]-R[L]',
+    'L_MIDR_MID' : 'L[M]-R[M]',
+    'L_MIDR_HIGH' : 'L[M]-R[H]',
+    'L_HIGHR_LOW' : 'L[H]-R[L]',
+    'L_HIGHR_MID' : 'L[H]-R[M]',
+    'L_HIGHR_HIGH' : 'L[H]-R[H]',
+    'AUTO_2' : 'AUTO',
+    'POWER_2' : 'POWER',
+    'LONGPOWER' : 'LONG-POWER',    
+}
+
+FAN_MODES_BY_DEVICE_NAME['RAC_056905_WW'] = {
+    'LOW': c_const.FAN_LOW,
+    'MID': c_const.FAN_MEDIUM,
+    'HIGH': c_const.FAN_HIGH,
+    'NATURE': 'NATURE',	
 }
 
 MAX_RETRIES = 5
@@ -177,8 +209,13 @@ class LGDevice(climate.ClimateDevice):
 
     @property
     def fan_modes(self):
-        return list(FAN_MODES.values())
-
+        # if model id is exists
+        # then return model's fan mode
+        # else return default fan mode
+        if self._device.model_id in FAN_MODES_BY_DEVICE_NAME:
+            return list(FAN_MODES_BY_DEVICE_NAME[self._device.model_id].values())
+        return list(FAN_MODES_BY_DEVICE_NAME['DEFAULT'].values())
+    
     @property
     def hvac_mode(self):
         if self._state:
@@ -189,8 +226,9 @@ class LGDevice(climate.ClimateDevice):
 
     @property
     def fan_mode(self):
-        mode = self._state.fan_speed
-        return FAN_MODES[mode.name]
+        if self._device.model_id in FAN_MODES_BY_DEVICE_NAME:
+            return FAN_MODES_BY_DEVICE_NAME[self._device.model_id][mode.name]
+        return FAN_MODES_BY_DEVICE_NAME['DEFAULT'][mode.name]
 
     def set_hvac_mode(self, hvac_mode):
         if hvac_mode == c_const.HVAC_MODE_OFF:
@@ -213,9 +251,11 @@ class LGDevice(climate.ClimateDevice):
 
     def set_fan_mode(self, fan_mode):
         import wideq
-
-        # Invert the fan modes mapping.
-        fan_modes_inv = {v: k for k, v in FAN_MODES.items()}
+        fan_modes_inv = None
+        if self._device.model_id in FAN_MODES_BY_DEVICE_NAME:
+            fan_modes_inv = {v: k for k, v in FAN_MODES_BY_DEVICE_NAME[self._device.model_id].items()}
+        else:
+            fan_modes_inv = {v: k for k, v in FAN_MODES_BY_DEVICE_NAME['DEFAULT'].items()}
 
         mode = wideq.ACFanSpeed[fan_modes_inv[fan_mode]]
         LOGGER.info('Setting fan mode to %s', fan_mode)
