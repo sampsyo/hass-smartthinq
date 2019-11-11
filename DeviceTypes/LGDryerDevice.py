@@ -9,6 +9,7 @@ LOGGER = logging.getLogger(__name__)
 import datetime
 from .LGDevice import LGDevice
 from wideq import dryer as wideq_dryer
+from wideq.util import lookup_enum, lookup_reference
 
 # Device specific dictionaries
 DRYER_BIT_STATE = {
@@ -164,7 +165,7 @@ class LGDryerDevice(LGDevice):
 
         # If we have a status
         if self._status:
-            bit_value = int(self._status[key])
+            bit_value = int(self._status.data[key])
             bit_index = 2 ** index
             mode = bin(bit_value & bit_index)
             if mode == bin(0):
@@ -184,26 +185,6 @@ class LGDryerDevice(LGDevice):
         data = {}
         data['is_on'] = self.is_on
         data['state'] = self.state
-        data['error'] = self.error
-        data['remaining_time'] = self.remaining_time
-        data['remaining_time_in_minutes'] = self.remaining_time_in_minutes
-        data['initial_time'] = self.initial_time
-        data['initial_time_in_minutes'] = self.initial_time_in_minutes
-        data['dry_level'] = self.dry_level
-        data['temperature_control'] = self.temperature_control
-        data['time_dry'] = self.time_dry
-        data['eco_hybrid'] = self.eco_hybrid
-        data['course'] = self.course
-        data['smart_course'] = self.smart_course
-        data['process_state'] = self.process_state
-        data['anticrease_state'] = self.anticrease_state
-        data['childlock_state'] = self.childlock_state
-        data['selfcleaning_state'] = self.selfcleaning_state
-        data['dampdrybeep_state'] = self.dampdrybeep_state
-        data['handiron_state'] = self.handiron_state
-        data['remotestart_state'] = self.remotestart_state
-        data['initialbit_state'] = self.initialbit_state
-        data['standby_state'] = self.standby_state
         return data
 
     @property
@@ -219,9 +200,9 @@ class LGDryerDevice(LGDevice):
 
         # If we have a status
         if self._status:
-            key = self._status.State.name
-            if key.startswith('@WM_STATE_'):
-                key = key[10:-2]
+            enum = lookup_enum('State', self._status.data, self._device)
+            if enum.name.startswith('@WM_STATE_'):
+                key = enum.name[10:-2]
 
         # If we have a '-' state, it is off
         if key == '-':
@@ -232,207 +213,3 @@ class LGDryerDevice(LGDevice):
             return DRYER_STATE[key]
         except KeyError:
             return key
-
-    @property
-    def error(self):
-        key = 'N/A'
-
-        # If we have a status
-        if self._status:
-            key = self._status.State.name
-            if key.startswith('@WM_STATE_'):
-                key = key[19:-2]
-
-        # If we have a '-' state, it is off
-        if key == 'No Error':
-            key = 'NO_ERROR'
-
-        # Lookup the readable state representation, but if it fails, return the dryer returned value instead.
-        try:
-            return DRYER_ERROR[key]
-        except KeyError:
-            return key
-
-    @property
-    def remaining_time(self):
-        minutes = 'N/A'
-
-        # If we have a status
-        if self._status:
-            minutes = self.remaining_time_in_minutes
-            minutes = str(datetime.timedelta(minutes=minutes))[:-3]
-
-        return minutes
-
-    @property
-    def remaining_time_in_minutes(self):
-        minutes = 'N/A'
-
-        # If we have a status
-        if self._status:
-            minutes = self._status.remaining_time
-
-            # The API (indefinitely) returns 1 minute remaining when a cycle is
-            # either in state off or complete, or process night-drying. Return 0
-            # minutes remaining in these instances, which is more reflective of
-            # reality.
-            if (self._status.state == wideq_dryer.DryerState.END or
-                self._status.state == wideq_dryer.DryerState.COMPLETE):
-                minutes = 0
-
-        return minutes
-
-    @property
-    def initial_time(self):
-        minutes = 'N/A'
-
-        # If we have a status
-        if self._status:
-            minutes = self.initial_time_in_minutes
-            minutes = str(datetime.timedelta(minutes=minutes))[:-3]
-
-        return minutes
-
-    @property
-    def initial_time_in_minutes(self):
-        minutes = 'N/A'
-
-        # If we have a status
-        if self._status:
-            minutes = self._status.initial_time
-
-            # When in state OFF, the dishwasher still returns the initial program
-            # length of the previously ran cycle. Instead, return 0 which is more
-            # reflective of the dishwasher being off.
-            if (self._status.state == wideq_dryer.DryerState.OFF):
-                minutes = 0
-
-        return minutes
-
-    @property
-    def dry_level(self):
-        key = 'N/A'
-        if self._status:
-            key = self._status.DryLevel.name
-            if key.startswith('@WM_DRY24_DRY_LEVEL_') or key.startswith('@WM_DRY27_DRY_LEVEL_'):
-                key = key[20:-2]
-
-        try:
-            return DRYER_DRY_LEVEL[key]
-        except KeyError:
-            return key
-
-    @property
-    def temperature_control(self):
-        key = 'N/A'
-        if self._status:
-            key = self._status.TempControl.name
-
-        try:
-            return DRYER_TEMPERATURE_CONTROL[key]
-        except KeyError:
-            return key
-
-    @property
-    def time_dry(self):
-        key = 'N/A'
-        if self._status:
-            key = self._status.TimeDry.name
-
-        try:
-            return DRYER_TIME_DRY[key]
-        except KeyError:
-            return key
-
-    @property
-    def eco_hybrid(self):
-        key = 'N/A'
-        if self._status:
-            key = self._status.EcoHybrid.name
-            if key.startswith('@WM_DRY'):
-                key = key[20:-2]
-
-        try:
-            return DRYER_ECO_HYBRID[key]
-        except KeyError:
-            return key
-
-    @property
-    def course(self):
-        key = 'N/A'
-
-        # If we have a status
-        if self._status:
-            key = self._status.Course.name
-            if key.startswith('@WM_DRY'):
-                key = key[17:-2]
-
-        # Lookup the readable state representation, but if it fails, return the dryer returned value instead.
-        try:
-            return DRYER_COURSE[key]
-        except KeyError:
-            return key
-
-    @property
-    def smart_course(self):
-        key = 'N/A'
-
-        # If we have a status
-        if self._status:
-            key = self._status.SmartCourse.name
-            if key.startswith('@WM_WW_DRYER_SMARTCOURSE_'):
-                key = key[25:-2]
-
-        # Lookup the readable state representation, but if it fails, return the dryer returned value instead.
-        try:
-            return DRYER_SMART_COURSE[key]
-        except KeyError:
-            return key
-
-    @property
-    def process_state(self):
-        key = 'N/A'
-
-        # If we have a status
-        if self._status:
-            key = self._status.State.name
-            if key.startswith('@WM_STATE_'):
-                key = key[10:-2]
-
-        # Lookup the readable state representation, but if it fails, return the dryer returned value instead.
-        try:
-            return DRYER_PROCESS_STATE[key]
-        except KeyError:
-            return key
-
-    @property
-    def anticrease_state(self):
-        return self.bit_state('Option1', 1)
-
-    @property
-    def childlock_state(self):
-        return self.bit_state('Option1', 4)
-
-    @property
-    def selfcleaning_state(self):
-        return self.bit_state('Option1', 5)
-
-    @property
-    def dampdrybeep_state(self):
-        return self.bit_state('Option1', 6)
-
-    @property
-    def handiron_state(self):
-        return self.bit_state('Option1', 7)
-
-    @property
-    def remotestart_state(self):
-        return self.bit_state('Option2', 0)
-
-    @property
-    def initialbit_state(self):
-        return self.bit_state('Option2', 1)
-
-    @property
-    def standby_state(self):
-        return self.bit_state('Option2', 6)
