@@ -1,0 +1,14 @@
+- State: @WM_STATE_POWER_OFF_W
+- Remain_Time_H: 0 (0-30)
+- Remain_Time_M: 0 (0-59)
+- Initial_Time_H: 0 (0-30)
+- Initial_Time_M: 0 (0-59)
+- DryLevel: -
+- EcoHybrid: -
+- ProcessState: @WM_STATE_DETECTING_W
+- Reserve_Initial_Time_H: 0
+- Reserve_Initial_Time_H: @WM_STATE_DETECTING_W
+- Reserve_Initial_Time_M: 0
+- Reserve_Initial_Time_M: @WM_STATE_DETECTING_W
+- Reserve_Time_H: 0 (3-19)
+- Reserve_Time_M: 0 (0-59)
