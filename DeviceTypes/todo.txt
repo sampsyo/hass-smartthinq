@@ -37,6 +37,7 @@ DRYER_ERROR = {
     'DE4': 'De4',
     'EMPTYWATER': 'Empty water',
     'DE': 'Door',
+    'OE': 'Drainmotor',
     'F1': 'F1',
     'LE1': 'Le1',
     'LE2': 'Le2',
