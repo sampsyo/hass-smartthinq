@@ -10,7 +10,6 @@ LOGGER = logging.getLogger(__name__)
 import datetime
 from .LGDevice import LGDevice
 from wideq import dryer as wideq_dryer
-from wideq.dryer import DryerState
 from wideq.util import lookup_enum, lookup_reference
 
 # Device specific dictionaries
@@ -342,8 +341,8 @@ class LGDryerDevice(LGDevice):
             # either in state off or complete, or process night-drying. Return 0
             # minutes remaining in these instances, which is more reflective of
             # reality.
-            if (self._status.state == DryerState.END or
-                self._status.state == DryerState.COMPLETE):
+            if (self._status.state == 'END' or
+                self._status.state == 'COMPLETE'):
                 minutes = 0
 
         return minutes
@@ -370,7 +369,7 @@ class LGDryerDevice(LGDevice):
             # When in state OFF, the dishwasher still returns the initial program
             # length of the previously ran cycle. Instead, return 0 which is more
             # reflective of the dishwasher being off.
-            if (self._status.state == DryerState.OFF):
+            if (self._status.state == 'OFF'):
                 minutes = 0
 
         return minutes
