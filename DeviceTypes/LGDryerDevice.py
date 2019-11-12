@@ -220,6 +220,7 @@ class LGDryerDevice(LGDevice):
         :returns: The decoded bit.
         """
 
+        return self._status.get_bit(key, idx)
         try:
             key = 'N/A'
             if (self._status):
