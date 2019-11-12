@@ -179,7 +179,7 @@ class LGDryerDevice(LGDevice):
         # Overwrite variables
         self._name = "lg_dryer_" + device.id
 
-    def lookup_enum(self, attr, dflt):
+    def lookup_enum(self, attr: str, dflt: str):
         """Looks up an enum value for the provided attr.
 
         :param attr: The attribute to lookup in the enum.
@@ -205,7 +205,7 @@ class LGDryerDevice(LGDevice):
 
         try:
         	reference = dflt
-            if attr in self._status.data
+            if attr in self._status.data:
                 value = str(self._status.data[attr])
                 references = self._wideq_device.model.value(attr).reference
                 if value in references:
