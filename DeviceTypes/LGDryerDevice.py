@@ -424,7 +424,7 @@ class LGDryerDevice(LGDevice):
         if (self._status and self._status.is_on):
             key = self.lookup_enum('EcoHybrid', key)
             if key.startswith('@WM_DRY'):
-                key = key[20:-2]
+                key = key[21:-2]
 
         try:
             return DRYER_ECO_HYBRID[key]
