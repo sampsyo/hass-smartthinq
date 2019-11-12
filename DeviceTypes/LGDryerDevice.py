@@ -236,8 +236,6 @@ class LGDryerDevice(LGDevice):
                     bit = 'OFF'
                 else:
                     bit = 'ON'
-            else:
-                LOGGER.warn(key + ' not found in self._status.data')
             return BIT_STATE[bit]
         except KeyError:
             return dflt
