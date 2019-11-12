@@ -20,7 +20,7 @@ BIT_STATE = {
 }
 
 DRYER_STATE = {
-    'N/A': 'Unavailable',
+    'N/A': 'N/A',
     'POWER_OFF': 'Power Off',
     'INITIAL': 'Initial',
     'RUNNING': 'Running',
@@ -37,7 +37,7 @@ DRYER_STATE = {
 }
 
 DRYER_ERROR = {
-    'N/A': 'Unavailable',
+    'N/A': 'N/A',
     'NOERROR': 'No error',
     'AE': 'Ae',
     'CE1': 'Ce1',
@@ -63,7 +63,7 @@ DRYER_IS_ON = {
 }
 
 DRYER_DRY_LEVEL = {
-    'N/A': 'Unavailable',
+    'N/A': 'N/A',
     'CUPBOARD': 'Cupboard',
     'DAMP': 'Damp',
     'EXTRA': 'Extra',
@@ -75,7 +75,7 @@ DRYER_DRY_LEVEL = {
 }
 
 DRYER_TEMPERATURE_CONTROL = {
-    'N/A': 'Unavailable',
+    'N/A': 'N/A',
     'OFF': 'Off',
     'ULTRA_LOW': 'Ultra low',
     'LOW': 'Low',
@@ -85,7 +85,7 @@ DRYER_TEMPERATURE_CONTROL = {
 }
 
 DRYER_TIME_DRY = {
-    'N/A': 'Unavailable',
+    'N/A': 'N/A',
     'OFF': 'Off',
     'TWENTY': '20',
     'THIRTY': '30',
@@ -95,14 +95,14 @@ DRYER_TIME_DRY = {
 }
 
 DRYER_ECO_HYBRID = {
-    'N/A': 'Unavailable',
+    'N/A': 'N/A',
     'ECO': 'Eco',
     'NORMAL': 'Normal',
     'TURBO': 'Turbo'
 }
 
 DRYER_COURSE = {
-    'N/A': 'Unavailable',
+    'N/A': 'N/A',
     'COTTON_SOFT': 'Cotton Soft',
     'BULKY_ITEM': 'Bulky Item',
     'EASY_CARE': 'Easy Care',
@@ -132,7 +132,7 @@ DRYER_COURSE = {
 }
 
 DRYER_SMART_COURSE = {
-    'N/A': 'Unavailable',
+    'N/A': 'N/A',
     'BABY_WEAR': 'Baby wear',
     'GYM_CLOTHES': 'Gym clothes',
     'BLANKET': 'Blanket',
@@ -153,7 +153,7 @@ DRYER_SMART_COURSE = {
 }
 
 DRYER_PROCESS_STATE = {
-    'N/A': 'Unavailable',
+    'N/A': 'N/A',
     'DETECTING': 'Detecting',
     'STEAM': 'Steam',
     'DRY': 'Dry',
