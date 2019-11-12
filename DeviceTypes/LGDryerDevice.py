@@ -98,7 +98,8 @@ DRYER_ECO_HYBRID = {
     'N/A': 'N/A',
     'ECO': 'Eco',
     'NORMAL': 'Normal',
-    'TURBO': 'Turbo'
+    'TURBO': 'Turbo',
+    'TIME': 'Time'
 }
 
 DRYER_COURSE = {
@@ -221,7 +222,7 @@ class LGDryerDevice(LGDevice):
 
         try:
             key = 'N/A'
-            if (self._status and self._status.is_on):
+            if (self._status):
                 key = self._status.get_bit(key, idx)
             return BIT_STATE[key]
         except KeyError:
