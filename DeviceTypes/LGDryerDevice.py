@@ -177,17 +177,18 @@ class LGDryerDevice(LGDevice):
         """Get a state of a bit (ON/OFF) or N/A if not there."""
 
         key = 'N/A'
-        if self._status:
-            bit_value = int(self._status.data[key])
-            bit_index = 2 ** index
-            mode = bin(bit_value & bit_index)
-            if mode == bin(0):
-                key = 'OFF'
-            else:
-                key = 'ON'
 
-        # Lookup the readable state representation, but if it fails, return the dryer returned value instead.
         try:
+            if self._status:
+                bit_value = int(self._status.data[key])
+                bit_index = 2 ** index
+                mode = bin(bit_value & bit_index)
+                if mode == bin(0):
+                    key = 'OFF'
+                else:
+                    key = 'ON'
+
+            # Lookup the readable state representation, but if it fails, return the dryer returned value instead.
             return BIT_STATE[key]
         except KeyError:
             return key
@@ -243,6 +244,15 @@ class LGDryerDevice(LGDevice):
         data['eco_hybrid'] = self.eco_hybrid
         data['course'] = self.course
         data['smart_course'] = self.smart_course
+        data['process_state'] = self.process_state
+        data['anticrease_state'] = self.anticrease_state
+        data['childlock_state'] = self.childlock_state
+        data['selfcleaning_state'] = self.selfcleaning_state
+        data['dampdrybeep_state'] = self.dampdrybeep_state
+        data['handiron_state'] = self.handiron_state
+        data['remotestart_state'] = self.remotestart_state
+        data['initialbit_state'] = self.initialbit_state
+        data['standby_state'] = self.standby_state
         return data
 
     @property
@@ -460,3 +470,66 @@ class LGDryerDevice(LGDevice):
             return DRYER_SMART_COURSE[key]
         except KeyError:
             return key
+
+    @property
+    def process_state(self):
+        """Returns the translated, readable state representation of this property or N/A if the dryer is not on."""
+
+        key = 'N/A'
+        if (self._status and self._status.is_on):
+            key = self.lookup_enum('ProcessState', key)
+            if key.startswith('@WM_STATE_'):
+                key = key[10:-2]
+
+        try:
+            return DRYER_PROCESS_STATE[key]
+        except KeyError:
+            return key
+
+    @property
+    def anticrease_state(self):
+        """Returns the translated, readable state representation of this property or N/A if the dryer is not on."""
+
+        return self.bit_state('Option1', 1)
+
+    @property
+    def childlock_state(self):
+        """Returns the translated, readable state representation of this property or N/A if the dryer is not on."""
+
+        return self.bit_state('Option1', 4)
+
+    @property
+    def selfcleaning_state(self):
+        """Returns the translated, readable state representation of this property or N/A if the dryer is not on."""
+
+        return self.bit_state('Option1', 5)
+
+    @property
+    def dampdrybeep_state(self):
+        """Returns the translated, readable state representation of this property or N/A if the dryer is not on."""
+
+        return self.bit_state('Option1', 6)
+
+    @property
+    def handiron_state(self):
+        """Returns the translated, readable state representation of this property or N/A if the dryer is not on."""
+
+        return self.bit_state('Option1', 7)
+
+    @property
+    def remotestart_state(self):
+        """Returns the translated, readable state representation of this property or N/A if the dryer is not on."""
+
+        return self.bit_state('Option2', 0)
+
+    @property
+    def initialbit_state(self):
+        """Returns the translated, readable state representation of this property or N/A if the dryer is not on."""
+
+        return self.bit_state('Option2', 1)
+
+    @property
+    def standby_state(self):
+        """Returns the translated, readable state representation of this property or N/A if the dryer is not on."""
+
+        return self.bit_state('Option2', 6)
