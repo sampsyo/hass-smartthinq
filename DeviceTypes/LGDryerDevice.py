@@ -198,7 +198,7 @@ class LGDryerDevice(LGDevice):
         key = ''
         enum = self._wideq_device.model.enum_name(attr, self._status.data[attr])
         if (enum):
-            key = enum.name;
+            key = enum;
         return key
 
     @property
