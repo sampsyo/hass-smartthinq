@@ -422,7 +422,7 @@ class LGDryerDevice(LGDevice):
 
         key = 'N/A'
         if (self._status and self._status.is_on):
-            key = self.lookup_enum('Course', key)
+            key = self.lookup_enum('EcoHybrid', key)
             if key.startswith('@WM_DRY'):
                 key = key[20:-2]
 
