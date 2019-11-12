@@ -195,7 +195,7 @@ class LGDryerDevice(LGDevice):
         except KeyError:
             return dflt
 
-    def lookup_reference(self, attr, dflt):
+    def lookup_reference(self, attr: str, dflt: str):
         """Look up a reference value for the provided attribute.
 
         :param attr: The attribute to find the value for.
@@ -204,9 +204,15 @@ class LGDryerDevice(LGDevice):
         """
 
         try:
-            reference = lookup_reference(attr, self._status.data, self._wideq_device)
-            if (reference is None):
-                reference = dflt
+        	reference = dflt
+            if attr in self._status.data
+                value = str(self._status.data[attr])
+                references = self._wideq_device.model.value(attr).reference
+                if value in references:
+                    if 'label' in references[value]:
+                        reference = references[value]['label']
+                    elif '_comment' in references[value]:
+                        reference = references[value]['_comment']
             return reference
         except KeyError:
             return dflt
