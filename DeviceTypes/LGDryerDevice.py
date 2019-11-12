@@ -196,7 +196,7 @@ class LGDryerDevice(LGDevice):
         """Returns the found enum name for this key."""
 
         key = ''
-        enum = self._device.model.enum_name(attr, self._status.data[attr])
+        enum = self._wideq_device.model.enum_name(attr, self._status.data[attr])
         if (enum):
             key = enum.name;
         return key
@@ -208,6 +208,7 @@ class LGDryerDevice(LGDevice):
         data = {}
         data['is_on'] = self.is_on
         data['state'] = self.state
+        data['previous_state'] = self.previous_state
         data['error'] = self.error
         data['remaining_time'] = self.remaining_time
         data['remaining_time_in_minutes'] = self.remaining_time_in_minutes
