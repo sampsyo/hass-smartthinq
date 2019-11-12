@@ -192,11 +192,11 @@ class LGDryerDevice(LGDevice):
         except KeyError:
             return key
 
-    def lookup_key_in_enum(self, key):
+    def lookup_key_in_enum(self, attr):
         """Returns the found enum name for this key."""
 
         key = ''
-        enum = lookup_enum(key, self._status.data, self._status._device)
+        enum = self._device.enum_name(attr, self._status.data[attr])
         if (enum):
             key = enum.name;
         return key
