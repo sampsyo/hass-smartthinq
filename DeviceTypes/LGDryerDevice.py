@@ -225,12 +225,19 @@ class LGDryerDevice(LGDevice):
         :param dflt: The default value if key is not found in the JSON data from the API.
         :returns: The decoded bit.
         """
-
         try:
-            key = 'N/A'
-            if (self._status):
-                key = self._status.get_bit(key, idx)
-            return BIT_STATE[key]
+            bit = 'N/A'
+            if (self._status and key in self._status.data):
+                value = int(self._status.data[key])
+                bit_index = 2 ** idx
+                mode = bin(bit_value & bit_index)
+                if mode == bin(0):
+                    bit = 'OFF'
+                else:
+                    bit = 'ON'
+            else:
+                logger.warn(key + ' not found in self._status.data')
+            return BIT_STATE[bit]
         except KeyError:
             return dflt
 
