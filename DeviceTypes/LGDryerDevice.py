@@ -256,26 +256,17 @@ class LGDryerDevice(LGDevice):
         return data
 
     @property
-    def is_on(self):
-        """Returns if the dryer is currently on"""
-
-        key = 'NO'
-        if (self._status and self._status.is_on):
-            key = 'YES'
-        return DRYER_IS_ON[key]
-
-    @property
     def state(self):
         """Returns the translated, readable state representation of this property or N/A if the dryer is not on."""
 
         key = 'N/A'
-        if self._status:
+        if (self._status and self._status.is_on):
             key = self.lookup_enum('State', key)
             if key.startswith('@WM_STATE_'):
                 key = key[10:-2]
 
         # If we have a '-' state, it is off
-        if key == '-':
+        if (key == '-' or key == 'N/A'):
             key = 'POWER_OFF'
 
         # Lookup the readable state representation, but if it fails, return the dryer returned value instead.
@@ -285,11 +276,20 @@ class LGDryerDevice(LGDevice):
             return key
 
     @property
+    def is_on(self):
+        """Returns if the dryer is currently on"""
+
+        key = 'NO'
+        if (self._status and self._status.is_on):
+            key = 'YES'
+        return DRYER_IS_ON[key]
+
+    @property
     def previous_state(self):
         """Returns the translated, readable state representation of this property or N/A if the dryer is not on."""
 
         key = 'N/A'
-        if self._status:
+        if (self._status and self._status.is_on):
             key = self.lookup_enum('PreState', key)
             if key.startswith('@WM_STATE_'):
                 key = key[10:-2]
@@ -309,7 +309,7 @@ class LGDryerDevice(LGDevice):
         """Returns the translated, readable state representation of this property or N/A if the dryer is not on."""
 
         key = 'N/A'
-        if self._status:
+        if (self._status and self._status.is_on):
             key = self.lookup_reference('Error', key)
             if key.startswith('ERROR_NOERROR'):
                 key = 'NOERROR'
@@ -490,7 +490,17 @@ class LGDryerDevice(LGDevice):
     def anticrease_state(self):
         """Returns the translated, readable state representation of this property or N/A if the dryer is not on."""
 
-        return self.bit_state('Option1', 1)
+        key = 'N/A'
+        if (self._status and self._status.is_on):
+            key = self._status.get_bit('Option1', 1)
+
+        # Lookup the readable state representation, but if it fails, return the dryer returned value instead.
+        try:
+            return BIT_STATE[key]
+        except KeyError:
+            return 'error: ' + key
+
+        //return self.bit_state('Option1', 1)
 
     @property
     def childlock_state(self):
