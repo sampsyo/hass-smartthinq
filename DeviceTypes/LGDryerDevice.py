@@ -196,7 +196,7 @@ class LGDryerDevice(LGDevice):
 
     @property
     def is_on(self):
-    	"""Returns if the dryer is currently on"""
+        """Returns if the dryer is currently on"""
 
         key = 'NO'
         if (self._status and self._status.is_on):
@@ -205,7 +205,7 @@ class LGDryerDevice(LGDevice):
 
     @property
     def state(self):
-    	"""Returns the current (translated) state of the dryer, taken from the 'DRYER_STATE' enum"""
+        """Returns the current (translated) state of the dryer, taken from the 'DRYER_STATE' enum"""
 
         key = 'N/A'
 
