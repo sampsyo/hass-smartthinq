@@ -180,7 +180,10 @@ class LGDryerDevice(LGDevice):
         self._name = "lg_dryer_" + device.id
 
     def lookup_enum(self, attr: str, dflt: str):
-        """Looks up an enum value for the provided attr.
+        """Looks up an enum value for the provided attr. This is an improved version
+        of the one in wideq.util since it can support non-existing keys in the _status field
+        by having a fallback to a default value in case there is either a KeyError or the
+        method returns 'Unknown'.
 
         :param attr: The attribute to lookup in the enum.
         :param dflt: The default value if attr is not found in the JSON data from the API.
@@ -196,7 +199,10 @@ class LGDryerDevice(LGDevice):
             return dflt
 
     def lookup_reference(self, attr: str, dflt: str):
-        """Look up a reference value for the provided attribute.
+        """Look up a reference value for the provided attribute. This is an improved version
+        of the one in wideq.util since it can support non-existing keys in the _status field
+        by having a fallback to a default value if not present. It also first takes 'label'
+        instead of _comment since this LGDryer device strips off the '@...' part.
 
         :param attr: The attribute to find the value for.
         :param dflt: The default value if attr is not found in the JSON data from the API.
@@ -218,7 +224,10 @@ class LGDryerDevice(LGDevice):
             return dflt
 
     def lookup_bit(self, key: str, idx: int, dflt: str):
-        """Returns the translated, readable state representation of this property or N/A if the dryer is not on.
+        """Returns the translated, readable state representation for the provided bit.
+        This is an improved version of the one in DryerStatus since it can support
+        non-existing keys in the _status field by having a fallback to a default value
+        in case there is either a KeyError or the method returns 'Unknown'.
 
         :param key: The key to find the bit for.
         :param idx: The index of the bit to decode.
@@ -238,7 +247,10 @@ class LGDryerDevice(LGDevice):
                         bit = 'ON'
             return BIT_STATE[bit]
         except KeyError:
-            return dflt
+            if (dflt in BIT_STATE):
+                return BIT_STATE[bit]
+            else:
+                return dflt
 
     @property
     def state_attributes(self):
@@ -388,9 +400,9 @@ class LGDryerDevice(LGDevice):
         if (self._status and self._status.is_on):
             minutes = self._status.initial_time
 
-            # When in state OFF, the dishwasher still returns the initial program
+            # When in state OFF, the dryer still returns the initial program
             # length of the previously ran cycle. Instead, return 0 which is more
-            # reflective of the dishwasher being off.
+            # reflective of the dryer being off.
             if (self._status.state == 'OFF'):
                 minutes = 0
 
