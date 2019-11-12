@@ -203,8 +203,8 @@ class LGDryerDevice(LGDevice):
         try:
             enum = lookup_enum(attr, self._status.data, self._wideq_device)
             if (enum is 'Unknown'):
-            	enum = dflt
-           	return enum
+                enum = dflt
+               return enum
         except KeyError:
             return dflt
 
@@ -219,8 +219,8 @@ class LGDryerDevice(LGDevice):
         try:
             reference = lookup_reference(attr, self._status.data, self._wideq_device)
             if (reference is None):
-            	reference = dflt
-           	return reference
+                reference = dflt
+               return reference
         except KeyError:
             return dflt
 
