@@ -1,3 +1,4 @@
+import wideq
 import logging
 
 from homeassistant.helpers.entity import Entity
