@@ -226,7 +226,8 @@ class LGDryerDevice(LGDevice):
         :returns: The decoded bit.
         """
         try:
-            bit = 'N/A'
+            bit = dflt
+            LOGGER.warn(attr + ': ' + self._wideq_device.model.value(attr))
             if (self._status and key in self._status.data):
                 value = int(self._status.data[key])
                 bit_index = 2 ** idx
