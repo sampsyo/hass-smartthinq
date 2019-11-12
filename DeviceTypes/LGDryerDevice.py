@@ -187,10 +187,10 @@ class LGDryerDevice(LGDevice):
         """Returns the found enum value for this key."""
         
         enum_name = ''
-           enum = lookup_enum(key, self._status.data, self._device)
-           if (enum):
-               enum_name = enum.name;
-           return enum_name
+        enum = lookup_enum(key, self._status.data, self._device)
+        if (enum):
+            enum_name = enum.name;
+        return enum_name
 
     @property
     def state_attributes(self):
