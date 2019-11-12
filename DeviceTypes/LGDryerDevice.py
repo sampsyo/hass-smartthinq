@@ -165,7 +165,12 @@ DRYER_PROCESS_STATE = {
 
 class LGDryerDevice(LGDevice):
     def __init__(self, client, max_retries, device):
-        """Initialize an LG Dryer Device."""
+        """Initialize an LG Dryer Device.
+
+        :param client: The logged in client.
+        :param max_retries: The max retries for the API.
+        :param device: The LG Device to construct.
+        """
 
         # Call LGDevice constructor
         super().__init__(client, max_retries, device, wideq_dryer.DryerDevice)
@@ -173,31 +178,11 @@ class LGDryerDevice(LGDevice):
         # Overwrite variables
         self._name = "lg_dryer_" + device.id
 
-    def bit_state(self, key, index):
-        """Get a state of a bit (ON/OFF) or N/A if not there."""
-
-        key = 'N/A'
-
-        try:
-            if self._status:
-                bit_value = int(self._status.data[key])
-                bit_index = 2 ** index
-                mode = bin(bit_value & bit_index)
-                if mode == bin(0):
-                    key = 'OFF'
-                else:
-                    key = 'ON'
-
-            # Lookup the readable state representation, but if it fails, return the dryer returned value instead.
-            return BIT_STATE[key]
-        except KeyError:
-            return key
-
     def lookup_enum(self, attr, dflt):
         """Looks up an enum value for the provided attr.
 
         :param attr: The attribute to lookup in the enum.
-        :param dflt: The default value if attr is not found int the JSON data from the API.
+        :param dflt: The default value if attr is not found in the JSON data from the API.
         :returns: The looked up value.
         """
 
@@ -213,7 +198,7 @@ class LGDryerDevice(LGDevice):
         """Look up a reference value for the provided attribute.
 
         :param attr: The attribute to find the value for.
-        :param dflt: The default value if attr is not found int the JSON data from the API.
+        :param dflt: The default value if attr is not found in the JSON data from the API.
         :returns: The looked up value.
         """
 
@@ -222,6 +207,23 @@ class LGDryerDevice(LGDevice):
             if (reference is None):
                 reference = dflt
             return reference
+        except KeyError:
+            return dflt
+
+    def lookup_bit(self, key: str, idx: int, dflt: str):
+        """Returns the translated, readable state representation of this property or N/A if the dryer is not on.
+
+        :param key: The key to find the bit for.
+        :param idx: The index of the bit to decode.
+        :param dflt: The default value if key is not found in the JSON data from the API.
+        :returns: The decoded bit.
+        """
+
+        try:
+            key = 'N/A'
+            if (self._status and self._status.is_on):
+                key = self._status.get_bit(key, idx)
+            return BIT_STATE[key]
         except KeyError:
             return dflt
 
@@ -269,7 +271,6 @@ class LGDryerDevice(LGDevice):
         if (key == '-' or key == 'N/A'):
             key = 'POWER_OFF'
 
-        # Lookup the readable state representation, but if it fails, return the dryer returned value instead.
         try:
             return DRYER_STATE[key]
         except KeyError:
@@ -298,7 +299,6 @@ class LGDryerDevice(LGDevice):
         if key == '-':
             key = 'POWER_OFF'
 
-        # Lookup the readable state representation, but if it fails, return the dryer returned value instead.
         try:
             return DRYER_STATE[key]
         except KeyError:
@@ -322,7 +322,6 @@ class LGDryerDevice(LGDevice):
         if key == '-':
             key = 'NOERROR'
 
-        # Lookup the readable state representation, but if it fails, return the dryer returned value instead.
         try:
             return DRYER_ERROR[key]
         except KeyError:
@@ -488,57 +487,48 @@ class LGDryerDevice(LGDevice):
 
     @property
     def anticrease_state(self):
-        """Returns the translated, readable state representation of this property or N/A if the dryer is not on."""
+        """Returns the state of this bit (ON/OFF) or N/A if the dryer is not on."""
 
-        key = 'N/A'
-        if (self._status and self._status.is_on):
-            key = self._status.get_bit('Option1', 1)
-
-        # Lookup the readable state representation, but if it fails, return the dryer returned value instead.
-        #return self.bit_state('Option1', 1)
-        try:
-            return BIT_STATE[key]
-        except KeyError:
-            return 'error: ' + key
+        return self.lookup_bit('Option1', 1, 'N/A')
 
     @property
     def childlock_state(self):
-        """Returns the translated, readable state representation of this property or N/A if the dryer is not on."""
+        """Returns the state of this bit (ON/OFF) or N/A if the dryer is not on."""
 
-        return self.bit_state('Option1', 4)
+        return self.lookup_bit('Option1', 4, 'N/A')
 
     @property
     def selfcleaning_state(self):
-        """Returns the translated, readable state representation of this property or N/A if the dryer is not on."""
+        """Returns the state of this bit (ON/OFF) or N/A if the dryer is not on."""
 
-        return self.bit_state('Option1', 5)
+        return self.lookup_bit('Option1', 5, 'N/A')
 
     @property
     def dampdrybeep_state(self):
-        """Returns the translated, readable state representation of this property or N/A if the dryer is not on."""
+        """Returns the state of this bit (ON/OFF) or N/A if the dryer is not on."""
 
-        return self.bit_state('Option1', 6)
+        return self.lookup_bit('Option1', 6, 'N/A')
 
     @property
     def handiron_state(self):
-        """Returns the translated, readable state representation of this property or N/A if the dryer is not on."""
+        """Returns the state of this bit (ON/OFF) or N/A if the dryer is not on."""
 
-        return self.bit_state('Option1', 7)
+        return self.lookup_bit('Option1', 7, 'N/A')
 
     @property
     def remotestart_state(self):
-        """Returns the translated, readable state representation of this property or N/A if the dryer is not on."""
+        """Returns the state of this bit (ON/OFF) or N/A if the dryer is not on."""
 
-        return self.bit_state('Option2', 0)
+        return self.lookup_bit('Option2', 0, 'N/A')
 
     @property
     def initialbit_state(self):
-        """Returns the translated, readable state representation of this property or N/A if the dryer is not on."""
+        """Returns the state of this bit (ON/OFF) or N/A if the dryer is not on."""
 
-        return self.bit_state('Option2', 1)
+        return self.lookup_bit('Option2', 1, 'N/A')
 
     @property
     def standby_state(self):
-        """Returns the translated, readable state representation of this property or N/A if the dryer is not on."""
+        """Returns the state of this bit (ON/OFF) or N/A if the dryer is not on."""
 
-        return self.bit_state('Option2', 6)
+        return self.lookup_bit('Option2', 6, 'N/A')
