@@ -2,32 +2,30 @@
 Support for LG Smartthinq devices.
 """
 import logging
-import wideq
-
 import voluptuous as vol
 
 from homeassistant.const import CONF_REGION, CONF_TOKEN
 import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers import discovery
-from homeassistant.helpers.entity import Entity
 
+"""General variables"""
+REQUIREMENTS = ['wideq']
 DOMAIN = 'smartthinq'
-
 CONF_LANGUAGE = 'language'
+CONF_MAX_RETRIES = 'max_retries'
 CONFIG_SCHEMA = vol.Schema({
     DOMAIN: vol.Schema({
         vol.Required(CONF_TOKEN): cv.string,
         CONF_REGION: cv.string,
         CONF_LANGUAGE: cv.string,
+        CONF_MAX_RETRIES: cv.positive_int,
         })
 }, extra=vol.ALLOW_EXTRA)
-
-
 LOGGER = logging.getLogger(__name__)
 
 SMARTTHINQ_COMPONENTS = [
-    'sensor',
     'climate',
+    'sensor',
 ]
 KEY_SMARTTHINQ_DEVICES = 'smartthinq_devices'
 README_URL = 'https://github.com/sampsyo/hass-smartthinq/blob/master/README.md'
@@ -64,12 +62,17 @@ def setup(hass, config):
     refresh_token = config[DOMAIN].get(CONF_TOKEN)
     region = config[DOMAIN].get(CONF_REGION)
     language = config[DOMAIN].get(CONF_LANGUAGE)
+    max_retries = config[DOMAIN].get(CONF_MAX_RETRIES)
+    if max_retries is None:
+        max_retries = 5
 
+    import wideq
     client = wideq.Client.from_token(refresh_token, region, language)
 
     hass.data[CONF_TOKEN] = refresh_token
     hass.data[CONF_REGION] = region
     hass.data[CONF_LANGUAGE] = language
+    hass.data[CONF_MAX_RETRIES] = max_retries
 
     for device in client.devices:
         hass.data[KEY_SMARTTHINQ_DEVICES].append(device.id)
@@ -77,17 +80,3 @@ def setup(hass, config):
     for component in SMARTTHINQ_COMPONENTS:
         discovery.load_platform(hass, component, DOMAIN, {}, config)
     return True
-
-
-class LGDevice(Entity):
-    def __init__(self, client, device):
-        self._client = client
-        self._device = device
-
-    @property
-    def name(self):
-        return self._device.name
-
-    @property
-    def available(self):
-        return True

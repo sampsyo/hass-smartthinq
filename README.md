@@ -41,11 +41,13 @@ Here's how to use this:
 
    Use your refresh token and country & language codes. If region and language are not provided, then 'US' and 'en-US' are default.
    Start up Home Assistant and hope for the best.
+   
+   > Please note, at least for region `NL` the language should be in lowercase (e.g. `en-us`).
 
 Dishwasher Visualization Example
 --------------------------------
 
-Dishwashers will be automatically added as a new `sensor.lg_dishwasher.[ID]`
+Dishwashers will be automatically added as a new `sensor.lg_dishwasher_[ID]`
 entity with various useful attributes. See the below example for how this can
 be used in the Lovelace UI, which uses the built-in picture-elements card, the
 [circle custom card](https://github.com/custom-cards/circle-sensor-card), the
