@@ -225,32 +225,29 @@ class LGDryerDevice(LGDevice):
 
     def lookup_bit(self, key: str, idx: int, dflt: str):
         """Returns the translated, readable state representation for the provided bit.
-        This is an improved version of the one in DryerStatus since it can support
-        non-existing keys in the _status field by having a fallback to a default value
-        in case there is either a KeyError or the method returns 'Unknown'.
+        This is an improved version of the one in DryerStatus with the change that it is resilient
+        to non-existing keys in the _status.data field by having a fallback to a default value.
 
         :param key: The key to find the bit for.
         :param idx: The index of the bit to decode.
         :param dflt: The default value if key is not found in the JSON data from the API.
         :returns: The decoded bit.
         """
-        try:
-            bit = dflt
-            if (self._status and self._status.is_on):
-                if (key in self._status.data):
-                    bit_value = int(self._status.data[key])
-                    bit_index = 2 ** idx
-                    mode = bin(bit_value & bit_index)
-                    if mode == bin(0):
-                        bit = 'OFF'
-                    else:
-                        bit = 'ON'
+
+        bit = dflt
+        if (self._status and self._status.is_on):
+            if (key in self._status.data):
+                bit_value = int(self._status.data[key])
+                bit_index = 2 ** idx
+                mode = bin(bit_value & bit_index)
+                if mode == bin(0):
+                    bit = 'OFF'
+                else:
+                    bit = 'ON'
+        if (bit in BIT_STATE):
             return BIT_STATE[bit]
-        except KeyError:
-            if (dflt in BIT_STATE):
-                return BIT_STATE[bit]
-            else:
-                return dflt
+        else:
+            return dflt
 
     @property
     def state_attributes(self):
