@@ -495,12 +495,11 @@ class LGDryerDevice(LGDevice):
             key = self._status.get_bit('Option1', 1)
 
         # Lookup the readable state representation, but if it fails, return the dryer returned value instead.
+        #return self.bit_state('Option1', 1)
         try:
             return BIT_STATE[key]
         except KeyError:
             return 'error: ' + key
-
-        //return self.bit_state('Option1', 1)
 
     @property
     def childlock_state(self):
