@@ -196,7 +196,7 @@ class LGDryerDevice(LGDevice):
         """Returns the found enum name for this key."""
 
         key = ''
-        enum = self._device.enum_name(attr, self._status.data[attr])
+        enum = self._device.model.enum_name(attr, self._status.data[attr])
         if (enum):
             key = enum.name;
         return key
