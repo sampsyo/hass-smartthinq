@@ -227,15 +227,15 @@ class LGDryerDevice(LGDevice):
         """
         try:
             bit = dflt
-            LOGGER.warn(attr + ': ' + self._wideq_device.model.value(attr))
-            if (self._status and key in self._status.data):
-                value = int(self._status.data[key])
-                bit_index = 2 ** idx
-                mode = bin(bit_value & bit_index)
-                if mode == bin(0):
-                    bit = 'OFF'
-                else:
-                    bit = 'ON'
+            if (self._status and self._status.is_on):
+                if (key in self._status.data):
+                    bit_value = int(self._status.data[key])
+                    bit_index = 2 ** idx
+                    mode = bin(bit_value & bit_index)
+                    if mode == bin(0):
+                        bit = 'OFF'
+                    else:
+                        bit = 'ON'
             return BIT_STATE[bit]
         except KeyError:
             return dflt
@@ -281,7 +281,7 @@ class LGDryerDevice(LGDevice):
                 key = key[10:-2]
 
         # If we have a '-' state, it is off
-        if (key == '-' or key == 'N/A'):
+        if ((key == '-') or (key == 'N/A')):
             key = 'POWER_OFF'
 
         try:
@@ -309,7 +309,7 @@ class LGDryerDevice(LGDevice):
                 key = key[10:-2]
 
         # If we have a '-' state, it is off
-        if key == '-':
+        if (key == '-'):
             key = 'POWER_OFF'
 
         try:
@@ -332,7 +332,7 @@ class LGDryerDevice(LGDevice):
                 key = key[16:-2]
 
         # If we have a '-' state, there is no error.
-        if key == '-':
+        if (key == '-'):
             key = 'NOERROR'
 
         try:
@@ -407,6 +407,9 @@ class LGDryerDevice(LGDevice):
                 key.startswith('@WM_DRY27_DRY_LEVEL_')):
                 key = key[20:-2]
 
+        if (key == '-'):
+            key = 'N/A'
+
         try:
             return DRYER_DRY_LEVEL[key]
         except KeyError:
@@ -447,6 +450,9 @@ class LGDryerDevice(LGDevice):
             key = self.lookup_enum('EcoHybrid', key)
             if key.startswith('@WM_DRY'):
                 key = key[21:-2]
+
+        if (key == '-'):
+            key = 'N/A'
 
         try:
             return DRYER_ECO_HYBRID[key]
