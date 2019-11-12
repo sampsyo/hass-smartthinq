@@ -192,27 +192,37 @@ class LGDryerDevice(LGDevice):
         except KeyError:
             return key
 
-    def lookup_enum(self, attr):
+    def lookup_enum(self, attr, dflt):
         """Looks up an enum value for the provided attr.
 
         :param attr: The attribute to lookup in the enum.
-        :param data: The JSON data from the API.
-        :param device: A sub-class instance of a Device.
-        :returns: The enum value.
-        """
-
-        return lookup_enum(attr, self._status.data, self._wideq_device)
-
-    def lookup_reference(self, attr):
-        """Look up a reference value for the provided attribute.
-
-        :param attr: The attribute to find the value for.
-        :param data: The JSON data from the API.
-        :param device: A sub-class instance of a Device.
+        :param dflt: The default value if attr is not found int the JSON data from the API.
         :returns: The looked up value.
         """
 
-        return lookup_reference(attr, self._status.data, self._wideq_device)
+        try:
+            enum = lookup_enum(attr, self._status.data, self._wideq_device)
+            if (enum is 'Unknown'):
+            	enum = dflt
+           	return enum
+        except KeyError:
+            return dflt
+
+    def lookup_reference(self, attr, dflt):
+        """Look up a reference value for the provided attribute.
+
+        :param attr: The attribute to find the value for.
+        :param dflt: The default value if attr is not found int the JSON data from the API.
+        :returns: The looked up value.
+        """
+
+        try:
+            reference = lookup_reference(attr, self._status.data, self._wideq_device)
+            if (reference is None):
+            	reference = dflt
+           	return reference
+        except KeyError:
+            return dflt
 
     @property
     def state_attributes(self):
@@ -250,7 +260,7 @@ class LGDryerDevice(LGDevice):
 
         key = 'N/A'
         if self._status:
-            key = self.lookup_enum('State')
+            key = self.lookup_enum('State', key)
             if key.startswith('@WM_STATE_'):
                 key = key[10:-2]
 
@@ -270,7 +280,7 @@ class LGDryerDevice(LGDevice):
 
         key = 'N/A'
         if self._status:
-            key = self.lookup_enum('PreState')
+            key = self.lookup_enum('PreState', key)
             if key.startswith('@WM_STATE_'):
                 key = key[10:-2]
 
@@ -290,7 +300,7 @@ class LGDryerDevice(LGDevice):
 
         key = 'N/A'
         if self._status:
-            key = self.lookup_reference('Error')
+            key = self.lookup_reference('Error', key)
             if key.startswith('ERROR_NOERROR'):
                 key = 'NOERROR'
             if key.startswith('@WM_US_DRYER_ERROR_'):
@@ -370,7 +380,7 @@ class LGDryerDevice(LGDevice):
 
         key = 'N/A'
         if (self._status and self._status.is_on):
-            key = self.lookup_enum('DryLevel')
+            key = self.lookup_enum('DryLevel', key)
             if (key.startswith('@WM_DRY24_DRY_LEVEL_') or
                 key.startswith('@WM_DRY27_DRY_LEVEL_')):
                 key = key[20:-2]
@@ -386,7 +396,7 @@ class LGDryerDevice(LGDevice):
 
         key = 'N/A'
         if (self._status and self._status.is_on):
-            key = self.lookup_enum('TempControl')
+            key = self.lookup_enum('TempControl', key)
 
         try:
             return DRYER_TEMPERATURE_CONTROL[key]
@@ -399,7 +409,7 @@ class LGDryerDevice(LGDevice):
 
         key = 'N/A'
         if (self._status and self._status.is_on):
-            key = self.lookup_enum('TimeDry')
+            key = self.lookup_enum('TimeDry', key)
 
         try:
             return DRYER_TIME_DRY[key]
@@ -412,7 +422,7 @@ class LGDryerDevice(LGDevice):
 
         key = 'N/A'
         if (self._status and self._status.is_on):
-            key = self.lookup_enum('Course')
+            key = self.lookup_enum('Course', key)
             if key.startswith('@WM_DRY'):
                 key = key[20:-2]
 
@@ -427,7 +437,7 @@ class LGDryerDevice(LGDevice):
 
         key = 'N/A'
         if (self._status and self._status.is_on):
-            key = self.lookup_reference('Course')
+            key = self.lookup_reference('Course', key)
             if key.startswith('@WM_DRY'):
                 key = key[17:-2]
 
@@ -442,7 +452,7 @@ class LGDryerDevice(LGDevice):
 
         key = 'N/A'
         if (self._status and self._status.is_on):
-            key = self.lookup_reference('SmartCourse')
+            key = self.lookup_reference('SmartCourse', key)
             if key.startswith('@WM_WW_DRYER_SMARTCOURSE_'):
                 key = key[25:-2]
 
