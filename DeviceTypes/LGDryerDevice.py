@@ -204,7 +204,7 @@ class LGDryerDevice(LGDevice):
         """
 
         try:
-        	reference = dflt
+            reference = dflt
             if attr in self._status.data:
                 value = str(self._status.data[attr])
                 references = self._wideq_device.model.value(attr).reference
