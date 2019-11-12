@@ -1,18 +1,20 @@
 import wideq
 import logging
 
-"""General variables"""
+# General variables
 REQUIREMENTS = ['wideq']
 LOGGER = logging.getLogger(__name__)
 
-"""Device specific imports"""
+
+# Device specific imports
 import datetime
 from .LGDevice import LGDevice
 from wideq import dryer as wideq_dryer
 from wideq.util import lookup_enum, lookup_reference
 
 # Device specific dictionaries
-DRYER_BIT_STATE = {
+# Where applicable extended with my model: https://eic.lgthinq.com:46030/api/webContents/modelJSON?modelName=RC90U2_WW&countryCode=WW&contentsId=JS0611052043415559&authKey=thinq
+BIT_STATE = {
     'ON': 'On',
     'OFF': 'Off'
 }
@@ -27,6 +29,9 @@ DRYER_STATE = {
     'ERROR': 'Error',
     'DRYING': 'Drying',
     'SMART_DIAGNOSIS': 'Smart diagnosis',
+    'TEST1': 'Test 1',
+    'TEST2': 'Test 2',
+    'RESERVE': 'Reserve',
     'WRINKLE_CARE': 'Wrinkle care'
 }
 
@@ -149,7 +154,6 @@ DRYER_PROCESS_STATE = {
     'OFF': 'Off'
 }
 
-# Class implementation
 class LGDryerDevice(LGDevice):
     def __init__(self, client, max_retries, device):
         """Initialize an LG Dryer Device."""
@@ -161,6 +165,8 @@ class LGDryerDevice(LGDevice):
         self._name = "lg_dryer_" + device.id
 
     def bit_state(self, key, index):
+        """Get a state of a bit (ON/OFF) or N/A if not there."""
+
         key = 'N/A'
 
         # If we have a status
@@ -175,13 +181,14 @@ class LGDryerDevice(LGDevice):
 
         # Lookup the readable state representation, but if it fails, return the dryer returned value instead.
         try:
-            return DRYER_BIT_STATE[key]
+            return BIT_STATE[key]
         except KeyError:
             return key
 
     @property
     def state_attributes(self):
-        """Return the optional state attributes for the dishwasher."""
+        """Returns the optional state attributes for the dishwasher."""
+
         data = {}
         data['is_on'] = self.is_on
         data['state'] = self.state
@@ -189,6 +196,8 @@ class LGDryerDevice(LGDevice):
 
     @property
     def is_on(self):
+    	"""Returns if the dryer is currently on"""
+
         key = 'NO'
         if (self._status and self._status.is_on):
             key = 'YES'
@@ -196,6 +205,8 @@ class LGDryerDevice(LGDevice):
 
     @property
     def state(self):
+    	"""Returns the current (translated) state of the dryer, taken from the 'DRYER_STATE' enum"""
+
         key = 'N/A'
 
         # If we have a status
