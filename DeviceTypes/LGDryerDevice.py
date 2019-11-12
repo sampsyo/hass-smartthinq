@@ -192,13 +192,27 @@ class LGDryerDevice(LGDevice):
         except KeyError:
             return key
 
-    def lookup_key_in_enum(self, attr):
-        """Returns the found enum name for this key."""
+    def lookup_enum(self, attr):
+        """Looks up an enum value for the provided attr.
 
-        try:
-	        return self._wideq_device.model.enum_name(attr, self._status.data[attr])
-        except KeyError:
-            return 'N/A'
+        :param attr: The attribute to lookup in the enum.
+        :param data: The JSON data from the API.
+        :param device: A sub-class instance of a Device.
+        :returns: The enum value.
+        """
+
+        return lookup_enum(attr, self._status.data, self._wideq_device)
+
+    def lookup_reference(self, attr):
+        """Look up a reference value for the provided attribute.
+
+        :param attr: The attribute to find the value for.
+        :param data: The JSON data from the API.
+        :param device: A sub-class instance of a Device.
+        :returns: The looked up value.
+        """
+
+        return lookup_reference(attr, self._status.data, self._wideq_device)
 
     @property
     def state_attributes(self):
@@ -216,6 +230,9 @@ class LGDryerDevice(LGDevice):
         data['dry_level'] = self.dry_level
         data['temperature_control'] = self.temperature_control
         data['time_dry'] = self.time_dry
+        data['eco_hybrid'] = self.eco_hybrid
+        data['course'] = self.course
+        data['smart_course'] = self.smart_course
         return data
 
     @property
@@ -229,11 +246,11 @@ class LGDryerDevice(LGDevice):
 
     @property
     def state(self):
-        """Returns the current (translated) state of the dryer, taken from the 'DRYER_STATE' enum"""
+        """Returns the translated, readable state representation of this property or N/A if the dryer is not on."""
 
         key = 'N/A'
         if self._status:
-            key = self.lookup_key_in_enum('State')
+            key = self.lookup_enum('State')
             if key.startswith('@WM_STATE_'):
                 key = key[10:-2]
 
@@ -249,11 +266,11 @@ class LGDryerDevice(LGDevice):
 
     @property
     def previous_state(self):
-        """Returns the previous (translated) state of the dryer, taken from the 'DRYER_STATE' enum"""
+        """Returns the translated, readable state representation of this property or N/A if the dryer is not on."""
 
         key = 'N/A'
         if self._status:
-            key = self.lookup_key_in_enum('PreState')
+            key = self.lookup_enum('PreState')
             if key.startswith('@WM_STATE_'):
                 key = key[10:-2]
 
@@ -269,11 +286,11 @@ class LGDryerDevice(LGDevice):
 
     @property
     def error(self):
-        """Returns the current (translated) error of the dryer, taken from the 'DRYER_ERROR' enum"""
+        """Returns the translated, readable state representation of this property or N/A if the dryer is not on."""
 
         key = 'N/A'
         if self._status:
-            key = self.lookup_key_in_enum('Error')
+            key = self.lookup_reference('Error')
             if key.startswith('ERROR_NOERROR'):
                 key = 'NOERROR'
             if key.startswith('@WM_US_DRYER_ERROR_'):
@@ -349,11 +366,11 @@ class LGDryerDevice(LGDevice):
 
     @property
     def dry_level(self):
-        """Returns the dry level of the dryer or N/A if the dryer is not on."""
+        """Returns the translated, readable state representation of this property or N/A if the dryer is not on."""
 
         key = 'N/A'
         if (self._status and self._status.is_on):
-            key = self.lookup_key_in_enum('DryLevel')
+            key = self.lookup_enum('DryLevel')
             if (key.startswith('@WM_DRY24_DRY_LEVEL_') or
                 key.startswith('@WM_DRY27_DRY_LEVEL_')):
                 key = key[20:-2]
@@ -365,11 +382,11 @@ class LGDryerDevice(LGDevice):
 
     @property
     def temperature_control(self):
-        """Returns the temperature control of the dryer or N/A if the dryer is not on."""
+        """Returns the translated, readable state representation of this property or N/A if the dryer is not on."""
 
         key = 'N/A'
         if (self._status and self._status.is_on):
-            key = self.lookup_key_in_enum('TempControl')
+            key = self.lookup_enum('TempControl')
 
         try:
             return DRYER_TEMPERATURE_CONTROL[key]
@@ -378,13 +395,58 @@ class LGDryerDevice(LGDevice):
 
     @property
     def time_dry(self):
-        """Returns the timedry of the dryer or N/A if the dryer is not on."""
+        """Returns the translated, readable state representation of this property or N/A if the dryer is not on."""
 
         key = 'N/A'
         if (self._status and self._status.is_on):
-            key = self.lookup_key_in_enum('TimeDry')
+            key = self.lookup_enum('TimeDry')
 
         try:
             return DRYER_TIME_DRY[key]
+        except KeyError:
+            return key
+
+    @property
+    def eco_hybrid(self):
+        """Returns the translated, readable state representation of this property or N/A if the dryer is not on."""
+
+        key = 'N/A'
+        if (self._status and self._status.is_on):
+            key = self.lookup_enum('Course')
+            if key.startswith('@WM_DRY'):
+                key = key[20:-2]
+
+        try:
+            return DRYER_ECO_HYBRID[key]
+        except KeyError:
+            return key
+
+    @property
+    def course(self):
+        """Returns the translated, readable state representation of this property or N/A if the dryer is not on."""
+
+        key = 'N/A'
+        if (self._status and self._status.is_on):
+            key = self.lookup_reference('Course')
+            if key.startswith('@WM_DRY'):
+                key = key[17:-2]
+
+        try:
+            return DRYER_COURSE[key]
+        except KeyError:
+            return key
+
+    @property
+    def smart_course(self):
+        """Returns the translated, readable state representation of this property or N/A if the dryer is not on."""
+
+        key = 'N/A'
+        if (self._status and self._status.is_on):
+            key = self.lookup_reference('SmartCourse')
+            if key.startswith('@WM_WW_DRYER_SMARTCOURSE_'):
+                key = key[25:-2]
+
+        try:
+            return DRYER_SMART_COURSE[key]
         except KeyError:
             return key
