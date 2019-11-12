@@ -36,7 +36,7 @@ DRYER_STATE = {
 }
 
 DRYER_ERROR = {
-    'NO_ERROR': 'No error',
+    'NOERROR': 'No error',
     'AE': 'Ae',
     'CE1': 'Ce1',
     'DE4': 'De4',
@@ -168,8 +168,6 @@ class LGDryerDevice(LGDevice):
         """Get a state of a bit (ON/OFF) or N/A if not there."""
 
         key = 'N/A'
-
-        # If we have a status
         if self._status:
             bit_value = int(self._status.data[key])
             bit_index = 2 ** index
@@ -185,13 +183,28 @@ class LGDryerDevice(LGDevice):
         except KeyError:
             return key
 
+    def lookup_enum(self, key):
+        """Returns the found enum value for this key."""
+        
+        enum_name = ''
+           enum = lookup_enum(key, self._status.data, self._device)
+           if (enum):
+               enum_name = enum.name;
+           return enum_name
+
     @property
     def state_attributes(self):
-        """Returns the optional state attributes for the dishwasher."""
+        """Returns the state of the dryer for HomeAssistant representation."""
 
         data = {}
         data['is_on'] = self.is_on
         data['state'] = self.state
+        data['error'] = self.error
+        data['remaining_time'] = self.remaining_time
+        data['remaining_time_in_minutes'] = self.remaining_time_in_minutes
+        data['initial_time'] = self.initial_time
+        data['initial_time_in_minutes'] = self.initial_time_in_minutes
+        data['dry_level'] = self.dry_level
         return data
 
     @property
@@ -208,12 +221,10 @@ class LGDryerDevice(LGDevice):
         """Returns the current (translated) state of the dryer, taken from the 'DRYER_STATE' enum"""
 
         key = 'N/A'
-
-        # If we have a status
         if self._status:
-            enum = lookup_enum('State', self._status.data, self._device)
-            if enum.name.startswith('@WM_STATE_'):
-                key = enum.name[10:-2]
+            enum = self.lookup_enum('State')
+            if enum.startswith('@WM_STATE_'):
+                key = enum[10:-2]
 
         # If we have a '-' state, it is off
         if key == '-':
@@ -224,3 +235,98 @@ class LGDryerDevice(LGDevice):
             return DRYER_STATE[key]
         except KeyError:
             return key
+
+    @property
+    def error(self):
+        """Returns the current (translated) error of the dryer, taken from the 'DRYER_ERROR' enum"""
+
+        key = 'N/A'
+        if self._status:
+            enum = self.lookup_enum('Error')
+            if enum.startswith('ERROR_NOERROR'):
+                key = 'NOERROR'
+            if enum.startswith('@WM_US_DRYER_ERROR_'):
+                key = enum[19:-2]
+            if enum.startswith('@WM_WW_FL_ERROR_'):
+                key = enum[16:-2]
+
+        # If we have a '-' state, there is no error.
+        if key == '-':
+            key = 'NOERROR'
+
+        # Lookup the readable state representation, but if it fails, return the dryer returned value instead.
+        try:
+            return DRYER_ERROR[key]
+        except KeyError:
+            return key
+
+    @property
+    def remaining_time(self):
+        """Returns the current remaining time of the dryer or N/A if the dryer is not on."""
+
+        minutes = 'N/A'
+        if (self._status and self._status.is_on):
+            minutes = self.remaining_time_in_minutes
+            minutes = str(datetime.timedelta(minutes=minutes))[:-3]
+
+        return minutes
+
+    @property
+    def remaining_time_in_minutes(self):
+        """Returns the current remaining time of the dryer or N/A if the dryer is not on."""
+
+        minutes = 'N/A'
+        if (self._status and self._status.is_on):
+            minutes = self._status.remaining_time
+
+            # The API (indefinitely) returns 1 minute remaining when a cycle is
+            # either in state off or complete, or process night-drying. Return 0
+            # minutes remaining in these instances, which is more reflective of
+            # reality.
+            if (self._status.state == wideq_dryer.DryerState.END or
+                self._status.state == wideq_dryer.DryerState.COMPLETE):
+                minutes = 0
+
+        return minutes
+
+    @property
+    def initial_time(self):
+        """Returns the initial time of the dryer or N/A if the dryer is not on."""
+
+        minutes = 'N/A'
+        if (self._status and self._status.is_on):
+            minutes = self.initial_time_in_minutes
+            minutes = str(datetime.timedelta(minutes=minutes))[:-3]
+
+        return minutes
+
+    @property
+    def initial_time_in_minutes(self):
+        """Returns the initial time in minutes of the dryer or N/A if the dryer is not on."""
+
+        minutes = 'N/A'
+        if (self._status and self._status.is_on):
+            minutes = self._status.initial_time
+
+            # When in state OFF, the dishwasher still returns the initial program
+            # length of the previously ran cycle. Instead, return 0 which is more
+            # reflective of the dishwasher being off.
+            if (self._status.state == wideq_dryer.DryerState.OFF):
+                minutes = 0
+
+        return minutes
+
+    @property
+    def dry_level(self):
+        key = 'N/A'
+        if (self._status and self._status.is_on):
+            enum = self.lookup_enum('DryLevel')
+            if (enum.startswith('@WM_DRY24_DRY_LEVEL_') or
+                enum.startswith('@WM_DRY27_DRY_LEVEL_')):
+                key = enum[20:-2]
+
+        try:
+            return DRYER_DRY_LEVEL[key]
+        except KeyError:
+            return key
+
