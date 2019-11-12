@@ -20,6 +20,7 @@ BIT_STATE = {
 }
 
 DRYER_STATE = {
+    'N/A': 'Unavailable',
     'POWER_OFF': 'Power Off',
     'INITIAL': 'Initial',
     'RUNNING': 'Running',
@@ -36,6 +37,7 @@ DRYER_STATE = {
 }
 
 DRYER_ERROR = {
+    'N/A': 'Unavailable',
     'NOERROR': 'No error',
     'AE': 'Ae',
     'CE1': 'Ce1',
@@ -61,6 +63,7 @@ DRYER_IS_ON = {
 }
 
 DRYER_DRY_LEVEL = {
+    'N/A': 'Unavailable',
     'CUPBOARD': 'Cupboard',
     'DAMP': 'Damp',
     'EXTRA': 'Extra',
@@ -72,6 +75,7 @@ DRYER_DRY_LEVEL = {
 }
 
 DRYER_TEMPERATURE_CONTROL = {
+    'N/A': 'Unavailable',
     'OFF': 'Off',
     'ULTRA_LOW': 'Ultra low',
     'LOW': 'Low',
@@ -81,6 +85,7 @@ DRYER_TEMPERATURE_CONTROL = {
 }
 
 DRYER_TIME_DRY = {
+    'N/A': 'Unavailable',
     'OFF': 'Off',
     'TWENTY': '20',
     'THIRTY': '30',
@@ -90,12 +95,14 @@ DRYER_TIME_DRY = {
 }
 
 DRYER_ECO_HYBRID = {
+    'N/A': 'Unavailable',
     'ECO': 'Eco',
     'NORMAL': 'Normal',
     'TURBO': 'Turbo'
 }
 
 DRYER_COURSE = {
+    'N/A': 'Unavailable',
     'COTTON_SOFT': 'Cotton Soft',
     'BULKY_ITEM': 'Bulky Item',
     'EASY_CARE': 'Easy Care',
@@ -125,6 +132,7 @@ DRYER_COURSE = {
 }
 
 DRYER_SMART_COURSE = {
+    'N/A': 'Unavailable',
     'BABY_WEAR': 'Baby wear',
     'GYM_CLOTHES': 'Gym clothes',
     'BLANKET': 'Blanket',
@@ -145,6 +153,7 @@ DRYER_SMART_COURSE = {
 }
 
 DRYER_PROCESS_STATE = {
+    'N/A': 'Unavailable',
     'DETECTING': 'Detecting',
     'STEAM': 'Steam',
     'DRY': 'Dry',
@@ -183,14 +192,14 @@ class LGDryerDevice(LGDevice):
         except KeyError:
             return key
 
-    def lookup_enum(self, key):
-        """Returns the found enum value for this key."""
-        
-        enum_name = ''
-        enum = lookup_enum(key, self._status.data, self._device)
+    def lookup_key_in_enum(self, key):
+        """Returns the found enum name for this key."""
+
+        key = ''
+        enum = lookup_enum(key, self._status.data, self._status._device)
         if (enum):
-            enum_name = enum.name;
-        return enum_name
+            key = enum.name;
+        return key
 
     @property
     def state_attributes(self):
@@ -205,6 +214,8 @@ class LGDryerDevice(LGDevice):
         data['initial_time'] = self.initial_time
         data['initial_time_in_minutes'] = self.initial_time_in_minutes
         data['dry_level'] = self.dry_level
+        data['temperature_control'] = self.temperature_control
+        data['time_dry'] = self.time_dry
         return data
 
     @property
@@ -222,9 +233,29 @@ class LGDryerDevice(LGDevice):
 
         key = 'N/A'
         if self._status:
-            enum = self.lookup_enum('State')
-            if enum.startswith('@WM_STATE_'):
-                key = enum[10:-2]
+            key = self.lookup_key_in_enum('State')
+            if key.startswith('@WM_STATE_'):
+                key = key[10:-2]
+
+        # If we have a '-' state, it is off
+        if key == '-':
+            key = 'POWER_OFF'
+
+        # Lookup the readable state representation, but if it fails, return the dryer returned value instead.
+        try:
+            return DRYER_STATE[key]
+        except KeyError:
+            return key
+
+    @property
+    def previous_state(self):
+        """Returns the previous (translated) state of the dryer, taken from the 'DRYER_STATE' enum"""
+
+        key = 'N/A'
+        if self._status:
+            key = self.lookup_key_in_enum('PreState')
+            if key.startswith('@WM_STATE_'):
+                key = key[10:-2]
 
         # If we have a '-' state, it is off
         if key == '-':
@@ -242,13 +273,13 @@ class LGDryerDevice(LGDevice):
 
         key = 'N/A'
         if self._status:
-            enum = self.lookup_enum('Error')
-            if enum.startswith('ERROR_NOERROR'):
+            key = self.lookup_key_in_enum('Error')
+            if key.startswith('ERROR_NOERROR'):
                 key = 'NOERROR'
-            if enum.startswith('@WM_US_DRYER_ERROR_'):
-                key = enum[19:-2]
-            if enum.startswith('@WM_WW_FL_ERROR_'):
-                key = enum[16:-2]
+            if key.startswith('@WM_US_DRYER_ERROR_'):
+                key = key[19:-2]
+            if key.startswith('@WM_WW_FL_ERROR_'):
+                key = key[16:-2]
 
         # If we have a '-' state, there is no error.
         if key == '-':
@@ -318,15 +349,42 @@ class LGDryerDevice(LGDevice):
 
     @property
     def dry_level(self):
+        """Returns the dry level of the dryer or N/A if the dryer is not on."""
+
         key = 'N/A'
         if (self._status and self._status.is_on):
-            enum = self.lookup_enum('DryLevel')
-            if (enum.startswith('@WM_DRY24_DRY_LEVEL_') or
-                enum.startswith('@WM_DRY27_DRY_LEVEL_')):
-                key = enum[20:-2]
+            key = self.lookup_key_in_enum('DryLevel')
+            if (key.startswith('@WM_DRY24_DRY_LEVEL_') or
+                key.startswith('@WM_DRY27_DRY_LEVEL_')):
+                key = key[20:-2]
 
         try:
             return DRYER_DRY_LEVEL[key]
         except KeyError:
             return key
 
+    @property
+    def temperature_control(self):
+        """Returns the temperature control of the dryer or N/A if the dryer is not on."""
+
+        key = 'N/A'
+        if (self._status and self._status.is_on):
+            key = self.lookup_key_in_enum('TempControl')
+
+        try:
+            return DRYER_TEMPERATURE_CONTROL[key]
+        except KeyError:
+            return key
+
+    @property
+    def time_dry(self):
+        """Returns the timedry of the dryer or N/A if the dryer is not on."""
+
+        key = 'N/A'
+        if (self._status and self._status.is_on):
+            key = self.lookup_key_in_enum('TimeDry')
+
+        try:
+            return DRYER_TIME_DRY[key]
+        except KeyError:
+            return key
