@@ -195,11 +195,10 @@ class LGDryerDevice(LGDevice):
     def lookup_key_in_enum(self, attr):
         """Returns the found enum name for this key."""
 
-        key = ''
-        enum = self._wideq_device.model.enum_name(attr, self._status.data[attr])
-        if (enum):
-            key = enum;
-        return key
+        try:
+	        return self._wideq_device.model.enum_name(attr, self._status.data[attr])
+        except KeyError:
+            return 'N/A'
 
     @property
     def state_attributes(self):
