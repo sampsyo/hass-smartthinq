@@ -33,6 +33,9 @@ FAN_MODES = {
     'MID': c_const.FAN_MEDIUM,
     'MID_HIGH': 'mid-high',
     'HIGH': c_const.FAN_HIGH,
+
+    'NATURE': 'nature',
+    'POWER': 'power',
 }
 
 MAX_RETRIES = 5
