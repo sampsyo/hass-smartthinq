@@ -256,6 +256,9 @@ class LGDevice(climate.ClimateDevice):
                 self._client.refresh()
                 self._ac.monitor_start()
                 continue
+            except wideq.NotConnectedError:
+                LOGGER.info('Device not available.')
+                return
 
             if state:
                 LOGGER.info('Status updated.')
