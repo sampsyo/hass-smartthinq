@@ -4,5 +4,5 @@
   "domains": ["climate", "sensor"],
   "iot_class": "cloud_poll",
   "homeassistant": "0.96.0",
-  "render_readme": true
+  "render_readme": false
 }
