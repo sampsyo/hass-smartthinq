@@ -19,7 +19,7 @@ be used in the Lovelace UI, which uses the built-in picture-elements card, the
 card](https://github.com/custom-cards/entity-attributes-card) and [card
 mod](https://github.com/thomasloven/lovelace-card-mod).
 
-![Dishwasher Lovelace card](dishwasher_lovelace.png)
+![Dishwasher Lovelace card](https://github.com/sampsyo/hass-smartthinq/blob/master/dishwasher_lovelace.png?raw=true)
 
 Lovelace configuration is below. Replace `[ID]` with the entity ID
 from your dishwasher. Place the [dishwasher background image](dishwasher_background.png)
