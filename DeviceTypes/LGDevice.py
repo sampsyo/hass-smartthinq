@@ -36,6 +36,7 @@ class LGDevice(Entity):
         try:
             self._wideq_device.monitor_start()
         except wideq.NotConnectedError:
+            LOGGER.info('Device not available.')
             self._status = None
         except wideq.NotLoggedInError:
             LOGGER.info('Session expired. Refreshing.')
