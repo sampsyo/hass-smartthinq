@@ -7,7 +7,7 @@ from homeassistant import const
 import time
 from homeassistant.components.climate import const as c_const
 from custom_components.smartthinq import (
-    CONF_LANGUAGE, DEPRECATION_WARNING, KEY_DEPRECATED_COUNTRY,
+    CONF_LANGUAGE, KEY_DEPRECATED_COUNTRY,
     KEY_DEPRECATED_LANGUAGE, KEY_DEPRECATED_REFRESH_TOKEN)
 
 REQUIREMENTS = ['wideq']
@@ -48,12 +48,6 @@ TEMP_MAX_C = 30
 
 def setup_platform(hass, config, add_devices, discovery_info=None):
     import wideq
-
-    if any(key in config for key in (
-        (KEY_DEPRECATED_REFRESH_TOKEN,
-         KEY_DEPRECATED_COUNTRY,
-         KEY_DEPRECATED_LANGUAGE))):
-        LOGGER.warning(DEPRECATION_WARNING)
 
     refresh_token = config.get(KEY_DEPRECATED_REFRESH_TOKEN) or \
         hass.data.get(CONF_TOKEN)

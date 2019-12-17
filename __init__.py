@@ -53,6 +53,7 @@ DEPRECATION_WARNING = (
         key_language=CONF_LANGUAGE,
         domain=DOMAIN)
 
+
 def setup(hass, config):
     if DOMAIN not in config:
         LOGGER.warning(DEPRECATION_WARNING)
