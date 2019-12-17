@@ -55,7 +55,7 @@ DEPRECATION_WARNING = (
 
 LOGIN_PROMPT = (
     'Please <a href="{url}">log in to SmartThinQ</a>. '
-    'The site will redirect you to an error page. '
+    'The site will redirect you to a blank page. '
     'Paste that URL here.'
 )
 
@@ -80,9 +80,11 @@ def setup(hass, config):
             hass.data[CONF_LANGUAGE],
         )
         login_url = gateway.oauth_url()
+        LOGGER.debug('Login URL: %s', login_url)
 
         def setup_callback(data):
             auth = wideq.Auth.from_url(gateway, data['url'])
+            LOGGER.debug('Found refresh token: %s', auth.refresh_token)
             hass.data[CONF_TOKEN] = auth.refresh_token
             finish_setup(hass, config)
 
