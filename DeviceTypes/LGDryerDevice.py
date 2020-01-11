@@ -219,6 +219,9 @@ class LGDryerDevice(LGDevice):
                         reference = references[value]['label']
                     elif '_comment' in references[value]:
                         reference = references[value]['_comment']
+                        if '_' in reference:
+                            reference = reference.split('_')[0]
+                        reference = reference.replace(' ', '_').upper()
             return reference
         except KeyError:
             return dflt
@@ -479,6 +482,7 @@ class LGDryerDevice(LGDevice):
                 key = key[17:-2]
 
         try:
+
             return DRYER_COURSE[key]
         except KeyError:
             return key
