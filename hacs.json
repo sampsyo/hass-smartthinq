@@ -1,0 +1,8 @@
+{
+  "name": "LG SmartThinQ Appliances",
+  "content_in_root": true,
+  "domains": ["climate", "sensor"],
+  "iot_class": "cloud_poll",
+  "homeassistant": "0.96.0",
+  "render_readme": false
+}
