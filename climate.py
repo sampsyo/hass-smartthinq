@@ -171,6 +171,7 @@ class LGDevice(climate.ClimateDevice):
 
     @property
     def hvac_modes(self):
+        LOGGER.debug("hvac_modes")
         return list(MODES.values()) + [c_const.HVAC_MODE_OFF]
 
     @property
@@ -179,10 +180,14 @@ class LGDevice(climate.ClimateDevice):
 
     @property
     def hvac_mode(self):
+        LOGGER.debug("hvac_mode")
         if self._state:
+            LOGGER.debug('hvac_mode is_on %s', self._state.is_on)
+
             if not self._state.is_on:
                 return c_const.HVAC_MODE_OFF
             mode = self._state.mode
+            LOGGER.debug('hvac_mode name %s', MODES[mode.name])
             return MODES[mode.name]
 
     @property
