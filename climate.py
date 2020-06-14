@@ -22,6 +22,7 @@ PLATFORM_SCHEMA = climate.PLATFORM_SCHEMA.extend({
 
 MODES = {
     'AI': c_const.HVAC_MODE_AUTO,
+    'ENERGY_SAVER': c_const.HVAC_MODE_AUTO,
     'HEAT': c_const.HVAC_MODE_HEAT,
     'COOL': c_const.HVAC_MODE_COOL,
     'FAN': c_const.HVAC_MODE_FAN_ONLY,
