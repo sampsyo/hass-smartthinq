@@ -95,6 +95,8 @@ class LGDevice(climate.ClimateDevice):
         self._client = client
         self._device = device
         self._fahrenheit = fahrenheit
+        self._attrs = {}
+        self._has_power = "maybe"
 
         import wideq
         self._ac = wideq.ACDevice(client, device)
@@ -107,6 +109,10 @@ class LGDevice(climate.ClimateDevice):
         # store the timestamp for when we set this value.
         self._transient_temp = None
         self._transient_time = None
+
+    @property
+    def device_state_attributes(self):
+        return self._attrs
 
     @property
     def temperature_unit(self):
@@ -235,6 +241,22 @@ class LGDevice(climate.ClimateDevice):
             self._ac.set_celsius(temperature)
         LOGGER.info('Temperature set.')
 
+    def check_power(self):
+        """Poll for power consumption. If it fails once,
+            assume it's not supported, and don't try again"""
+
+        if not self._has_power:
+            return
+
+        try:
+            power = self._ac.get_power()
+            if power:
+                self._attrs['power'] = power
+                self._has_power = True
+        except wideq.InvalidRequestError:
+            LOGGER.info('Power consumption not available.')
+            self._has_power = False
+
     def update(self):
         """Poll for updated device status.
 
@@ -257,6 +279,8 @@ class LGDevice(climate.ClimateDevice):
             except wideq.NotConnectedError:
                 LOGGER.info('Device not available.')
                 return
+
+            self.check_power()
 
             if state:
                 LOGGER.info('Status updated.')
