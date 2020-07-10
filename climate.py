@@ -291,6 +291,7 @@ class LGDevice(climate.ClimateDevice):
     def check_power(self):
         """Poll for power consumption. If it fails once,
             assume it's not supported, and don't try again"""
+        import wideq
 
         if not self._has_power:
             return
