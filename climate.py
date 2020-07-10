@@ -32,13 +32,11 @@ MODES = {
 }
 FAN_MODES = {
     'LOW': c_const.FAN_LOW,
-    'LOW_MID': 'low-mid',
     'MID': c_const.FAN_MEDIUM,
-    'MID_HIGH': 'mid-high',
     'HIGH': c_const.FAN_HIGH,
 
-    'NATURE': 'nature',
-    'POWER': 'power',
+    'NATURE': 'auto',
+    'POWER': 'jet',
 }
 SWING_MODES = {
     # id, [name, horz_key, vert_key]
