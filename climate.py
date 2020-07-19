@@ -196,8 +196,9 @@ class LGDevice(climate.ClimateDevice):
 
     @property
     def fan_mode(self):
-        mode = self._state.fan_speed
-        return FAN_MODES[mode.name]
+        if self._state:
+            mode = self._state.fan_speed
+            return FAN_MODES[mode.name]
 
     def set_hvac_mode(self, hvac_mode):
         if hvac_mode == c_const.HVAC_MODE_OFF:
