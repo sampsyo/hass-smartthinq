@@ -90,7 +90,7 @@ def _ac_devices(hass, client, fahrenheit):
                 yield d
 
 
-class LGDevice(climate.ClimateDevice):
+class LGDevice(climate.ClimateEntity):
     def __init__(self, client, device, fahrenheit=True):
         self._client = client
         self._device = device
