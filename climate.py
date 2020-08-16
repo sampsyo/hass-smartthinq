@@ -10,6 +10,11 @@ from custom_components.smartthinq import (
     CONF_LANGUAGE, KEY_DEPRECATED_COUNTRY,
     KEY_DEPRECATED_LANGUAGE, KEY_DEPRECATED_REFRESH_TOKEN)
 
+try:
+  from homeassistant.components.climate import ClimateEntity
+except ImportError:
+  from homeassistant.components.climate import ClimateDevice as ClimateEntity
+
 REQUIREMENTS = ['wideq']
 
 LOGGER = logging.getLogger(__name__)
@@ -90,7 +95,7 @@ def _ac_devices(hass, client, fahrenheit):
                 yield d
 
 
-class LGDevice(climate.ClimateDevice):
+class LGDevice(ClimateEntity):
     def __init__(self, client, device, fahrenheit=True):
         self._client = client
         self._device = device
