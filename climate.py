@@ -11,9 +11,10 @@ from custom_components.smartthinq import (
     KEY_DEPRECATED_LANGUAGE, KEY_DEPRECATED_REFRESH_TOKEN)
 
 try:
-  from homeassistant.components.climate import ClimateEntity
+    from homeassistant.components.climate import ClimateEntity
 except ImportError:
-  from homeassistant.components.climate import ClimateDevice as ClimateEntity
+    from homeassistant.components.climate import ClimateDevice \
+         as ClimateEntity
 
 REQUIREMENTS = ['wideq']
 
