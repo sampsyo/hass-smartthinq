@@ -185,12 +185,17 @@ class LGDevice(ClimateEntity):
     @property
     def hvac_modes(self):
         import wideq
-        return [v for k, v in MODES.items() if wideq.ACMode[k].value in self._ac.model.value('SupportOpMode').options.values()] + [c_const.HVAC_MODE_OFF]
+        return [v for k, v in MODES.items()
+                if wideq.ACMode[k].value in
+                self._ac.model.value('SupportOpMode').options.values()] \
+            + [c_const.HVAC_MODE_OFF]
 
     @property
     def fan_modes(self):
         import wideq
-        return [v for k, v in FAN_MODES.items() if wideq.ACFanSpeed[k].value in self._ac.model.value('SupportWindStrength').options.values()]
+        return [v for k, v in FAN_MODES.items()
+                if wideq.ACFanSpeed[k].value in
+                self._ac.model.value('SupportWindStrength').options.values()]
 
     @property
     def hvac_mode(self):
