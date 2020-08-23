@@ -11,6 +11,12 @@ from custom_components.smartthinq import (
     KEY_DEPRECATED_LANGUAGE, KEY_DEPRECATED_REFRESH_TOKEN)
 from wideq import ACHSwingMode, ACVSwingMode
 
+try:
+    from homeassistant.components.climate import ClimateEntity
+except ImportError:
+    from homeassistant.components.climate import ClimateDevice \
+         as ClimateEntity
+
 REQUIREMENTS = ['wideq']
 
 LOGGER = logging.getLogger(__name__)
@@ -100,7 +106,7 @@ def _ac_devices(hass, client, fahrenheit):
                 yield d
 
 
-class LGDevice(climate.ClimateDevice):
+class LGDevice(ClimateEntity):
     def __init__(self, client, device, fahrenheit=True):
         self._client = client
         self._device = device
@@ -192,12 +198,17 @@ class LGDevice(climate.ClimateDevice):
     @property
     def hvac_modes(self):
         import wideq
-        return [v for k, v in MODES.items() if wideq.ACMode[k].value in self._ac.model.value('SupportOpMode').options.values()] + [c_const.HVAC_MODE_OFF]
+        return [v for k, v in MODES.items()
+                if wideq.ACMode[k].value in
+                self._ac.model.value('SupportOpMode').options.values()] \
+            + [c_const.HVAC_MODE_OFF]
 
     @property
     def fan_modes(self):
         import wideq
-        return [v for k, v in FAN_MODES.items() if wideq.ACFanSpeed[k].value in self._ac.model.value('SupportWindStrength').options.values()]
+        return [v for k, v in FAN_MODES.items()
+                if wideq.ACFanSpeed[k].value in
+                self._ac.model.value('SupportWindStrength').options.values()]
 
     @property
     def swing_mode(self):
@@ -241,8 +252,9 @@ class LGDevice(climate.ClimateDevice):
 
     @property
     def fan_mode(self):
-        mode = self._state.fan_speed
-        return FAN_MODES[mode.name]
+        if self._state:
+            mode = self._state.fan_speed
+            return FAN_MODES[mode.name]
 
     def set_hvac_mode(self, hvac_mode):
         if hvac_mode == c_const.HVAC_MODE_OFF:
