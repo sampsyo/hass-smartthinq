@@ -47,14 +47,14 @@ FAN_MODES = {
     'POWER': 'power',
 }
 SWING_MODES = {
-    # id, [name, horz_key, vert_key]
-    'OFF': ['Off', ACHSwingMode.OFF, ACVSwingMode.OFF],
-    'VERT': ['Vertical', ACHSwingMode.OFF, ACVSwingMode.ALL] ,
-    'HORIZ': ['Horizontal', ACHSwingMode.ALL, ACVSwingMode.OFF],
-    'VERT_HORIZ': ['Vertical and Horizontal', ACHSwingMode.ALL, ACVSwingMode.ALL] ,
-    'UP_LEFT': ['Up Left', ACHSwingMode.FIVE, ACVSwingMode.ONE] ,
-    'UP_RIGHT': ['Up Right', ACHSwingMode.ONE, ACVSwingMode.ONE] ,
-    'UP': ['Up', ACHSwingMode.ALL, ACVSwingMode.ONE],
+    # name, [horz_key, vert_key]
+    'Off': [ACHSwingMode.OFF, ACVSwingMode.OFF],
+    'Vertical': [ACHSwingMode.OFF, ACVSwingMode.ALL] ,
+    'Horizontal': [ACHSwingMode.ALL, ACVSwingMode.OFF],
+    'Vertical and Horizontal': [ACHSwingMode.ALL, ACVSwingMode.ALL] ,
+    'Up Left': [ACHSwingMode.FIVE, ACVSwingMode.ONE] ,
+    'Up Right': [ACHSwingMode.ONE, ACVSwingMode.ONE] ,
+    'Up': [ACHSwingMode.ALL, ACVSwingMode.ONE],
 }
 
 
@@ -215,22 +215,22 @@ class LGDevice(ClimateEntity):
     @property
     def swing_mode(self):
         # try to find out if the (initial) state matches a known state actually
-        if self._swing_mode == "UNKNOWN":
+        if self._swing_mode == "Unknown":
             for k, v in SWING_MODES.items():
-                if v[1] == self._state.horz_swing and v[2] == self._state.vert_swing:
+                if v[0] == self._state.horz_swing and v[1] == self._state.vert_swing:
                     self._swing_mode = k
         
-        if self._swing_mode == "UNKNOWN":
+        if self._swing_mode == "Unknown":
             return "Unknown"
         
-        return SWING_MODES[self._swing_mode][0]
+        return self._swing_mode
 
     def set_swing_mode(self, swing_mode):
         self._swing_mode = swing_mode
         LOGGER.info('Setting swing mode to %s...', self._swing_mode)
         
-        horiz_mode = SWING_MODES[self._swing_mode][1]
-        vert_mode = SWING_MODES[self._swing_mode][2]
+        horiz_mode = SWING_MODES[self._swing_mode][0]
+        vert_mode = SWING_MODES[self._swing_mode][1]
         
         LOGGER.info('Setting device horizontal swing mode to %s...', horiz_mode)
         self._ac.set_horz_swing(horiz_mode)
@@ -242,7 +242,7 @@ class LGDevice(ClimateEntity):
 
     @property
     def swing_modes(self):
-        return [v[0] for k, v in SWING_MODES.items()]
+        return [k for k, v in SWING_MODES.items()]
 
     @property
     def hvac_mode(self):
