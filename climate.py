@@ -56,6 +56,7 @@ SWING_MODES = {
     'Up Right': [ACHSwingMode.ONE, ACVSwingMode.ONE] ,
     'Up': [ACHSwingMode.ALL, ACVSwingMode.ONE],
 }
+SWING_MODE_DEFAULT = "Unknown"
 
 
 MAX_RETRIES = 5
@@ -128,7 +129,7 @@ class LGDevice(ClimateEntity):
         self._transient_temp = None
         self._transient_time = None
         
-        self._swing_mode = 'UNKNOWN'
+        self._swing_mode = SWING_MODE_DEFAULT
 
     @property
     def device_state_attributes(self):
@@ -215,13 +216,13 @@ class LGDevice(ClimateEntity):
     @property
     def swing_mode(self):
         # try to find out if the (initial) state matches a known state actually
-        if self._swing_mode == "Unknown":
+        if self._swing_mode == SWING_MODE_DEFAULT:
             for k, v in SWING_MODES.items():
                 if v[0] == self._state.horz_swing and v[1] == self._state.vert_swing:
                     self._swing_mode = k
                     break
             else:
-                return "Unknown"
+                return SWING_MODE_DEFAULT
         
         return self._swing_mode
 
