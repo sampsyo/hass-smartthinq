@@ -219,9 +219,9 @@ class LGDevice(ClimateEntity):
             for k, v in SWING_MODES.items():
                 if v[0] == self._state.horz_swing and v[1] == self._state.vert_swing:
                     self._swing_mode = k
-        
-        if self._swing_mode == "Unknown":
-            return "Unknown"
+                    break
+            else:
+                return "Unknown"
         
         return self._swing_mode
 
