@@ -46,6 +46,19 @@ FAN_MODES = {
     'POWER': 'power',
 }
 
+def swing_modes_index():
+    from wideq import ACHSwingMode, ACVSwingMode
+            # name: [horz_key, vert_key]
+    return {'Off': [ACHSwingMode.OFF, ACVSwingMode.OFF],
+            'Vertical': [ACHSwingMode.OFF, ACVSwingMode.ALL] ,
+            'Horizontal': [ACHSwingMode.ALL, ACVSwingMode.OFF],
+            'Vertical and Horizontal': [ACHSwingMode.ALL, ACVSwingMode.ALL] ,
+            'Up Left': [ACHSwingMode.FIVE, ACVSwingMode.ONE] ,
+            'Up Right': [ACHSwingMode.ONE, ACVSwingMode.ONE] ,
+            'Up': [ACHSwingMode.ALL, ACVSwingMode.ONE]}
+SWING_MODE_DEFAULT = "Unknown"
+
+
 MAX_RETRIES = 5
 TRANSIENT_EXP = 5.0  # Report set temperature for 5 seconds.
 TEMP_MIN_F = 60  # Guessed from actual behavior: API reports are unreliable.
@@ -115,6 +128,8 @@ class LGDevice(ClimateEntity):
         # store the timestamp for when we set this value.
         self._transient_temp = None
         self._transient_time = None
+        
+        self._swing_mode = SWING_MODE_DEFAULT
 
     @property
     def device_state_attributes(self):
@@ -139,7 +154,8 @@ class LGDevice(ClimateEntity):
     def supported_features(self):
         return (
             c_const.SUPPORT_TARGET_TEMPERATURE |
-            c_const.SUPPORT_FAN_MODE
+            c_const.SUPPORT_FAN_MODE |
+            c_const.SUPPORT_SWING_MODE
         )
 
     @property
@@ -196,6 +212,38 @@ class LGDevice(ClimateEntity):
         return [v for k, v in FAN_MODES.items()
                 if wideq.ACFanSpeed[k].value in
                 self._ac.model.value('SupportWindStrength').options.values()]
+
+    @property
+    def swing_mode(self):
+        # try to find out if the (initial) state matches a known state actually
+        if self._swing_mode == SWING_MODE_DEFAULT:
+            for k, v in swing_modes_index().items():
+                if v[0] == self._state.horz_swing and v[1] == self._state.vert_swing:
+                    self._swing_mode = k
+                    break
+            else:
+                return SWING_MODE_DEFAULT
+        
+        return self._swing_mode
+
+    def set_swing_mode(self, swing_mode):
+        self._swing_mode = swing_mode
+        LOGGER.info('Setting swing mode to %s...', self._swing_mode)
+        
+        horiz_mode = swing_modes_index()[self._swing_mode][0]
+        vert_mode = swing_modes_index()[self._swing_mode][1]
+        
+        LOGGER.info('Setting device horizontal swing mode to %s...', horiz_mode)
+        self._ac.set_horz_swing(horiz_mode)
+        LOGGER.info('Mode set.')
+        
+        LOGGER.info('Setting device vertical swing mode to %s...', vert_mode)
+        self._ac.set_vert_swing(vert_mode)
+        LOGGER.info('Mode set.')
+
+    @property
+    def swing_modes(self):
+        return [k for k, v in swing_modes_index().items()]
 
     @property
     def hvac_mode(self):
