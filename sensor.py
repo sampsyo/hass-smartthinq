@@ -245,7 +245,7 @@ class LGACRemainingFilterTime(Entity):
     @property
     def state(self):
         filter_state = self._ac.get_filter_state()
-        return filter_state["UseTime"]
+        return int(filter_state["ChangePeriod"]) - int(filter_state["UseTime"])
 
     @property
     def unit_of_measurement(self):
