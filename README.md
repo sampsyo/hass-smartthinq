@@ -32,19 +32,14 @@ You can also install it manually:
        $ python3 example.py -c US -l en-US
 
    For the `-c` and `-l` parameters, use your country and language code: SmartThinQ accounts are associated with a specific locale, so be sure to use the country you originally created your account with.
-   The script will ask you to open a browser, log in, and then paste the URL you're redirected to. It will then write a JSON file called `wideq_state.json`.
-
-   Look inside this file for a key called `"refresh_token"` and copy the value.
+   The script will ask you to open a browser, log in, and then paste the URL you're redirected to. It will then write a JSON file called `wideq_state.json`. Place the file in a directory accessible to Home Assistant.
 
 3. Add a stanza to your Home Assistant `configuration.yaml` like this:
 
        smartthinq:
-           token: [YOUR_TOKEN_HERE]
-           region: US
-           language: en-US
+           wideq_state: /config/wideq_state.json
 
-   Use your refresh token and country & language codes. If region and language are not provided, then 'US' and 'en-US' are default.
-   Start up Home Assistant and hope for the best.
+Where `/config/wideq_state.json` is the path to the JSON file you copied.
 
 Dishwasher Visualization Example
 --------------------------------

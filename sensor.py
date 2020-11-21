@@ -32,7 +32,7 @@ LOGGER = logging.getLogger(__name__)
 
 def setup_platform(hass, config, add_entities, discovery_info=None):
     """Set up the LG dishwasher entities"""
-
+""" 
     refresh_token = hass.data[CONF_TOKEN]
     region = hass.data[CONF_REGION]
     language = hass.data[CONF_LANGUAGE]
@@ -56,7 +56,7 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
 
     if dishwashers:
         add_entities(dishwashers, True)
-    return True
+    return True """
 
 
 class LGDishWasherDevice(LGDevice):
