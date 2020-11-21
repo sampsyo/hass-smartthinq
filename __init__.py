@@ -60,7 +60,6 @@ def setup(hass, config):
         LOGGER.warning(DEPRECATION_WARNING)
         return True
 
-    LOGGER.error("Starting up")
 
     if KEY_SMARTTHINQ_DEVICES not in hass.data:
         hass.data[KEY_SMARTTHINQ_DEVICES] = []
