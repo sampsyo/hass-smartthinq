@@ -27,6 +27,9 @@ FAN_MODES = {
     'MID': c_const.FAN_MEDIUM,
     'MID_HIGH': 'mid-high',
     'HIGH': c_const.FAN_HIGH,
+
+    'NATURE': 'nature',
+    'POWER': 'power',
 }
 
 TRANSIENT_EXP = 5.0  # Report set temperature for 5 seconds.
