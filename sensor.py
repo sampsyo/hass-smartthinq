@@ -48,6 +48,6 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
         add_devices(dishwashers, True)
 
     if dryers:
-        for device in dishwashers:
+        for device in dryers:
             LOGGER.debug("Found LG Dryer: %s" % device.name)
         add_devices(dryers, True)
