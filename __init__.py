@@ -2,6 +2,8 @@
 Support for LG Smartthinq devices.
 """
 import logging
+import os
+import json
 import wideq
 
 import voluptuous as vol
@@ -14,11 +16,10 @@ from homeassistant.helpers.entity import Entity
 DOMAIN = 'smartthinq'
 
 CONF_LANGUAGE = 'language'
+CONF_WIDEQ_STATE='wideq_state'
 CONFIG_SCHEMA = vol.Schema({
     DOMAIN: vol.Schema({
-        vol.Required(CONF_TOKEN): cv.string,
-        CONF_REGION: cv.string,
-        CONF_LANGUAGE: cv.string,
+        vol.Required(CONF_WIDEQ_STATE): cv.string
         })
 }, extra=vol.ALLOW_EXTRA)
 
@@ -59,25 +60,36 @@ def setup(hass, config):
         LOGGER.warning(DEPRECATION_WARNING)
         return True
 
+
     if KEY_SMARTTHINQ_DEVICES not in hass.data:
         hass.data[KEY_SMARTTHINQ_DEVICES] = []
 
-    refresh_token = config[DOMAIN].get(CONF_TOKEN)
-    region = config[DOMAIN].get(CONF_REGION)
-    language = config[DOMAIN].get(CONF_LANGUAGE)
+    state_file = config[DOMAIN].get(CONF_WIDEQ_STATE)
 
-    client = wideq.Client.from_token(refresh_token, region, language)
+    # Load the configuration from the state file
+    try:
+        with open(state_file) as f:
+            LOGGER.debug("State file found '%s'", os.path.abspath(state_file))
+            state = json.load(f)
+    except IOError:
+        state = {}
+        LOGGER.debug("No state file found (tried: '%s')",
+                     os.path.abspath(state_file))
 
-    hass.data[CONF_TOKEN] = refresh_token
-    hass.data[CONF_REGION] = region
-    hass.data[CONF_LANGUAGE] = language
+    client = wideq.Client.load(state)
+    hass.data[CONF_WIDEQ_STATE] = state
 
-    for device in client.devices:
-        hass.data[KEY_SMARTTHINQ_DEVICES].append(device.id)
+    while True:
+        try:
+            for device in client.devices:
+                hass.data[KEY_SMARTTHINQ_DEVICES].append(device.id)
 
-    for component in SMARTTHINQ_COMPONENTS:
-        discovery.load_platform(hass, component, DOMAIN, {}, config)
-    return True
+            for component in SMARTTHINQ_COMPONENTS:
+                discovery.load_platform(hass, component, DOMAIN, {}, config)
+            return True
+        except wideq.NotLoggedInError:
+            LOGGER.info('Session expired.')
+            client.refresh()
 
 
 class LGDevice(Entity):

@@ -8,7 +8,8 @@ import time
 from homeassistant.components.climate import const as c_const
 from custom_components.smartthinq import (
     CONF_LANGUAGE, KEY_DEPRECATED_COUNTRY,
-    KEY_DEPRECATED_LANGUAGE, KEY_DEPRECATED_REFRESH_TOKEN)
+    KEY_DEPRECATED_LANGUAGE, KEY_DEPRECATED_REFRESH_TOKEN,
+    CONF_WIDEQ_STATE)
 
 try:
     from homeassistant.components.climate import ClimateEntity
@@ -70,16 +71,9 @@ TEMP_MAX_C = 30
 def setup_platform(hass, config, add_devices, discovery_info=None):
     import wideq
 
-    refresh_token = config.get(KEY_DEPRECATED_REFRESH_TOKEN) or \
-        hass.data.get(CONF_TOKEN)
-    country = config.get(KEY_DEPRECATED_COUNTRY) or \
-        hass.data.get(CONF_REGION)
-    language = config.get(KEY_DEPRECATED_LANGUAGE) or \
-        hass.data.get(CONF_LANGUAGE)
-
+    client = wideq.Client.load(hass.data[CONF_WIDEQ_STATE])
+    client.refresh()
     fahrenheit = hass.config.units.temperature_unit != '°C'
-
-    client = wideq.Client.from_token(refresh_token, country, language)
     add_devices(_ac_devices(hass, client, fahrenheit), True)
 
 
@@ -203,7 +197,7 @@ class LGDevice(ClimateEntity):
         import wideq
         return [v for k, v in MODES.items()
                 if wideq.ACMode[k].value in
-                self._ac.model.value('SupportOpMode').options.values()] \
+                self._ac.model.value('airState.opMode').options.values()] \
             + [c_const.HVAC_MODE_OFF]
 
     @property
@@ -211,7 +205,7 @@ class LGDevice(ClimateEntity):
         import wideq
         return [v for k, v in FAN_MODES.items()
                 if wideq.ACFanSpeed[k].value in
-                self._ac.model.value('SupportWindStrength').options.values()]
+                self._ac.model.value('airState.windStrength').options.values()]
 
     @property
     def swing_mode(self):
