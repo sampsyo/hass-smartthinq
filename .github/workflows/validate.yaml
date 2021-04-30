@@ -1,0 +1,36 @@
+name: "Validation"
+on:
+  push:
+  pull_request:
+  schedule:
+    - cron: '0 0 * * *'
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        name: Download repo
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v2
+        name: Setup Python
+      - uses: actions/cache@v2
+        name: Cache
+        with:
+          path: |
+            ~/.cache/pip
+          key: custom-component-ci
+      - uses: hacs/integration/action@main
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CATEGORY: integration
+      - run: |
+          mkdir custom_components/
+          mkdir custom_components/smartthinq/
+          mv *.* custom_components/smartthinq/
+      - uses: KTibow/ha-blueprint@main
+        name: CI
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        env:
+          FORMAT_CODE: DISABLED
