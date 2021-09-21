@@ -61,8 +61,6 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
             try:
                 sensors.append(LGACRemainingFilterTime(client, device, fahrenheit))
             except wideq.NotConnectedError:
-                # Dishwashers are only connected when in use. Ignore
-                # NotConnectedError on platform setup.
                 pass
 
     if sensors:
@@ -235,8 +233,9 @@ class LGACRemainingFilterTime(Entity):
         self._ac = wideq.ACDevice(client, device)
         self._ac.monitor_start()
 
-        # The response from the monitoring query.
-        self._state = None
+        self._change_period = -1
+        self._use_time = -1
+        self._remaining_filter_time = -1
 
     @property
     def name(self):
@@ -244,8 +243,7 @@ class LGACRemainingFilterTime(Entity):
 
     @property
     def state(self):
-        filter_state = self._ac.get_filter_state()
-        return int(filter_state["ChangePeriod"]) - int(filter_state["UseTime"])
+        return self._remaining_filter_time
 
     @property
     def unit_of_measurement(self):
@@ -275,8 +273,11 @@ class LGACRemainingFilterTime(Entity):
                 return
 
             if state:
+                filter_state = self._ac.get_filter_state()
+                self._change_period = int(filter_state["ChangePeriod"])
+                self._use_time = int(filter_state["UseTime"])
+                self._remaining_filter_time = self._change_period - self._use_time
                 LOGGER.info('Status updated.')
-                self._state = state
                 return
 
             LOGGER.info('No status available yet.')
@@ -286,4 +287,5 @@ class LGACRemainingFilterTime(Entity):
         # when the monitoring request gets into a bad state, so we
         # restart the task.
         LOGGER.warn('Status update failed.')
+        self._ac.monitor_stop()
         self._ac.monitor_start()
