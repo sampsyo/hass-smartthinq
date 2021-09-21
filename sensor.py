@@ -6,7 +6,7 @@ import voluptuous as vol
 from custom_components.smartthinq import (
     CONF_LANGUAGE, KEY_SMARTTHINQ_DEVICES, LGDevice)
 import homeassistant.helpers.config_validation as cv
-from homeassistant.const import CONF_REGION, CONF_TOKEN, TIME_HOURS
+from homeassistant.const import CONF_REGION, CONF_TOKEN, TIME_HOURS, PERCENTAGE
 from homeassistant.helpers.entity import Entity
 
 import wideq
