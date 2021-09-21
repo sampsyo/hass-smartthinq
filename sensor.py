@@ -319,7 +319,7 @@ class LGACFilterHealth(LGACFilter):
 
     @property
     def state(self):
-        return round(100 * self._remaining_filter_time / self._change_period, 2)
+        return round(100.0 * self._remaining_filter_time / self._change_period, 2)
 
     @property
     def unit_of_measurement(self):
