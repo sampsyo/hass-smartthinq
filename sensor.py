@@ -59,7 +59,10 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
             fahrenheit = hass.config.units.temperature_unit != '°C'
             LOGGER.debug("Creating new LG AC: %s" % device.name)
             try:
-                sensors.append(LGACRemainingFilterTime(client, device, fahrenheit))
+                sensors.append(LGACFilterChangePeriod(client, device, fahrenheit))
+                sensors.append(LGACFilterUseTime(client, device, fahrenheit))
+                sensors.append(LGACFilterRemainingTime(client, device, fahrenheit))
+                sensors.append(LGACFilterHealth(client, device, fahrenheit))
             except wideq.NotConnectedError:
                 pass
 
@@ -223,7 +226,7 @@ class LGDishWasherDevice(LGDevice):
             self._failed_request_count = 0
 
 
-class LGACRemainingFilterTime(Entity):
+class LGACFilter(Entity):
     def __init__(self, client, device, fahrenheit=True):
         self._client = client
         self._device = device
@@ -236,14 +239,6 @@ class LGACRemainingFilterTime(Entity):
         self._change_period = -1
         self._use_time = -1
         self._remaining_filter_time = -1
-
-    @property
-    def name(self):
-        return self._device.name + "_ac_remaining_filter_time"
-
-    @property
-    def state(self):
-        return self._remaining_filter_time
 
     @property
     def unit_of_measurement(self):
@@ -289,3 +284,43 @@ class LGACRemainingFilterTime(Entity):
         LOGGER.warn('Status update failed.')
         self._ac.monitor_stop()
         self._ac.monitor_start()
+
+class LGACFilterChangePeriod(LGACFilter):
+    @property
+    def name(self):
+        return self._device.name + "_ac.filter_change_period"
+
+    @property
+    def state(self):
+        return self._change_period
+
+class LGACFilterUseTime(LGACFilter):
+    @property
+    def name(self):
+        return self._device.name + "_ac.filter_use_time"
+
+    @property
+    def state(self):
+        return self._use_time
+
+class LGACFilterRemainingTime(LGACFilter):
+    @property
+    def name(self):
+        return self._device.name + "_ac.filter_remaining_time"
+
+    @property
+    def state(self):
+        return self._remaining_filter_time
+
+class LGACFilterHealth(LGACFilter):
+    @property
+    def name(self):
+        return self._device.name + "_ac.filter_health"
+
+    @property
+    def state(self):
+        return round(self._remaining_filter_time / self._change_period, 2)
+
+    @property
+    def unit_of_measurement(self):
+        return PERCENTAGE
