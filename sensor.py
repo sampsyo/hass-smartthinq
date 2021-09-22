@@ -6,7 +6,8 @@ import voluptuous as vol
 from custom_components.smartthinq import (
     CONF_LANGUAGE, KEY_SMARTTHINQ_DEVICES, LGDevice)
 import homeassistant.helpers.config_validation as cv
-from homeassistant.const import CONF_REGION, CONF_TOKEN
+from homeassistant.const import CONF_REGION, CONF_TOKEN, TIME_HOURS, PERCENTAGE
+from homeassistant.helpers.entity import Entity
 
 import wideq
 from wideq import dishwasher
@@ -38,7 +39,7 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
     language = hass.data[CONF_LANGUAGE]
 
     client = wideq.Client.from_token(refresh_token, region, language)
-    dishwashers = []
+    sensors = []
 
     for device_id in hass.data[KEY_SMARTTHINQ_DEVICES]:
         device = client.get_device(device_id)
@@ -48,14 +49,26 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
             base_name = "lg_dishwasher_" + device.id
             LOGGER.debug("Creating new LG DishWasher: %s" % base_name)
             try:
-                dishwashers.append(LGDishWasherDevice(client, device, base_name))
+                sensors.append(LGDishWasherDevice(client, device, base_name))
             except wideq.NotConnectedError:
                 # Dishwashers are only connected when in use. Ignore
                 # NotConnectedError on platform setup.
                 pass
 
-    if dishwashers:
-        add_entities(dishwashers, True)
+        if device.type == wideq.DeviceType.AC:
+            fahrenheit = hass.config.units.temperature_unit != '°C'
+            LOGGER.debug("Creating new LG AC: %s" % device.name)
+            try:
+                sensors.append(LGACFilterChangePeriod(client, device, fahrenheit))
+                sensors.append(LGACFilterUseTime(client, device, fahrenheit))
+                sensors.append(LGACFilterRemainingTime(client, device, fahrenheit))
+                sensors.append(LGACFilterHealth(client, device, fahrenheit))
+            except wideq.NotConnectedError:
+                pass
+
+    if sensors:
+        add_entities(sensors, True)
+
     return True
 
 
@@ -211,3 +224,103 @@ class LGDishWasherDevice(LGDevice):
             # restart the task.
             self._restart_monitor()
             self._failed_request_count = 0
+
+
+class LGACFilter(Entity):
+    def __init__(self, client, device, fahrenheit=True):
+        self._client = client
+        self._device = device
+        self._fahrenheit = fahrenheit
+
+        import wideq
+        self._ac = wideq.ACDevice(client, device)
+        self._ac.monitor_start()
+
+        self._change_period = -1
+        self._use_time = -1
+        self._remaining_filter_time = -1
+
+    @property
+    def unit_of_measurement(self):
+        return TIME_HOURS
+
+    def update(self):
+        """Poll for updated device status.
+
+        Set the `_state` field to a new data mapping.
+        """
+
+        import wideq
+
+        LOGGER.info('Updating %s.', self.name)
+        for iteration in range(MAX_RETRIES):
+            LOGGER.info('Polling...')
+
+            try:
+                state = self._ac.poll()
+            except wideq.NotLoggedInError:
+                LOGGER.info('Session expired. Refreshing.')
+                self._client.refresh()
+                self._ac.monitor_start()
+                continue
+            except wideq.NotConnectedError:
+                LOGGER.info('Device not available.')
+                return
+
+            if state:
+                filter_state = self._ac.get_filter_state()
+                self._change_period = int(filter_state["ChangePeriod"])
+                self._use_time = int(filter_state["UseTime"])
+                self._remaining_filter_time = self._change_period - self._use_time
+                LOGGER.info('Status updated.')
+                return
+
+            LOGGER.info('No status available yet.')
+            time.sleep(2 ** iteration)  # Exponential backoff.
+
+        # We tried several times but got no result. This might happen
+        # when the monitoring request gets into a bad state, so we
+        # restart the task.
+        LOGGER.warn('Status update failed.')
+        self._ac.monitor_stop()
+        self._ac.monitor_start()
+
+class LGACFilterChangePeriod(LGACFilter):
+    @property
+    def name(self):
+        return self._device.name + "_ac.filter_change_period"
+
+    @property
+    def state(self):
+        return self._change_period
+
+class LGACFilterUseTime(LGACFilter):
+    @property
+    def name(self):
+        return self._device.name + "_ac.filter_use_time"
+
+    @property
+    def state(self):
+        return self._use_time
+
+class LGACFilterRemainingTime(LGACFilter):
+    @property
+    def name(self):
+        return self._device.name + "_ac.filter_remaining_time"
+
+    @property
+    def state(self):
+        return self._remaining_filter_time
+
+class LGACFilterHealth(LGACFilter):
+    @property
+    def name(self):
+        return self._device.name + "_ac.filter_health"
+
+    @property
+    def state(self):
+        return round(100.0 * self._remaining_filter_time / self._change_period, 2)
+
+    @property
+    def unit_of_measurement(self):
+        return PERCENTAGE
