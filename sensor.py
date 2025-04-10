@@ -6,7 +6,7 @@ import voluptuous as vol
 from custom_components.smartthinq import (
     CONF_LANGUAGE, KEY_SMARTTHINQ_DEVICES, LGDevice)
 import homeassistant.helpers.config_validation as cv
-from homeassistant.const import CONF_REGION, CONF_TOKEN, TIME_HOURS, PERCENTAGE
+from homeassistant.const import CONF_REGION, CONF_TOKEN, UnitOfTime, PERCENTAGE
 from homeassistant.helpers.entity import Entity
 
 import wideq
@@ -242,7 +242,7 @@ class LGACFilter(Entity):
 
     @property
     def unit_of_measurement(self):
-        return TIME_HOURS
+        return UnitOfTime.HOURS
 
     def update(self):
         """Poll for updated device status.
