@@ -10,6 +10,8 @@ from custom_components.smartthinq import (
     CONF_LANGUAGE, KEY_DEPRECATED_COUNTRY,
     KEY_DEPRECATED_LANGUAGE, KEY_DEPRECATED_REFRESH_TOKEN)
 
+from homeassistant.components.climate.const import HVACMode
+
 try:
     from homeassistant.components.climate import ClimateEntity
 except ImportError:
@@ -27,13 +29,13 @@ PLATFORM_SCHEMA = climate.PLATFORM_SCHEMA.extend({
 })
 
 MODES = {
-    'AI': c_const.HVAC_MODE_AUTO,
-    'ENERGY_SAVER': c_const.HVAC_MODE_AUTO,
-    'HEAT': c_const.HVAC_MODE_HEAT,
-    'COOL': c_const.HVAC_MODE_COOL,
-    'FAN': c_const.HVAC_MODE_FAN_ONLY,
-    'DRY': c_const.HVAC_MODE_DRY,
-    'ACO': c_const.HVAC_MODE_HEAT_COOL,
+    'AI': HVACMode.AUTO,
+    'ENERGY_SAVER': HVACMode.AUTO,
+    'HEAT': HVACMode.HEAT,
+    'COOL': HVACMode.COOL,
+    'FAN': HVACMode.FAN_ONLY,
+    'DRY': HVACMode.DRY,
+    'ACO': HVACMode.HEAT_COOL,
 }
 FAN_MODES = {
     'LOW': c_const.FAN_LOW,
