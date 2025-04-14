@@ -16,7 +16,7 @@ DOMAIN = 'smartthinq'
 CONF_LANGUAGE = 'language'
 CONFIG_SCHEMA = vol.Schema({
     DOMAIN: vol.Schema({
-        vol.Required(CONF_TOKEN): cv.string,
+        CONF_TOKEN: cv.string,
         CONF_REGION: cv.string,
         CONF_LANGUAGE: cv.string,
         })
@@ -53,6 +53,12 @@ DEPRECATION_WARNING = (
         key_language=CONF_LANGUAGE,
         domain=DOMAIN)
 
+LOGIN_PROMPT = (
+    'Please <a href="{url}">log in to SmartThinQ</a>. '
+    'The site will redirect you to a blank page. '
+    'Paste that URL here.'
+)
+
 
 def setup(hass, config):
     if DOMAIN not in config:
@@ -62,22 +68,50 @@ def setup(hass, config):
     if KEY_SMARTTHINQ_DEVICES not in hass.data:
         hass.data[KEY_SMARTTHINQ_DEVICES] = []
 
-    refresh_token = config[DOMAIN].get(CONF_TOKEN)
-    region = config[DOMAIN].get(CONF_REGION)
-    language = config[DOMAIN].get(CONF_LANGUAGE)
+    hass.data[CONF_TOKEN] = config[DOMAIN].get(CONF_TOKEN)
+    hass.data[CONF_REGION] = config[DOMAIN].get(CONF_REGION)
+    hass.data[CONF_LANGUAGE] = config[DOMAIN].get(CONF_LANGUAGE)
 
-    client = wideq.Client.from_token(refresh_token, region, language)
+    if hass.data[CONF_TOKEN]:
+        finish_setup(hass, config)
+    else:
+        gateway = wideq.Gateway.discover(
+            hass.data[CONF_REGION],
+            hass.data[CONF_LANGUAGE],
+        )
+        login_url = gateway.oauth_url()
+        LOGGER.debug('Login URL: %s', login_url)
 
-    hass.data[CONF_TOKEN] = refresh_token
-    hass.data[CONF_REGION] = region
-    hass.data[CONF_LANGUAGE] = language
+        def setup_callback(data):
+            auth = wideq.Auth.from_url(gateway, data['url'])
+            LOGGER.debug('Found refresh token: %s', auth.refresh_token)
+            hass.data[CONF_TOKEN] = auth.refresh_token
+            finish_setup(hass, config)
+
+        configurator = hass.components.configurator
+        configurator.request_config(
+            'SmartThinQ',
+            setup_callback,
+            description=LOGIN_PROMPT.format(url=login_url),
+            submit_caption='Save',
+            fields=[{"id": "url", "name": "URL", "type": ""}],
+        )
+
+    return True
+
+
+def finish_setup(hass, config):
+    client = wideq.Client.from_token(
+        hass.data[CONF_TOKEN],
+        hass.data[CONF_REGION],
+        hass.data[CONF_LANGUAGE],
+    )
 
     for device in client.devices:
         hass.data[KEY_SMARTTHINQ_DEVICES].append(device.id)
 
     for component in SMARTTHINQ_COMPONENTS:
         discovery.load_platform(hass, component, DOMAIN, {}, config)
-    return True
 
 
 class LGDevice(Entity):
